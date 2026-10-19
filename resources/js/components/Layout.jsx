@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard, Monitor, Users, LifeBuoy, ArrowLeftRight, Boxes,
-    LogOut, Menu, X, ShieldCheck, Bell, Search, Wifi, Lock, Settings,
+    LogOut, Menu, X, ShieldCheck, Search, Wifi, Lock, Settings,
     Building2, Network, MapPin, Building, Layers, Tags, Circle, Wrench,
     Truck, ShoppingCart, SlidersHorizontal, Ticket, ClipboardList, Package,
     Archive, Trash2,
@@ -15,6 +15,7 @@ import { sons } from '../lib/sons';
 import FondEcran from './FondEcran';
 import { ConfirmModal } from './ui';
 import ProfilModal from './Profil';
+import Notifications from './Notifications';
 import { User } from 'lucide-react';
 
 const sections = [
@@ -253,10 +254,7 @@ export default function Layout() {
                                 Confidentiel Défense
                             </span>
                         </div>
-                        <button className="relative p-2 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors">
-                            <Bell size={18} />
-                            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-rose-500" />
-                        </button>
+                        <Notifications />
                         <button
                             onClick={() => { sons.clic(); setProfilOuvert(true); }}
                             title="Voir / modifier mon profil"

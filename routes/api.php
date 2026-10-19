@@ -10,6 +10,7 @@ use App\Http\Controllers\EquipementController;
 use App\Http\Controllers\InventaireController;
 use App\Http\Controllers\LogicielController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RapportController;
 use App\Http\Controllers\ReferentielController;
 use App\Http\Controllers\TicketController;
@@ -26,6 +27,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'stats']);
     Route::get('/inventaire-details', [InventaireController::class, 'details']);
+
+    // Centre de notifications : fil personnel de l'utilisateur connecté.
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::patch('notifications/tout-lire', [NotificationController::class, 'toutMarquerLire']);
+    Route::patch('notifications/{id}/lire', [NotificationController::class, 'lire']);
 
     /*
      * Rôles :

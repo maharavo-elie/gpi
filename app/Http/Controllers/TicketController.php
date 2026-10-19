@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Ticket;
 use App\Models\TicketCommentaire;
+use App\Support\NotificationsMetier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -57,7 +58,18 @@ class TicketController extends CrudController
             return $ticket;
         });
 
+        $ticket->load('equipement');
         $this->logAction('création', $ticket);
+
+        // Alerte aux intervenants : les tickets ouverts ne doivent pas
+        // attendre qu'on remarque la page /tickets par hasard.
+        NotificationsMetier::notifier(
+            NotificationsMetier::idsParRoles(['admin', 'gestionnaire_parc', 'technicien']),
+            'Nouveau ticket '.$ticket->reference_ticket,
+            ($ticket->equipement?->code_inventaire ? $ticket->equipement->code_inventaire.' — ' : '')
+                .$ticket->titre.' (priorité '.$ticket->priorite.')',
+            $ticket->priorite === 'critique' || $ticket->priorite === 'haute' ? 'alerte' : 'info'
+        );
 
         return response()->json($ticket->load($this->withRelations()), 201);
     }
@@ -71,8 +83,21 @@ class TicketController extends CrudController
             $data['date_cloture'] = today();
         }
 
+        $statutAvant = $ticket->statut;
         $ticket->update($data);
         $this->logAction('modification', $ticket);
+
+        if ($statutAvant !== $ticket->statut) {
+            // Le déclarant a le droit de savoir que sa demande avance (ou est résolue).
+            $idDeclarant = NotificationsMetier::idUtilisateurDeAgent($ticket->id_agent);
+            $estSolde = in_array($ticket->statut, ['resolu', 'ferme']);
+            NotificationsMetier::notifier(
+                [$idDeclarant],
+                'Ticket '.$ticket->reference_ticket.' '.($estSolde ? 'traité' : 'en traitement'),
+                'Statut : '.$statutAvant.' → '.$ticket->statut,
+                $estSolde ? 'succes' : 'info'
+            );
+        }
 
         return response()->json($ticket->load($this->withRelations()));
     }

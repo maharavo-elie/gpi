@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Maintenance;
 use App\Models\Equipement;
 use App\Models\Mouvement;
+use App\Support\NotificationsMetier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -107,6 +108,32 @@ class MaintenanceController extends CrudController
                 }
             }
         });
+
+        // Alerter dès que l'intervention démarre ou se termine : le retour
+        // du matériel au stock est le moment où gestionnaires et admins
+        // peuvent replanifier une affectation.
+        if ($ancienStatut !== $nouveauStatut) {
+            $equipement = Equipement::find($maintenance->id_equipement);
+            $code = $equipement?->code_inventaire ?? 'matériel #'.$maintenance->id_equipement;
+
+            if ($nouveauStatut === 'en_cours') {
+                NotificationsMetier::notifier(
+                    NotificationsMetier::idsParRoles(['admin', 'gestionnaire_parc']),
+                    'Intervention démarrée — '.$code,
+                    'La maintenance #'.$maintenance->id_maintenance.' est passée à « en cours ».',
+                    'info'
+                );
+            }
+            if (in_array($nouveauStatut, ['terminee', 'annulee'])) {
+                $verbe = $nouveauStatut === 'terminee' ? 'terminée' : 'annulée';
+                NotificationsMetier::notifier(
+                    NotificationsMetier::idsParRoles(['admin', 'gestionnaire_parc']),
+                    'Matériel de nouveau disponible — '.$code,
+                    'Intervention '.$verbe.' : l\'équipement redevient disponible au stock.',
+                    $nouveauStatut === 'terminee' ? 'succes' : 'warning'
+                );
+            }
+        }
 
         $this->logAction('modification', $maintenance);
 
