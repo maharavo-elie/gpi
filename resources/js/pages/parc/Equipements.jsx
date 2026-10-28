@@ -6,6 +6,7 @@ import { Spinner, PageHeader, EmptyState, Badge, Field, inputClass, ErrorText, E
 import { STATUTS_EQUIPEMENT, formatDate, formatAr } from '../../lib/constants';
 import { telechargerExport, nomExport } from '../../lib/exports';
 import { useAuth, aRole, ROLES_ECRITURE } from '../../auth';
+import { useT } from '../../lib/i18n';
 
 const VIDE_FORM = {
     code_inventaire: '', numero_serie: '', designation: '', description: '',
@@ -35,6 +36,7 @@ const versForm = (eq) => ({
 
 export default function Equipements() {
     const { user } = useAuth();
+    const { t } = useT();
     const peutEcrire = aRole(user, ROLES_ECRITURE);
     const [data, setData] = useState(null);
     const [filters, setFilters] = useState({ q: '', statut: '', id_categorie: '' });
@@ -95,7 +97,7 @@ export default function Equipements() {
             await load();
         } catch (err) {
             setASupprimer(null);
-            alert(err.response?.data?.message ?? 'Suppression impossible (élément utilisé ailleurs).');
+            alert(err.response?.data?.message ?? t('Suppression impossible (élément utilisé ailleurs).'));
         } finally {
             setBusySuppression(false);
         }
@@ -115,35 +117,35 @@ export default function Equipements() {
             setModal(null);
             await load();
         } catch (err) {
-            setErrors(err.response?.data?.errors ?? { erreur: ['Enregistrement impossible.'] });
+            setErrors(err.response?.data?.errors ?? { erreur: [t('Enregistrement impossible.')] });
         } finally {
             setBusy(false);
         }
     };
 
-    if (! data) return <Spinner label="Chargement des équipements…" />;
+    if (! data) return <Spinner label={t('Chargement des équipements…')} />;
 
     const champsForm = (
         <>
             <ErrorText errors={errors} />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <Field label="Code inventaire" required>
+                <Field label={t('Code inventaire')} required>
                     <input required value={form.code_inventaire} onChange={(e) => setForm({ ...form, code_inventaire: e.target.value })} className={inputClass} placeholder="GPI-00042" />
                 </Field>
-                <Field label="N° de série">
+                <Field label={t('N° de série')}>
                     <input value={form.numero_serie} onChange={(e) => setForm({ ...form, numero_serie: e.target.value })} className={inputClass} />
                 </Field>
-                <Field label="Désignation" required>
+                <Field label={t('Désignation')} required>
                     <input required value={form.designation} onChange={(e) => setForm({ ...form, designation: e.target.value })} className={inputClass} />
                 </Field>
-                <Field label="Statut" required>
+                <Field label={t('Statut')} required>
                     <select value={form.statut} onChange={(e) => setForm({ ...form, statut: e.target.value })} className={inputClass}>
                         {Object.entries(STATUTS_EQUIPEMENT).map(([k, m]) => (
                             <option key={k} value={k}>{m.label}</option>
                         ))}
                     </select>
                 </Field>
-                <Field label="Modèle">
+                <Field label={t('Modèle')}>
                     <select value={form.id_modele} onChange={(e) => setForm({ ...form, id_modele: e.target.value })} className={inputClass}>
                         <option value="">—</option>
                         {referentiel?.modeles?.map((m) => (
@@ -151,7 +153,7 @@ export default function Equipements() {
                         ))}
                     </select>
                 </Field>
-                <Field label="Direction">
+                <Field label={t('Direction')}>
                     <select value={form.id_direction} onChange={(e) => setForm({ ...form, id_direction: e.target.value })} className={inputClass}>
                         <option value="">—</option>
                         {referentiel?.directions?.map((d) => (
@@ -159,7 +161,7 @@ export default function Equipements() {
                         ))}
                     </select>
                 </Field>
-                <Field label="Localisation">
+                <Field label={t('Localisation')}>
                     <select value={form.id_localisation} onChange={(e) => setForm({ ...form, id_localisation: e.target.value })} className={inputClass}>
                         <option value="">Stock</option>
                         {referentiel?.localisations?.map((l) => (
@@ -167,7 +169,7 @@ export default function Equipements() {
                         ))}
                     </select>
                 </Field>
-                <Field label="État">
+                <Field label={t('État')}>
                     <select value={form.id_etat} onChange={(e) => setForm({ ...form, id_etat: e.target.value })} className={inputClass}>
                         <option value="">—</option>
                         {referentiel?.etats?.map((et) => (
@@ -175,10 +177,10 @@ export default function Equipements() {
                         ))}
                     </select>
                 </Field>
-                <Field label="Date d'acquisition">
+                <Field label={t("Date d'acquisition")}>
                     <input type="date" value={form.date_acquisition} onChange={(e) => setForm({ ...form, date_acquisition: e.target.value })} className={inputClass} />
                 </Field>
-                <Field label="Prix d'acquisition (Ar)">
+                <Field label={t("Prix d'acquisition (Ar)")}>
                     <input type="number" min="0" value={form.prix_acquisition} onChange={(e) => setForm({ ...form, prix_acquisition: e.target.value })} className={inputClass} />
                 </Field>
             </div>
@@ -188,8 +190,8 @@ export default function Equipements() {
     return (
         <div>
             <PageHeader
-                title="Équipements"
-                subtitle={`${data.total} équipement(s) au parc`}
+                title={t('Équipements')}
+                subtitle={`${data.total} ${t(' équipement(s) au parc')}`}
                 actions={
                     <>
                         <button
@@ -197,14 +199,14 @@ export default function Equipements() {
                             disabled={pdfEnCours}
                             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-300 text-sm font-bold transition-all disabled:opacity-60"
                         >
-                            <FileDown size={15} /> {pdfEnCours ? 'Génération…' : 'Imprimer PDF'}
+                            <FileDown size={15} /> {pdfEnCours ? t('Génération…') : t('Imprimer PDF')}
                         </button>
                         {peutEcrire && (
                             <button
                                 onClick={ouvrirCreation}
                                 className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-sm shadow-blue-600/25"
                             >
-                                <Plus size={15} /> Nouvel équipement
+                                <Plus size={15} /> {t('Nouvel équipement')}
                             </button>
                         )}
                     </>
@@ -218,18 +220,18 @@ export default function Equipements() {
                     <input
                         value={filters.q}
                         onChange={setF('q')}
-                        placeholder="Rechercher par code inventaire, n° série, désignation…"
+                        placeholder={t('Rechercher par code inventaire, n° série, désignation…')}
                         className={`${inputClass} pl-9`}
                     />
                 </div>
                 <select value={filters.statut} onChange={setF('statut')} className={`${inputClass} sm:w-44`}>
-                    <option value="">Tous les statuts</option>
+                    <option value="">{t('Tous les statuts')}</option>
                     {Object.entries(STATUTS_EQUIPEMENT).map(([k, m]) => (
                         <option key={k} value={k}>{m.label}</option>
                     ))}
                 </select>
                 <select value={filters.id_categorie} onChange={setF('id_categorie')} className={`${inputClass} sm:w-48`}>
-                    <option value="">Toutes catégories</option>
+                    <option value="">{t('Toutes catégories')}</option>
                     {referentiel?.categories?.map((c) => (
                         <option key={c.id_categorie} value={c.id_categorie}>{c.nom_categorie}</option>
                     ))}
@@ -242,12 +244,12 @@ export default function Equipements() {
                     <table className="w-full text-sm">
                         <thead>
                             <tr className="bg-slate-100 text-left text-[11px] uppercase tracking-wide text-slate-500 border-b border-slate-200/50">
-                                <th className="px-4 py-3 font-bold">Code</th>
-                                <th className="px-4 py-3 font-bold">Désignation</th>
-                                <th className="px-4 py-3 font-bold hidden md:table-cell">Catégorie</th>
-                                <th className="px-4 py-3 font-bold hidden lg:table-cell">Localisation</th>
-                                <th className="px-4 py-3 font-bold">Statut</th>
-                                <th className="px-4 py-3 text-right font-bold">Actions</th>
+                                <th className="px-4 py-3 font-bold">{t('Code')}</th>
+                                <th className="px-4 py-3 font-bold">{t('Désignation')}</th>
+                                <th className="px-4 py-3 font-bold hidden md:table-cell">{t('Catégorie')}</th>
+                                <th className="px-4 py-3 font-bold hidden lg:table-cell">{t('Localisation')}</th>
+                                <th className="px-4 py-3 font-bold">{t('Statut')}</th>
+                                <th className="px-4 py-3 text-right font-bold">{t('Actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -264,7 +266,7 @@ export default function Equipements() {
                                         {eq.categorie?.nom_categorie ?? '—'}
                                     </td>
                                     <td className="px-4 py-3 hidden lg:table-cell text-slate-600">
-                                        {eq.localisation ? `${eq.localisation.batiment?.site?.nom_site ?? ''} · ${eq.localisation.nom_localisation}` : 'Stock'}
+                                        {eq.localisation ? `${eq.localisation.batiment?.site?.nom_site ?? ''} · ${eq.localisation.nom_localisation}` : t('Stock')}
                                     </td>
                                     <td className="px-4 py-3">
                                         <Badge color={STATUTS_EQUIPEMENT[eq.statut]?.color}>{STATUTS_EQUIPEMENT[eq.statut]?.label ?? eq.statut}</Badge>
@@ -274,27 +276,27 @@ export default function Equipements() {
                                             {peutEcrire && (
                                                 <button
                                                     onClick={() => setASupprimer(eq)}
-                                                    title="Supprimer cet équipement"
+                                                    title={t('Supprimer cet équipement')}
                                                     className="inline-flex items-center px-2.5 py-1.5 rounded-lg border border-rose-200/60 bg-rose-100 hover:bg-rose-200 active:scale-[.95] text-rose-500 text-xs font-semibold transition-all"
                                                 >
-                                                    <Trash2 size={13} /> Supprimer
+                                                    <Trash2 size={13} /> {t('Supprimer')}
                                                 </button>
                                             )}
                                             {peutEcrire && (
                                                 <button
                                                     onClick={() => ouvrirEdition(eq)}
-                                                    title="Modifier cet équipement"
+                                                    title={t('Modifier cet équipement')}
                                                     className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200/50 bg-slate-100 hover:bg-card-high text-slate-600 hover:text-sky-400 text-xs font-semibold transition-colors"
                                                 >
-                                                    <Pencil size={13} /> Modifier
+                                                    <Pencil size={13} /> {t('Modifier')}
                                                 </button>
                                             )}
                                             <Link
                                                 to={`/equipements/${eq.id_equipement}`}
-                                                title="Voir la fiche détaillée"
+                                                title={t('Voir la fiche détaillée')}
                                                 className="inline-flex items-center px-2.5 py-1.5 rounded-lg border border-slate-200/50 bg-slate-100 hover:bg-card-high text-slate-600 hover:text-blue-300 text-xs font-semibold transition-colors"
                                             >
-                                                Détail
+                                                {t('Détail')}
                                             </Link>
                                         </div>
                                     </td>
@@ -305,14 +307,14 @@ export default function Equipements() {
                 </div>
 
                 {data.data.length === 0 && (
-                    <EmptyState icon={Monitor} title="Aucun équipement trouvé" hint="Ajustez les filtres ou créez un nouvel équipement." />
+                    <EmptyState icon={Monitor} title={t('Aucun équipement trouvé')} hint={t('Ajustez les filtres ou créez un nouvel équipement.')} />
                 )}
 
                 {/* Pagination */}
                 {data.last_page > 1 && (
                     <div className="flex items-center justify-between px-4 py-3 border-t border-slate-200/50 bg-slate-100 text-xs">
                         <span className="text-slate-500">
-                            Page {data.current_page} / {data.last_page} — {data.total} équipements
+                            {t('Page ')}{data.current_page} / {data.last_page} — {data.total} {t(' équipements')}
                         </span>
                         <div className="flex gap-1">
                             <button
@@ -320,14 +322,14 @@ export default function Equipements() {
                                 onClick={() => load({ ...filters, page: data.current_page - 1 })}
                                 className="px-3 py-1.5 rounded-lg border border-slate-200/50 bg-card disabled:opacity-40 hover:bg-card-high font-semibold"
                             >
-                                Précédent
+                                {t('Précédent')}
                             </button>
                             <button
                                 disabled={data.current_page >= data.last_page}
                                 onClick={() => load({ ...filters, page: data.current_page + 1 })}
                                 className="px-3 py-1.5 rounded-lg border border-slate-200/50 bg-card disabled:opacity-40 hover:bg-card-high font-semibold"
                             >
-                                Suivant
+                                {t('Suivant')}
                             </button>
                         </div>
                     </div>
@@ -341,7 +343,7 @@ export default function Equipements() {
                 onClose={() => setModal(null)}
                 onSubmit={submit}
                 busy={busy}
-                title={modal?.mode === 'edit' ? `Modifier — ${modal.equipement.code_inventaire}` : 'Nouvel équipement'}
+                title={modal?.mode === 'edit' ? `${t('Modifier — ')}${modal.equipement.code_inventaire}` : t('Nouvel équipement')}
             >
                 {champsForm}
             </EditModal>
@@ -350,7 +352,7 @@ export default function Equipements() {
             <ConfirmModal
                 open={!! aSupprimer}
                 message={aSupprimer
-                    ? <>Voulez-vous vraiment supprimer l'équipement <strong className="text-slate-700">« {aSupprimer.code_inventaire} — {aSupprimer.designation} »</strong> ? Cette action est définitive.</>
+                    ? <>{t("Voulez-vous vraiment supprimer l'équipement ")}<strong className="text-slate-700">« {aSupprimer.code_inventaire} — {aSupprimer.designation} »</strong>{t(' ? Cette action est définitive.')}</>
                     : ''}
                 busy={busySuppression}
                 onConfirm={confirmerSuppression}

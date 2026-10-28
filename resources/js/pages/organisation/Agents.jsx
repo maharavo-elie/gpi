@@ -6,6 +6,7 @@ import { Spinner, PageHeader, EmptyState, Badge, Field, inputClass, ErrorText, E
 import { formatDate } from '../../lib/constants';
 import { telechargerExport, nomExport } from '../../lib/exports';
 import { useAuth, aRole, ROLES_ECRITURE } from '../../auth';
+import { useT } from '../../lib/i18n';
 
 const VIDE = {
     matricule: '', nom_naiss: '', prenom: '', sexe: 'M', fonction: '',
@@ -15,6 +16,7 @@ const VIDE = {
 
 export default function Agents() {
     const { user } = useAuth();
+    const { t } = useT();
     const peutEcrire = aRole(user, ROLES_ECRITURE);
     const [agents, setAgents] = useState(null);
     const [referentiel, setReferentiel] = useState(null);
@@ -64,7 +66,7 @@ export default function Agents() {
             await loadAgents(q);
         } catch (err) {
             setASupprimer(null);
-            alert(err.response?.data?.message ?? 'Suppression impossible (élément utilisé ailleurs).');
+            alert(err.response?.data?.message ?? t('Suppression impossible (élément utilisé ailleurs).'));
         } finally {
             setBusySuppression(false);
         }
@@ -92,8 +94,8 @@ export default function Agents() {
         if (! dateEmbauche) return null;
         const debut = new Date(dateEmbauche);
         const ans = Math.floor((Date.now() - debut) / 31557600000);
-        if (ans < 1) return 'Moins d\'un an';
-        return `${ans} an${ans > 1 ? 's' : ''} d'ancienneté`;
+        if (ans < 1) return t("Moins d'un an");
+        return `${ans}${t(ans > 1 ? ' ans' : ' an')} ${t("d'ancienneté")}`;
     };
 
     const ouvrirEdition = (ag) => {
@@ -130,19 +132,19 @@ export default function Agents() {
             setModal(null);
             await loadAgents(q);
         } catch (err) {
-            setErrors(err.response?.data?.errors ?? { erreur: ['Enregistrement impossible.'] });
+            setErrors(err.response?.data?.errors ?? { erreur: [t('Enregistrement impossible.')] });
         } finally {
             setBusy(false);
         }
     };
 
-    if (! agents) return <Spinner label="Chargement des agents…" />;
+    if (! agents) return <Spinner label={t('Chargement des agents…')} />;
 
     return (
         <div>
             <PageHeader
-                title="Agents"
-                subtitle={`${agents.length} agent(s) enregistré(s)`}
+                title={t('Agents')}
+                subtitle={`${agents.length} ${t(' agent(s) enregistré(s)')}`}
                 actions={
                     <>
                         <button
@@ -150,11 +152,11 @@ export default function Agents() {
                             disabled={pdfEnCours}
                             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-300 text-sm font-bold transition-all disabled:opacity-60"
                         >
-                            <FileDown size={15} /> {pdfEnCours ? 'Génération…' : 'Imprimer PDF'}
+                            <FileDown size={15} /> {pdfEnCours ? t('Génération…') : t('Imprimer PDF')}
                         </button>
                         {peutEcrire && (
                             <button onClick={ouvrirCreation} className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-sm shadow-blue-600/25">
-                                <Plus size={15} /> Nouvel agent
+                                <Plus size={15} /> {t('Nouvel agent')}
                             </button>
                         )}
                     </>
@@ -164,7 +166,7 @@ export default function Agents() {
             <div className="bg-card rounded-2xl border border-slate-200/50 shadow-sm p-3 mb-4">
                 <div className="relative">
                     <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Rechercher par matricule, nom, fonction…" className={`${inputClass} pl-9`} />
+                    <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('Rechercher par matricule, nom, fonction…')} className={`${inputClass} pl-9`} />
                 </div>
             </div>
 
@@ -178,7 +180,7 @@ export default function Agents() {
                                 </div>
                                 <div className="min-w-0">
                                     <div className="font-bold text-slate-800 text-sm truncate">{ag.prenom} {ag.nom_naiss}</div>
-                                    <div className="text-[11px] text-slate-500 truncate">{ag.fonction ?? '—'}</div>
+                                    <div className="text-[11px] text-slate-500 truncate">{ag.fonction ? t(ag.fonction) : '—'}</div>
                                 </div>
                             </div>
                             <Badge color={
@@ -186,39 +188,39 @@ export default function Agents() {
                                 : ag.statut === 'conge' ? 'bg-jaune-100 text-jaune-400 border-jaune-200'
                                 : ag.statut === 'mutation' ? 'bg-blue-100 text-blue-300 border-blue-200' : 'bg-rose-100 text-rose-400 border-rose-200'
                             }>
-                                {ag.statut}
+                                {t(ag.statut)}
                             </Badge>
                         </div>
                         <div className="mt-3 pt-3 border-t border-slate-100 space-y-1 text-xs text-slate-600">
-                            <div className="flex justify-between"><span className="text-slate-400">Matricule</span><span className="font-mono font-semibold">{ag.matricule}</span></div>
-                            <div className="flex justify-between"><span className="text-slate-400">Service</span><span className="font-medium truncate max-w-[60%]">{ag.service?.nom_service ?? '—'}</span></div>
-                            <div className="flex justify-between"><span className="text-slate-400">Direction</span><span className="font-medium">{ag.direction?.code_direction ?? '—'}</span></div>
-                            <div className="flex justify-between"><span className="text-slate-400">Téléphone</span><span>{ag.telephone ?? '—'}</span></div>
+                            <div className="flex justify-between"><span className="text-slate-400">{t('Matricule')}</span><span className="font-mono font-semibold">{ag.matricule}</span></div>
+                            <div className="flex justify-between"><span className="text-slate-400">{t('Service')}</span><span className="font-medium truncate max-w-[60%]">{ag.service?.nom_service ?? '—'}</span></div>
+                            <div className="flex justify-between"><span className="text-slate-400">{t('Direction')}</span><span className="font-medium">{ag.direction?.code_direction ?? '—'}</span></div>
+                            <div className="flex justify-between"><span className="text-slate-400">{t('Téléphone')}</span><span>{ag.telephone ?? '—'}</span></div>
                         </div>
                         <div className="mt-3 pt-3 border-t border-slate-100 flex justify-end gap-1.5">
                             <button
                                 onClick={() => setAConsulter(ag)}
-                                title="Voir toutes les informations de cet agent"
+                                title={t('Voir toutes les informations de cet agent')}
                                 className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-blue-200/60 bg-blue-50 hover:bg-blue-100 active:scale-[.95] text-blue-500 text-xs font-semibold transition-all"
                             >
-                                <Eye size={13} /> Voir
+                                <Eye size={13} /> {t('Voir')}
                             </button>
                             {peutEcrire && (
                                 <button
                                     onClick={() => setASupprimer(ag)}
-                                    title="Supprimer cet agent"
+                                    title={t('Supprimer cet agent')}
                                     className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-200/60 bg-rose-100 hover:bg-rose-200 active:scale-[.95] text-rose-500 text-xs font-semibold transition-all"
                                 >
-                                    <Trash2 size={13} /> Supprimer
+                                    <Trash2 size={13} /> {t('Supprimer')}
                                 </button>
                             )}
                             {peutEcrire && (
                                 <button
                                     onClick={() => ouvrirEdition(ag)}
-                                    title="Modifier cet agent"
+                                    title={t('Modifier cet agent')}
                                     className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200/50 bg-slate-100 hover:bg-card-high text-slate-600 hover:text-sky-400 text-xs font-semibold transition-colors"
                                 >
-                                    <Pencil size={13} /> Modifier
+                                    <Pencil size={13} /> {t('Modifier')}
                                 </button>
                             )}
                         </div>
@@ -226,7 +228,7 @@ export default function Agents() {
                 ))}
             </div>
 
-            {agents.length === 0 && <EmptyState icon={Users} title="Aucun agent trouvé" />}
+            {agents.length === 0 && <EmptyState icon={Users} title={t('Aucun agent trouvé')} />}
 
             {/* Modale création / édition */}
             <EditModal
@@ -235,38 +237,38 @@ export default function Agents() {
                 onClose={() => setModal(null)}
                 onSubmit={submit}
                 busy={busy}
-                title={modal?.mode === 'edit' ? `Modifier — ${modal.agent.matricule}` : 'Nouvel agent'}
+                title={modal?.mode === 'edit' ? `${t('Modifier — ')}${modal.agent.matricule}` : t('Nouvel agent')}
                 width="max-w-xl"
             >
                 <ErrorText errors={errors} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <Field label="Matricule" required>
+                    <Field label={t('Matricule')} required>
                         <input required value={form.matricule} onChange={(e) => setForm({ ...form, matricule: e.target.value })} className={inputClass} placeholder="AG-2026-001" />
                     </Field>
-                    <Field label="Statut" required>
+                    <Field label={t('Statut')} required>
                         <select value={form.statut} onChange={(e) => setForm({ ...form, statut: e.target.value })} className={inputClass}>
-                            <option value="actif">Actif</option>
-                            <option value="inactif">Inactif</option>
-                            <option value="conge">Congé</option>
-                            <option value="mutation">Mutation</option>
+                            <option value="actif">{t('Actif')}</option>
+                            <option value="inactif">{t('Inactif')}</option>
+                            <option value="conge">{t('Congé')}</option>
+                            <option value="mutation">{t('Mutation')}</option>
                         </select>
                     </Field>
-                    <Field label="Nom de naissance" required>
+                    <Field label={t('Nom de naissance')} required>
                         <input required value={form.nom_naiss} onChange={(e) => setForm({ ...form, nom_naiss: e.target.value })} className={inputClass} />
                     </Field>
-                    <Field label="Prénom" required>
+                    <Field label={t('Prénom')} required>
                         <input required value={form.prenom} onChange={(e) => setForm({ ...form, prenom: e.target.value })} className={inputClass} />
                     </Field>
-                    <Field label="Sexe" required>
+                    <Field label={t('Sexe')} required>
                         <select value={form.sexe} onChange={(e) => setForm({ ...form, sexe: e.target.value })} className={inputClass}>
-                            <option value="M">Masculin</option>
-                            <option value="F">Féminin</option>
+                            <option value="M">{t('Masculin')}</option>
+                            <option value="F">{t('Féminin')}</option>
                         </select>
                     </Field>
-                    <Field label="Fonction">
+                    <Field label={t('Fonction')}>
                         <input value={form.fonction} onChange={(e) => setForm({ ...form, fonction: e.target.value })} className={inputClass} />
                     </Field>
-                    <Field label="Direction" required>
+                    <Field label={t('Direction')} required>
                         <select required value={form.id_direction} onChange={(e) => setForm({ ...form, id_direction: e.target.value, id_service: '' })} className={inputClass}>
                             <option value="">—</option>
                             {referentiel?.directions?.map((d) => (
@@ -274,7 +276,7 @@ export default function Agents() {
                             ))}
                         </select>
                     </Field>
-                    <Field label="Service">
+                    <Field label={t('Service')}>
                         <select value={form.id_service} onChange={(e) => setForm({ ...form, id_service: e.target.value })} className={inputClass}>
                             <option value="">—</option>
                             {servicesFiltres.map((s) => (
@@ -282,13 +284,13 @@ export default function Agents() {
                             ))}
                         </select>
                     </Field>
-                    <Field label="Téléphone">
+                    <Field label={t('Téléphone')}>
                         <input value={form.telephone} onChange={(e) => setForm({ ...form, telephone: e.target.value })} className={inputClass} />
                     </Field>
-                    <Field label="Email">
+                    <Field label={t('Email')}>
                         <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={inputClass} />
                     </Field>
-                    <Field label="Date d'embauche">
+                    <Field label={t("Date d'embauche")}>
                         <input type="date" value={form.date_embauche} onChange={(e) => setForm({ ...form, date_embauche: e.target.value })} className={inputClass} />
                     </Field>
                 </div>
@@ -300,7 +302,7 @@ export default function Agents() {
                     <div className="anim-pop bg-card rounded-2xl shadow-2xl w-full max-w-md border border-slate-200/50 overflow-hidden">
                         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200/50">
                             <h2 className="font-bold text-slate-800 flex items-center gap-2">
-                                Informations de l'agent
+                                {t("Informations de l'agent")}
                                 <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded font-mono bg-blue-100 text-blue-400">{aConsulter.matricule}</span>
                             </h2>
                             <button onClick={() => setAConsulter(null)} className="p-1.5 text-slate-400 hover:text-slate-700"><X size={18} /></button>
@@ -312,20 +314,20 @@ export default function Agents() {
                                 </div>
                                 <div className="min-w-0">
                                     <div className="font-bold text-slate-800">{aConsulter.prenom} {aConsulter.nom_naiss}</div>
-                                    <div className="text-xs text-slate-500">{aConsulter.fonction ?? 'Fonction non renseignée'}</div>
+                                    <div className="text-xs text-slate-500">{aConsulter.fonction ? t(aConsulter.fonction) : t('Fonction non renseignée')}</div>
                                     <Badge color={
                                         aConsulter.statut === 'actif' ? 'bg-vert-100 text-vert-400 border-vert-200'
                                         : aConsulter.statut === 'conge' ? 'bg-jaune-100 text-jaune-400 border-jaune-200'
                                         : aConsulter.statut === 'mutation' ? 'bg-blue-100 text-blue-300 border-blue-200' : 'bg-rose-100 text-rose-400 border-rose-200'
                                     }>
-                                        {aConsulter.statut}
+                                        {t(aConsulter.statut)}
                                     </Badge>
                                 </div>
                             </div>
                             <dl className="divide-y divide-slate-100 text-sm">
                                 {[
                                     ['Matricule', <span className="font-mono font-semibold">{aConsulter.matricule}</span>],
-                                    ['Sexe', aConsulter.sexe === 'F' ? 'Féminin' : 'Masculin'],
+                                    ['Sexe', aConsulter.sexe === 'F' ? t('Féminin') : t('Masculin')],
                                     ['Direction', libelleDirection(aConsulter) ?? '—'],
                                     ['Service', libelleService(aConsulter) ?? '—'],
                                     ["Date d'embauche", formatDate(aConsulter.date_embauche)],
@@ -334,7 +336,7 @@ export default function Agents() {
                                     ['Email', aConsulter.email ?? '—'],
                                 ].map(([label, valeur]) => (
                                     <div key={label} className="flex justify-between gap-4 py-2">
-                                        <dt className="text-slate-400 shrink-0">{label}</dt>
+                                        <dt className="text-slate-400 shrink-0">{t(label)}</dt>
                                         <dd className="font-medium text-slate-700 text-right truncate">{valeur}</dd>
                                     </div>
                                 ))
@@ -350,7 +352,7 @@ export default function Agents() {
             <ConfirmModal
                 open={!! aSupprimer}
                 message={aSupprimer
-                    ? <>Voulez-vous vraiment supprimer l'agent <strong className="text-slate-700">« {aSupprimer.prenom} {aSupprimer.nom_naiss} ({aSupprimer.matricule}) »</strong> ? Cette action est définitive.</>
+                    ? <>{t("Voulez-vous vraiment supprimer l'agent ")}<strong className="text-slate-700">« {aSupprimer.prenom} {aSupprimer.nom_naiss} ({aSupprimer.matricule}) »</strong>{t(' ? Cette action est définitive.')}</>
                     : ''}
                 busy={busySuppression}
                 onConfirm={confirmerSuppression}

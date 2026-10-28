@@ -5,19 +5,21 @@ import { api } from '../api';
 import { sons } from '../lib/sons';
 import { Field, inputClass, ErrorText } from './ui';
 import { useAuth } from '../auth';
+import { useT } from '../lib/i18n';
 
 const initiales = (nom) =>
     (nom ?? 'U').split(' ').map((p) => p[0]).join('').slice(0, 2).toUpperCase();
 
 const Infos = ({ user }) => {
+    const { t, langue } = useT();
     const agent = user?.agent;
     const lignes = [
         { icone: User, label: "Nom d'utilisateur", valeur: user?.username ?? '—' },
         { icone: Mail, label: 'Email', valeur: user?.email ?? '—' },
         { icone: Phone, label: 'Téléphone', valeur: agent?.telephone ?? '—' },
-        { icone: Briefcase, label: 'Fonction', valeur: agent?.fonction ?? '—' },
+        { icone: Briefcase, label: 'Fonction', valeur: agent?.fonction ? t(agent?.fonction) : '—' },
         { icone: MapPin, label: 'Service', valeur: agent?.service ? `${agent.service.nom_service} · ${agent.service.direction?.nom_direction ?? ''}` : '—' },
-        { icone: ShieldCheck, label: 'Dernière connexion', valeur: user?.dernier_connexion ? new Date(user.dernier_connexion).toLocaleString('fr-FR') : '—' },
+        { icone: ShieldCheck, label: 'Dernière connexion', valeur: user?.dernier_connexion ? new Date(user.dernier_connexion).toLocaleString(langue === 'en' ? 'en-GB' : 'fr-FR') : '—' },
     ];
     return (
         <div className="space-y-3">
@@ -43,7 +45,7 @@ const Infos = ({ user }) => {
                 {lignes.map(({ icone: Icon, label, valeur }) => (
                     <div key={label} className="flex items-center gap-3 px-3.5 py-2.5">
                         <Icon size={14} className="text-slate-400 shrink-0" />
-                        <span className="text-[11px] font-bold uppercase tracking-wide text-slate-500 w-36 shrink-0">{label}</span>
+                        <span className="text-[11px] font-bold uppercase tracking-wide text-slate-500 w-36 shrink-0">{t(label)}</span>
                         <span className="text-sm text-slate-700 min-w-0 truncate">{valeur}</span>
                     </div>
                 ))}
@@ -54,6 +56,7 @@ const Infos = ({ user }) => {
 
 export default function ProfilModal({ open, onClose }) {
     const { user, majUtilisateur } = useAuth();
+    const { t, langue } = useT();
     const [vue, setVue] = useState('voir'); // 'voir' | 'editer' | 'mdp'
     const [form, setForm] = useState({});
     const [mdp, setMdp] = useState({ mot_de_passe: '', nouveau: '', confirmation: '' });
@@ -87,7 +90,7 @@ export default function ProfilModal({ open, onClose }) {
 
     const source = profil ?? user;
     const agent = source?.agent;
-    const title = vue === 'voir' ? 'Mon profil' : vue === 'editer' ? 'Modifier mon profil' : 'Changer mon mot de passe';
+    const title = vue === 'voir' ? t('Mon profil') : vue === 'editer' ? t('Modifier mon profil') : t('Changer mon mot de passe');
     const bad = vue === 'voir' ? 'bg-blue-600' : 'bg-orange-600';
 
     const ouvrirEdition = () => {
@@ -114,12 +117,12 @@ export default function ProfilModal({ open, onClose }) {
             const { data } = await api.patch('/profil', form);
             majUtilisateur(data);
             setProfil(data);
-            setMessage('Profil enregistré.');
+            setMessage(t('Profil enregistré.'));
             sons.succes();
             setVue('voir');
         } catch (err) {
             sons.alerte();
-            setErrors(err.response?.data?.errors ?? { erreur: [err.response?.data?.message ?? 'Enregistrement impossible.'] });
+            setErrors(err.response?.data?.errors ?? { erreur: [err.response?.data?.message ?? t('Enregistrement impossible.')] });
         } finally {
             setBusy(false);
         }
@@ -134,12 +137,12 @@ export default function ProfilModal({ open, onClose }) {
             await api.put('/profil/mot-de-passe', mdp);
             setMdp({ mot_de_passe: '', nouveau: '', confirmation: '' });
             setVoirMdp({ mot_de_passe: false, nouveau: false, confirmation: false });
-            setMessage('Mot de passe modifié avec succès. Vos autres sessions ont été fermées.');
+            setMessage(t('Mot de passe modifié avec succès. Vos autres sessions ont été fermées.'));
             sons.succes();
             setVue('voir');
         } catch (err) {
             sons.alerte();
-            setErrors(err.response?.data?.errors ?? { erreur: [err.response?.data?.message ?? 'Modification impossible.'] });
+            setErrors(err.response?.data?.errors ?? { erreur: [err.response?.data?.message ?? t('Modification impossible.')] });
         } finally {
             setBusy(false);
         }
@@ -177,13 +180,13 @@ export default function ProfilModal({ open, onClose }) {
                     {vue === 'editer' && (
                         <form id="form-profil" onSubmit={enregistrerProfil} className="space-y-3">
                             <ErrorText errors={errors} />
-                            <Field label="Nom d'utilisateur" required>
+                            <Field label={t("Nom d'utilisateur")} required>
                                 <input className={inputClass} value={form.username ?? ''} onChange={(e) => setForm({ ...form, username: e.target.value })} required />
                             </Field>
-                            <Field label="Email" required>
+                            <Field label={t('Email')} required>
                                 <input type="email" className={inputClass} value={form.email ?? ''} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
                             </Field>
-                            <Field label="Téléphone">
+                            <Field label={t('Téléphone')}>
                                 <input className={inputClass} value={form.telephone ?? ''} onChange={(e) => setForm({ ...form, telephone: e.target.value })} placeholder="+261 …" />
                             </Field>
                             <p className="text-[10px] text-slate-500">
@@ -195,7 +198,7 @@ export default function ProfilModal({ open, onClose }) {
                     {vue === 'mdp' && (
                         <form id="form-mdp" onSubmit={enregistrerMdp} className="space-y-3">
                             <ErrorText errors={errors} />
-                            <Field label="Mot de passe actuel" required>
+                            <Field label={t('Mot de passe actuel')} required>
                                 <div className="relative">
                                     <input
                                         type={voirMdp.mot_de_passe ? 'text' : 'password'}
@@ -209,14 +212,14 @@ export default function ProfilModal({ open, onClose }) {
                                         type="button"
                                         tabIndex={-1}
                                         onClick={() => setVoirMdp((v) => ({ ...v, mot_de_passe: ! v.mot_de_passe }))}
-                                        title={voirMdp.mot_de_passe ? 'Masquer' : 'Afficher'}
+                                        title={voirMdp.mot_de_passe ? t('Masquer') : t('Afficher')}
                                         className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-blue-400 transition-colors"
                                     >
                                         {voirMdp.mot_de_passe ? <EyeOff size={15} /> : <Eye size={15} />}
                                     </button>
                                 </div>
                             </Field>
-                            <Field label="Nouveau mot de passe" required>
+                            <Field label={t('Nouveau mot de passe')} required>
                                 <div className="relative">
                                     <input
                                         type={voirMdp.nouveau ? 'text' : 'password'}
@@ -231,14 +234,14 @@ export default function ProfilModal({ open, onClose }) {
                                         type="button"
                                         tabIndex={-1}
                                         onClick={() => setVoirMdp((v) => ({ ...v, nouveau: ! v.nouveau }))}
-                                        title={voirMdp.nouveau ? 'Masquer' : 'Afficher'}
+                                        title={voirMdp.nouveau ? t('Masquer') : t('Afficher')}
                                         className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-blue-400 transition-colors"
                                     >
                                         {voirMdp.nouveau ? <EyeOff size={15} /> : <Eye size={15} />}
                                     </button>
                                 </div>
                             </Field>
-                            <Field label="Confirmer le nouveau mot de passe" required>
+                            <Field label={t('Confirmer le nouveau mot de passe')} required>
                                 <div className="relative">
                                     <input
                                         type={voirMdp.confirmation ? 'text' : 'password'}
@@ -253,7 +256,7 @@ export default function ProfilModal({ open, onClose }) {
                                         type="button"
                                         tabIndex={-1}
                                         onClick={() => setVoirMdp((v) => ({ ...v, confirmation: ! v.confirmation }))}
-                                        title={voirMdp.confirmation ? 'Masquer' : 'Afficher'}
+                                        title={voirMdp.confirmation ? t('Masquer') : t('Afficher')}
                                         className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-slate-400 hover:text-blue-400 transition-colors"
                                     >
                                         {voirMdp.confirmation ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -273,14 +276,14 @@ export default function ProfilModal({ open, onClose }) {
                                 onClick={() => { sons.clic(); setErrors(null); setMessage(null); changementVueA.current = Date.now(); setVue('mdp'); }}
                                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200/50 bg-slate-100 hover:bg-card-high text-slate-600 hover:text-blue-400 text-xs font-semibold transition"
                             >
-                                <KeyRound size={13} /> Mot de passe
+                                <KeyRound size={13} /> {t('Mot de passe')}
                             </button>
                             <button
                                 type="button"
                                 onClick={ouvrirEdition}
                                 className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shadow-sm shadow-orange-600/30 transition active:scale-[.97]"
                             >
-                                <Pencil size={13} /> Modifier
+                                <Pencil size={13} /> {t('Modifier')}
                             </button>
                         </>
                     ) : (
@@ -290,7 +293,7 @@ export default function ProfilModal({ open, onClose }) {
                                 onClick={() => { sons.fermer(); setVue('voir'); setErrors(null); }}
                                 className="px-3.5 py-2 rounded-lg border border-slate-200/50 text-xs sm:text-sm font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition"
                             >
-                                Annuler
+                                {t('Annuler')}
                             </button>
                             <button
                                 type="submit"
@@ -298,7 +301,7 @@ export default function ProfilModal({ open, onClose }) {
                                 disabled={busy}
                                 className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-vert-600 hover:bg-vert-700 disabled:opacity-60 text-white text-xs font-bold shadow-sm shadow-vert-600/30 transition active:scale-[.97]"
                             >
-                                <Save size={13} /> {busy ? 'Enregistrement…' : 'Enregistrer'}
+                                <Save size={13} /> {busy ? t('Enregistrement…') : t('Enregistrer')}
                             </button>
                         </>
                     )}

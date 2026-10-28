@@ -5,13 +5,14 @@ import {
     Building2, Network, MapPin, Building, Layers, Tags, Circle, Wrench,
     Truck, ShoppingCart, SlidersHorizontal, Ticket, ClipboardList, Package,
     Archive, Trash2,
-    FileBarChart2,
+    FileBarChart2, Languages,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth, aRole, ROLES_ECRITURE } from '../auth';
 import { useSettings } from '../settings';
 import { sons } from '../lib/sons';
+import { useLangue, labelNav, labelSection, labelUi } from '../lib/i18n';
 import FondEcran from './FondEcran';
 import { ConfirmModal } from './ui';
 import ProfilModal from './Profil';
@@ -27,6 +28,7 @@ const sections = [
     },
     {
         label: 'Organisation',
+        icone: Building2,
         items: [
             { to: '/directions', label: 'Directions', icon: Building2 },
             { to: '/services', label: 'Services', icon: Network },
@@ -35,6 +37,7 @@ const sections = [
     },
     {
         label: 'Localisation',
+        icone: MapPin,
         items: [
             { to: '/sites', label: 'Sites', icon: MapPin },
             { to: '/batiments', label: 'Bâtiments', icon: Building },
@@ -43,6 +46,7 @@ const sections = [
     },
     {
         label: 'Parc informatique',
+        icone: Monitor,
         items: [
             { to: '/equipements', label: 'Équipements', icon: Monitor },
             { to: '/categories', label: 'Catégories', icon: Tags },
@@ -52,6 +56,7 @@ const sections = [
     },
     {
         label: 'Gestion',
+        icone: ArrowLeftRight,
         items: [
             { to: '/fournisseurs', label: 'Fournisseurs', icon: Truck },
             { to: '/achats', label: 'Achats', icon: ShoppingCart },
@@ -60,6 +65,7 @@ const sections = [
     },
     {
         label: 'Maintenance',
+        icone: Wrench,
         items: [
             { to: '/maintenances', label: 'Maintenances', icon: Wrench },
             { to: '/tickets', label: 'Tickets', icon: LifeBuoy },
@@ -67,6 +73,7 @@ const sections = [
     },
     {
         label: 'Autres',
+        icone: Boxes,
         items: [
             { to: '/inventaires', label: 'Inventaires', icon: ClipboardList },
             { to: '/logiciels', label: 'Logiciels', icon: Package },
@@ -74,12 +81,14 @@ const sections = [
     },
     {
         label: 'Rapports',
+        icone: FileBarChart2,
         items: [
             { to: '/rapports', label: 'Rapports & Historiques', icon: FileBarChart2 },
         ],
     },
     {
         label: 'Système',
+        icone: Settings,
         items: [
             { to: '/corbeille', label: 'Corbeille', icon: Trash2 },
             { to: '/parametres', label: 'Paramètres', icon: Settings },
@@ -96,6 +105,9 @@ export default function Layout() {
     const [confirmDeconnexion, setConfirmDeconnexion] = useState(false);
     const [deconnexionEnCours, setDeconnexionEnCours] = useState(false);
     const [profilOuvert, setProfilOuvert] = useState(false);
+
+    // Langue de l'interface : FR par défaut, partagee avec la page de connexion
+    const { langue, basculer: basculerLangue } = useLangue();
 
     const handleLogout = async () => {
         setDeconnexionEnCours(true);
@@ -165,7 +177,7 @@ export default function Layout() {
                                         DGSR
                                     </span>
                                     <span className="text-[10px] font-semibold text-slate-500 truncate">
-                                        Parc Informatique
+                                        {labelUi('parcInformatique', langue)}
                                     </span>
                                 </div>
                                 <button className="lg:hidden ml-auto p-1 text-slate-400 hover:text-slate-800" onClick={() => setOpen(false)}>
@@ -180,21 +192,29 @@ export default function Layout() {
                         {sectionsFiltrees.map((section, i) => (
                             <div key={section.label ?? `s${i}`}>
                                 {section.label && ! replie && (
-                                    <div className="px-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                                        {section.label}
+                                    <div className="px-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                        {section.icone && <section.icone size={11} className="shrink-0" />}
+                                        {labelSection(section.label, langue)}
                                     </div>
                                 )}
                                 <div className="flex flex-col gap-0.5">
-                                    {section.items.map(({ to, label, end }) => (
+                                    {section.items.map(({ to, label, end, icon: Icon }) => (
                                         <NavLink
                                             key={to}
                                             to={to}
                                             end={end}
                                             onClick={() => { setOpen(false); sons.clic(); }}
-                                            title={replie ? label : undefined}
+                                            title={replie ? labelNav(to, langue) : undefined}
                                             className={navLinkClass}
                                         >
-                                            {! replie ? <span className="truncate">{label}</span> : label.slice(0, 2).toUpperCase()}
+                                            {! replie ? (
+                                                <span className="flex items-center gap-2">
+                                                    {Icon && <Icon size={15} className={replie ? '' : 'shrink-0 opacity-80'} />}
+                                                    <span className="truncate">{labelNav(to, langue)}</span>
+                                                </span>
+                                            ) : (
+                                                <Icon size={17} className="mx-auto" />
+                                            )}
                                         </NavLink>
                                     ))}
                                 </div>
@@ -213,7 +233,7 @@ export default function Layout() {
                                 <span className="w-2 h-2 rounded-full bg-sky-400 animate-pulse" />
                                 <div className="flex flex-col">
                                     <span className="text-[10px] font-bold uppercase tracking-wider text-slate-700">
-                                        Réseau DGSR Interne
+                                        {labelUi('reseauInterne', langue)}
                                     </span>
                                     <span className="text-[12px] font-mono text-slate-400">VLAN-04 // 10.14.0.0</span>
                                 </div>
@@ -234,15 +254,15 @@ export default function Layout() {
                     style={estGrand ? { left: largeurReelle } : null}
                 >
                     <div className="flex items-center gap-3 flex-1 min-w-0 max-w-2xl">
-                        <button aria-label="Ouvrir le menu" className="lg:hidden p-1.5 -ml-1.5 shrink-0 text-slate-400 hover:text-slate-800" onClick={() => setOpen(true)}>
+                        <button aria-label={labelUi('ouvrirMenu', langue)} className="lg:hidden p-1.5 -ml-1.5 shrink-0 text-slate-400 hover:text-slate-800" onClick={() => setOpen(true)}>
                             <Menu size={20} />
                         </button>
                         <div className="relative w-full min-w-0 max-w-md">
                             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                             <input
                                 className="w-full min-w-0 h-9 sm:h-10 pl-8 sm:pl-9 pr-2 sm:pr-3 bg-card-high rounded-lg text-slate-700 placeholder:text-slate-400 text-[12px] focus:outline-none focus:bg-slate-50 transition-colors"
-                                placeholder="Rechercher…"
-                                title="Code inventaire, n° série, matricule agent"
+                                placeholder={labelUi('rechercher', langue)}
+                                title={labelUi('rechercherAstuce', langue)}
                                 type="text"
                             />
                         </div>
@@ -251,13 +271,24 @@ export default function Layout() {
                         <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-100">
                             <Lock size={14} className="text-sky-400" />
                             <span className="text-[10px] font-bold uppercase tracking-wider text-sky-400">
-                                Confidentiel Défense
+                                {labelUi('confidentiel', langue)}
                             </span>
                         </div>
                         <Notifications />
+                        {/* Sélecteur de langue : FR ⇄ EN (mémorisé, partagé avec la connexion) */}
+                        <button
+                            onClick={() => { sons.clic(); basculerLangue(); }}
+                            title={langue === 'fr' ? 'Switch to English' : 'Passer en français'}
+                            className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg hover:bg-slate-100 transition-colors text-slate-400 hover:text-blue-500"
+                        >
+                            <Languages size={15} />
+                            <span className="text-[11px] font-bold uppercase tracking-wider">
+                                {langue === 'fr' ? 'EN' : 'FR'}
+                            </span>
+                        </button>
                         <button
                             onClick={() => { sons.clic(); setProfilOuvert(true); }}
-                            title="Voir / modifier mon profil"
+                            title={labelUi('voirProfil', langue)}
                             className="flex items-center gap-2 pl-2 pr-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition-colors text-left"
                         >
                             <div className="hidden sm:flex flex-col text-right leading-tight">
@@ -271,7 +302,7 @@ export default function Layout() {
                         </button>
                         <button
                             onClick={() => { sons.clic(); setConfirmDeconnexion(true); }}
-                            title="Se déconnecter"
+                            title={labelUi('seDeconnecter', langue)}
                             className="p-2 text-slate-400 hover:text-rose-500 rounded-lg hover:bg-slate-100 transition-colors"
                         >
                             <LogOut size={17} />
@@ -286,14 +317,14 @@ export default function Layout() {
             {/* Confirmation de déconnexion */}
             <ConfirmModal
                 open={confirmDeconnexion}
-                title="Se déconnecter ?"
+                title={labelUi('titreDeconnexion', langue)}
                 message={nom
-                    ? <>Voulez-vous vraiment fermer la session de <strong className="text-slate-700">{nom}</strong> ?</>
-                    : 'Voulez-vous vraiment vous déconnecter ?'}
-                confirmLabel="Se déconnecter"
-                cancelLabel="Rester connecté"
+                    ? <>{labelUi('fermerSession', langue)} <strong className="text-slate-700">{nom}</strong> ?</>
+                    : labelUi('messageDeconnexion', langue)}
+                confirmLabel={labelUi('seDeconnecter', langue)}
+                cancelLabel={labelUi('resterConnecte', langue)}
                 icone={<LogOut size={15} />}
-                busyLabel="Déconnexion…"
+                busyLabel={labelUi('deconnexionEnCours', langue)}
                 busy={deconnexionEnCours}
                 onConfirm={handleLogout}
                 onClose={() => setConfirmDeconnexion(false)}

@@ -3,12 +3,14 @@ import { createPortal } from 'react-dom';
 import { Plus, ArrowLeftRight, Undo2, X, FileDown } from 'lucide-react';
 import { api } from '../../api';
 import { Spinner, PageHeader, EmptyState, Field, inputClass, ErrorText, ConfirmModal } from '../../components/ui';
-import { formatDate } from '../../lib/constants';
+import { formatDate, STATUTS_EQUIPEMENT } from '../../lib/constants';
 import { telechargerExport, nomExport } from '../../lib/exports';
 import { useAuth, aRole, ROLES_ECRITURE } from '../../auth';
+import { useT } from '../../lib/i18n';
 
 export default function Affectations() {
     const { user } = useAuth();
+    const { t } = useT();
     const peutEcrire = aRole(user, ROLES_ECRITURE);
     const [items, setItems] = useState(null);
     const [equipements, setEquipements] = useState([]);
@@ -55,7 +57,7 @@ export default function Affectations() {
             setForm({ id_equipement: '', id_agent: '', date_affectation: new Date().toISOString().slice(0, 10), motif: '', commentaire: '' });
             await load();
         } catch (err) {
-            setErrors(err.response?.data?.errors ?? { erreur: ['Affectation impossible.'] });
+            setErrors(err.response?.data?.errors ?? { erreur: [t('Affectation impossible.')] });
         } finally {
             setBusy(false);
         }
@@ -77,7 +79,7 @@ export default function Affectations() {
         }
     };
 
-    if (! items) return <Spinner label="Chargement des affectations…" />;
+    if (! items) return <Spinner label={t('Chargement des affectations…')} />;
 
     const actives = items.filter((a) => ! a.date_fin);
     const passees = items.filter((a) => a.date_fin);
@@ -85,8 +87,8 @@ export default function Affectations() {
     return (
         <div>
             <PageHeader
-                title="Affectations"
-                subtitle={`${actives.length} en cours · ${passees.length} terminée(s)`}
+                title={t('Affectations')}
+                subtitle={`${actives.length} ${t(' en cours · ')}${passees.length} ${t(' terminée(s)')}`}
                 actions={
                     <>
                         <button
@@ -94,11 +96,11 @@ export default function Affectations() {
                             disabled={pdfEnCours}
                             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-300 text-sm font-bold transition-all disabled:opacity-60"
                         >
-                            <FileDown size={15} /> {pdfEnCours ? 'Génération…' : 'Imprimer PDF'}
+                            <FileDown size={15} /> {pdfEnCours ? t('Génération…') : t('Imprimer PDF')}
                         </button>
                         {peutEcrire && (
                             <button onClick={() => setShowForm(true)} className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 text-white text-sm font-bold shadow-sm">
-                                <Plus size={15} /> Affecter un équipement
+                                <Plus size={15} /> {t('Affecter un équipement')}
                             </button>
                         )}
                     </>
@@ -107,7 +109,7 @@ export default function Affectations() {
 
             <div className="bg-card rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-4">
                 <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase tracking-wide text-slate-500">
-                    Affectations en cours
+                    {t('Affectations en cours')}
                 </div>
                 <div className="divide-y divide-slate-100">
                     {actives.map((a) => (
@@ -122,28 +124,28 @@ export default function Affectations() {
                                         <span className="text-slate-400 font-normal"> · {a.agent?.fonction}</span>
                                     </div>
                                     <div className="text-[11px] text-slate-500">
-                                        {a.equipement?.code_inventaire} — {a.equipement?.designation} · depuis le {formatDate(a.date_affectation)}
+                                        {a.equipement?.code_inventaire} — {a.equipement?.designation}{t(' · depuis le ')}{formatDate(a.date_affectation)}
                                     </div>
                                 </div>
                             </div>
                             <button
                                 onClick={() => restituer(a)}
                                 disabled={! peutEcrire}
-                                title={peutEcrire ? "Restituer au stock" : "Restitution réservée aux gestionnaires"}
+                                title={peutEcrire ? t('Restituer au stock') : t('Restitution réservée aux gestionnaires')}
                                 className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-700 hover:border-slate-300 disabled:opacity-40 disabled:cursor-not-allowed"
                             >
-                                <Undo2 size={13} /> Restituer
+                                <Undo2 size={13} /> {t('Restituer')}
                             </button>
                         </div>
                     ))}
-                    {actives.length === 0 && <EmptyState icon={ArrowLeftRight} title="Aucune affectation active" />}
+                    {actives.length === 0 && <EmptyState icon={ArrowLeftRight} title={t('Aucune affectation active')} />}
                 </div>
             </div>
 
             {passees.length > 0 && (
                 <div className="bg-card rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                     <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 text-xs font-bold uppercase tracking-wide text-slate-500">
-                        Historique
+                        {t('Historique')}
                     </div>
                     <div className="divide-y divide-slate-100">
                         {passees.map((a) => (
@@ -164,11 +166,11 @@ export default function Affectations() {
             {/* Confirmation de restitution */}
             <ConfirmModal
                 open={!! aRestituer}
-                title="Confirmer la restitution"
+                title={t('Confirmer la restitution')}
                 message={aRestituer
-                    ? <>L'équipement <strong className="text-slate-700">{aRestituer.equipement?.code_inventaire} — {aRestituer.equipement?.designation}</strong> sera rendu au stock et l'affectation de <strong className="text-slate-700">{aRestituer.agent ? `${aRestituer.agent.prenom} ${aRestituer.agent.nom_naiss}` : '—'}</strong> sera clôturée.</>
+                    ? <>{t("L'équipement ")}<strong className="text-slate-700">{aRestituer.equipement?.code_inventaire} — {aRestituer.equipement?.designation}</strong>{t(" sera rendu au stock et l'affectation de ")}<strong className="text-slate-700">{aRestituer.agent ? `${aRestituer.agent.prenom} ${aRestituer.agent.nom_naiss}` : '—'}</strong>{t(' sera clôturée.')}</>
                     : ''}
-                confirmLabel="Restituer"
+                confirmLabel={t('Restituer')}
                 danger={false}
                 busy={busyRestitution}
                 onConfirm={confirmerRestitution}
@@ -180,24 +182,24 @@ export default function Affectations() {
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
                     <div className="bg-card rounded-2xl shadow-2xl w-full max-w-lg">
                         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200">
-                            <h2 className="font-bold text-slate-800">Affecter un équipement</h2>
+                            <h2 className="font-bold text-slate-800">{t('Affecter un équipement')}</h2>
                             <button onClick={() => setShowForm(false)} className="p-1.5 text-slate-400 hover:text-slate-700"><X size={18} /></button>
                         </div>
                         <form onSubmit={submit} className="p-5 space-y-3">
                             <ErrorText errors={errors} />
-                            <Field label="Équipement" required>
+                            <Field label={t('Équipement')} required>
                                 <select required value={form.id_equipement} onChange={(e) => setForm({ ...form, id_equipement: e.target.value })} className={inputClass}>
-                                    <option value="">Choisir un équipement…</option>
+                                    <option value="">{t('Choisir un équipement…')}</option>
                                     {equipements.map((eq) => (
                                         <option key={eq.id_equipement} value={eq.id_equipement}>
-                                            {eq.code_inventaire} — {eq.designation} ({eq.statut.replace('_', ' ')})
+                                            {eq.code_inventaire} — {eq.designation} ({STATUTS_EQUIPEMENT[eq.statut]?.label ?? eq.statut})
                                         </option>
                                     ))}
                                 </select>
                             </Field>
-                            <Field label="Agent" required>
+                            <Field label={t('Agent')} required>
                                 <select required value={form.id_agent} onChange={(e) => setForm({ ...form, id_agent: e.target.value })} className={inputClass}>
-                                    <option value="">Choisir un agent…</option>
+                                    <option value="">{t('Choisir un agent…')}</option>
                                     {agents.map((ag) => (
                                         <option key={ag.id_agent} value={ag.id_agent}>
                                             {ag.prenom} {ag.nom_naiss} — {ag.matricule}
@@ -205,16 +207,16 @@ export default function Affectations() {
                                     ))}
                                 </select>
                             </Field>
-                            <Field label="Date d'affectation" required>
+                            <Field label={t("Date d'affectation")} required>
                                 <input type="date" required value={form.date_affectation} onChange={(e) => setForm({ ...form, date_affectation: e.target.value })} className={inputClass} />
                             </Field>
-                            <Field label="Motif">
-                                <input value={form.motif} onChange={(e) => setForm({ ...form, motif: e.target.value })} className={inputClass} placeholder="Besoin de service…" />
+                            <Field label={t('Motif')}>
+                                <input value={form.motif} onChange={(e) => setForm({ ...form, motif: e.target.value })} className={inputClass} placeholder={t('Besoin de service…')} />
                             </Field>
                             <div className="flex justify-end gap-2 pt-2">
-                                <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-xl border border-slate-300 text-sm font-semibold text-slate-600 hover:bg-slate-50">Annuler</button>
+                                <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 rounded-xl border border-slate-300 text-sm font-semibold text-slate-600 hover:bg-slate-50">{t('Annuler')}</button>
                                 <button disabled={busy} className="px-4 py-2 rounded-xl bg-blue-700 hover:bg-blue-800 disabled:opacity-60 text-white text-sm font-bold">
-                                    {busy ? 'Affectation…' : 'Affecter'}
+                                    {busy ? t('Affectation…') : t('Affecter')}
                                 </button>
                             </div>
                         </form>

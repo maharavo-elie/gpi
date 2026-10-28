@@ -4,8 +4,10 @@ import { api } from '../../api';
 import { Spinner, PageHeader, Badge } from '../../components/ui';
 import { formatDate } from '../../lib/constants';
 import { telechargerExport, nomExport } from '../../lib/exports';
+import { useT } from '../../lib/i18n';
 
 export default function Inventaires() {
+    const { t } = useT();
     const [rows, setRows] = useState(null);
     const [pdfEnCours, setPdfEnCours] = useState(false);
 
@@ -22,7 +24,7 @@ export default function Inventaires() {
         }
     };
 
-    if (! rows) return <Spinner label="Chargement des inventaires…" />;
+    if (! rows) return <Spinner label={t('Chargement des inventaires…')} />;
 
     const grouped = rows.reduce((acc, d) => {
         (acc[d.inventaire?.reference ?? '—'] ??= { inventaire: d.inventaire, details: [] }).details.push(d);
@@ -32,15 +34,15 @@ export default function Inventaires() {
     return (
         <div>
             <PageHeader
-                title="Inventaires"
-                subtitle="Campagnes de vérification du parc"
+                title={t('Inventaires')}
+                subtitle={t('Campagnes de vérification du parc')}
                 actions={
                     <button
                         onClick={imprimerPdf}
                         disabled={pdfEnCours}
                         className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-300 text-sm font-bold transition-all disabled:opacity-60"
                     >
-                        <FileDown size={15} /> {pdfEnCours ? 'Génération…' : 'Imprimer PDF'}
+                        <FileDown size={15} /> {pdfEnCours ? t('Génération…') : t('Imprimer PDF')}
                     </button>
                 }
             />
@@ -58,12 +60,12 @@ export default function Inventaires() {
                                     inventaire?.statut === 'en_cours' ? 'bg-sky-100 text-sky-400 border-sky-200'
                                     : 'bg-jaune-100 text-jaune-400 border-jaune-200'
                                 }>
-                                    {inventaire?.statut?.replace('_', ' ')}
+                                    {t(inventaire?.statut?.replace('_', ' '))}
                                 </Badge>
                             </div>
                             <div className="text-[11px] text-slate-500">
-                                {formatDate(inventaire?.date_debut)} · {verifies} vérifié(s) ·{' '}
-                                <span className={ecarts ? 'text-slate-600 font-bold' : ''}>{ecarts} écart(s)</span>
+                                {formatDate(inventaire?.date_debut)} · {verifies}{t(' vérifié(s) · ')}{' '}
+                                <span className={ecarts ? 'text-slate-600 font-bold' : ''}>{ecarts}{t(' écart(s)')}</span>
                             </div>
                         </div>
                         <div className="divide-y divide-slate-100">
@@ -76,8 +78,8 @@ export default function Inventaires() {
                                     <div className="flex items-center gap-2 shrink-0">
                                         <span className="text-[11px] text-slate-400 hidden sm:inline">{d.observation}</span>
                                         {d.statut === 'ecart'
-                                            ? <Badge color="bg-slate-100 text-slate-800 border-slate-200"><AlertTriangle size={11} className="mr-1" />Écart</Badge>
-                                            : <Badge color="bg-vert-100 text-vert-400 border-vert-200"><CheckCircle2 size={11} className="mr-1" />{d.statut === 'verifie' ? 'Vérifié' : 'À vérifier'}</Badge>}
+                                            ? <Badge color="bg-slate-100 text-slate-800 border-slate-200"><AlertTriangle size={11} className="mr-1" />{t('Écart')}</Badge>
+                                            : <Badge color="bg-vert-100 text-vert-400 border-vert-200"><CheckCircle2 size={11} className="mr-1" />{d.statut === 'verifie' ? t('Vérifié') : t('À vérifier')}</Badge>}
                                     </div>
                                 </div>
                             ))}

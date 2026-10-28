@@ -1,14 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
     Lock, Eye, EyeOff, ArrowRight, ShieldCheck, BadgeCheck,
-    Database, Wifi, AlertCircle, User,
+    Database, Wifi, AlertCircle, User, Sun, Moon, Languages,
 } from 'lucide-react';
 import { useAuth } from '../auth';
+import { useSettings } from '../settings';
 import { sons } from '../lib/sons';
+import { useLangue, tConnexion } from '../lib/i18n';
 
 export default function Connexion() {
     const { login } = useAuth();
+    const { settings } = useSettings();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -17,6 +20,26 @@ export default function Connexion() {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState(null);
     const [busy, setBusy] = useState(false);
+
+    // Langue : FR par défaut, choix mémorisé localement (hook partagé avec l'app)
+    const { langue, basculer: basculerLangue } = useLangue();
+    const t = tConnexion(langue);
+
+    // Mode clair de l'écran de connexion : applique un thème clair sur <html>,
+    // et restaure le thème de l'utilisateur en quittant la page.
+    const [modeLogin, setModeLogin] = useState(() => localStorage.getItem('gpi_login_mode') ?? 'sombre');
+    const themeClairActif = settings.theme?.startsWith('clair');
+
+    useEffect(() => {
+        localStorage.setItem('gpi_login_mode', modeLogin);
+        const clairVoulu = modeLogin === 'clair';
+        if (clairVoulu) {
+            document.documentElement.setAttribute('data-theme', themeClairActif ? settings.theme : 'clair-bleu');
+        } else {
+            document.documentElement.setAttribute('data-theme', themeClairActif ? 'navy' : settings.theme);
+        }
+        return () => document.documentElement.setAttribute('data-theme', settings.theme);
+    }, [modeLogin, settings.theme, themeClairActif]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -29,7 +52,7 @@ export default function Connexion() {
         } catch (err) {
             const msg = err.response?.data?.errors?.email?.[0]
                 || err.response?.data?.message
-                || 'Connexion impossible. Vérifiez le serveur.';
+                || t.erreurServeur;
             setError(msg);
             sons.alerte();
         } finally {
@@ -39,13 +62,34 @@ export default function Connexion() {
 
     return (
         <div
-            className="min-h-screen bg-slate-950 text-slate-800 flex items-center justify-center p-4 antialiased"
+            className="relative min-h-screen bg-slate-950 text-slate-800 flex items-center justify-center p-4 antialiased"
             style={{
                 backgroundImage:
                     'radial-gradient(rgba(37,99,235,0.12) 1px, transparent 0)',
                 backgroundSize: '28px 28px',
             }}
         >
+            {/* Réglages rapides : langue + mode clair */}
+            <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
+                <button
+                    type="button"
+                    onClick={basculerLangue}
+                    title={langue === 'fr' ? 'Switch to English' : 'Passer en français'}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-card-high border border-slate-200/50 text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-blue-400 hover:border-blue-400/40 transition"
+                >
+                    <Languages size={14} />
+                    {langue === 'fr' ? 'EN' : 'FR'}
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setModeLogin((m) => (m === 'clair' ? 'sombre' : 'clair'))}
+                    title={modeLogin === 'clair' ? 'Mode sombre' : 'Mode clair'}
+                    className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-card-high border border-slate-200/50 text-slate-500 hover:text-blue-400 hover:border-blue-400/40 transition"
+                >
+                    {modeLogin === 'clair' ? <Moon size={14} /> : <Sun size={14} />}
+                </button>
+            </div>
+
             <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 rounded-2xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.45)] border border-slate-200/50">
                 {/* Colonne gauche : branding étatique (Stitch) */}
                 <div className="lg:col-span-5 bg-slate-900 p-8 sm:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200/50 relative overflow-hidden">
@@ -70,13 +114,13 @@ export default function Connexion() {
                             <div>
                                 <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">
                                     <ShieldCheck size={12} className="text-sky-400" />
-                                    Ministère des Transports et de la Météorologie
+                                    {t.ministere}
                                 </div>
                                 <h1 className="text-xl font-bold tracking-tight text-slate-800 leading-tight mt-0.5">
                                     DGSR MADAGASCAR
                                 </h1>
                                 <p className="text-[11px] text-sky-400 font-semibold uppercase tracking-wider">
-                                    Portail Centralisé de Gestion
+                                    {t.portail}
                                 </p>
                             </div>
                         </div>
@@ -94,22 +138,20 @@ export default function Connexion() {
                                 <span className="px-2 py-1 rounded bg-card-high text-sky-400">AGENT</span>
                                 <span className="px-2 py-1 rounded bg-card-high text-sky-400">UTILISATEUR</span>
                             </div>
-                            <p className="mt-3 text-[10px] text-slate-500 leading-relaxed">
-                                <span className="text-slate-700 font-semibold">JOURNAL_ACTIVITE</span> (BLOC 15) trace chaque session.
-                            </p>
+                            <p className="mt-3 text-[10px] text-slate-500 leading-relaxed">{t.journal}</p>
                         </div>
 
                         {/* Nœud d'authentification */}
                         <div className="p-4 rounded-xl bg-slate-950 border border-slate-200/50 space-y-2.5">
                             <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                                 <Wifi size={12} className="text-sky-400" />
-                                Nœud d'Authentification
+                                {t.noeud}
                             </div>
                             <div className="flex items-center justify-between text-[11px]">
                                 <span className="font-mono text-slate-700 font-semibold">SRV-MG-TNR-01</span>
                                 <span className="flex items-center gap-1.5 text-[10px] text-slate-500">
                                     <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
-                                    Réseau Opérationnel
+                                    {t.reseau}
                                 </span>
                             </div>
                             <div className="h-px bg-slate-200/50" />
@@ -124,7 +166,7 @@ export default function Connexion() {
                         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-slate-950 border border-slate-200/50 text-slate-500 font-mono uppercase tracking-wider">
                             <Lock size={10} className="text-sky-400" /> TLS 1.3 / EAL4+
                         </span>
-                        <span className="text-slate-500 font-semibold uppercase tracking-wider">Support : assistance-dsi@dgsr.mg</span>
+                        <span className="text-slate-500 font-semibold uppercase tracking-wider">{t.support}</span>
                     </div>
                 </div>
 
@@ -134,13 +176,13 @@ export default function Connexion() {
                         <div className="text-center lg:text-left">
                             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-card-high border border-slate-200/50 text-sky-400 text-[10px] font-bold uppercase tracking-wider mb-4">
                                 <BadgeCheck size={12} />
-                                Accès Réserve — Confidentiel Défense
+                                {t.accesReserve}
                             </div>
                             <h2 className="text-2xl font-bold tracking-tight text-slate-800">
-                                Ouverture de session étatique
+                                {t.titreForm}
                             </h2>
                             <p className="text-[13px] text-slate-500 mt-1.5">
-                                Saisissez vos identifiants répertoriés au registre national des agents.
+                                {t.sousTitre}
                             </p>
                         </div>
 
@@ -154,7 +196,7 @@ export default function Connexion() {
                         <form className="space-y-4" onSubmit={handleSubmit}>
                             <div>
                                 <label htmlFor="identifier" className="flex items-center gap-1.5 block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                                    <User size={11} /> AGENT.matricule
+                                    <User size={11} /> {t.identifiant}
                                 </label>
                                 <div className="relative rounded-lg">
                                     <input
@@ -162,7 +204,7 @@ export default function Connexion() {
                                         id="identifier"
                                         value={identifier}
                                         onChange={(e) => setIdentifier(e.target.value)}
-                                        placeholder="Ex : A-0248 ou admin@dgsr.mg"
+                                        placeholder={t.placeholderIdent}
                                         autoComplete="username"
                                         className="block w-full px-4 py-2.5 bg-card-high border border-slate-200/50 rounded-lg text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-600/60 focus:border-blue-400 transition"
                                     />
@@ -171,7 +213,7 @@ export default function Connexion() {
 
                             <div>
                                 <label htmlFor="password" className="flex items-center gap-1.5 block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                                    <Lock size={11} /> Clé d'accès
+                                    <Lock size={11} /> {t.cleAcces}
                                 </label>
                                 <div className="relative rounded-lg">
                                     <input
@@ -193,14 +235,6 @@ export default function Connexion() {
                                 </div>
                             </div>
 
-                            {/* <div className="flex items-center justify-between rounded-lg bg-slate-950 border border-slate-200/50 px-3.5 py-2.5">
-                                <div>
-                                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Comptes de démonstration</div>
-                                    <div className="text-[11px] font-mono text-sky-400">admin@dgsr.mg · password</div>
-                                </div>
-                                <ShieldCheck size={16} className="text-sky-400 shrink-0" />
-                            </div> */}
-
                             <button
                                 type="submit"
                                 disabled={busy}
@@ -210,7 +244,7 @@ export default function Connexion() {
                                     <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                                 ) : (
                                     <>
-                                        <span>Accéder au Système DGSR</span>
+                                        <span>{t.bouton}</span>
                                         <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                                     </>
                                 )}
@@ -219,9 +253,7 @@ export default function Connexion() {
 
                         <div className="pt-4 border-t border-slate-200/50 text-center">
                             <p className="text-[11px] text-slate-500 leading-normal">
-                                Accès strictement réservé aux personnels habilités de la République
-                                de Madagascar. Tout accès non autorisé fait l'objet de poursuites
-                                conformément à la législation en vigueur.
+                                {t.legal}
                             </p>
                         </div>
                     </div>

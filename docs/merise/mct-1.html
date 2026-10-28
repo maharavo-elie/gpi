@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>MCT 1 - GPI</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+body{margin:0;padding:24px;background:#fff}
+#err{font-family:monospace;color:#b91c1c;white-space:pre-wrap;max-width:1200px}
+.legende{font-family:'Times New Roman',serif;font-size:14px;color:#334155;max-width:960px}
+</style>
+</head>
+<body>
+<div id="err"></div>
+<div id="graphe" class="mermaid">
+flowchart LR
+  classDef ev fill:#dbeafe,stroke:#1e40af,stroke-width:1.4px,color:#0f172a
+  classDef op fill:#f1f5f9,stroke:#475569,stroke-width:1.2px,color:#0f172a
+
+  subgraph P1["PROCESSUS 1 - Inscription du parc"]
+    direction TB
+    e1["E1 : Equipement recu<br/>code, serie, modele"]:::ev
+    o11["O11 : Verifier unicite du<br/>code inventaire"]:::op
+    o12["O12 : Creer la fiche<br/>EQUIPEMENT"]:::op
+    e2["E2 : Equipement enregistre<br/>statut = en_stock"]:::ev
+    e1 -->|"declenche"| o11
+    o11 -->|"code deja utilise"| e1
+    o11 -->|"ok"| o12
+    o12 -->|"fiche creee"| e2
+  end
+
+  subgraph P2["PROCESSUS 2 - Affectation"]
+    direction TB
+    e3["E3 : Demande d affectation<br/>agent, equipement"]:::ev
+    o21["O21 : Controler disponibilite<br/>de l equipement"]:::op
+    o22["O22 : Creer l AFFECTATION<br/>et le MOUVEMENT"]:::op
+    e4["E4 : Equipement affecte<br/>statut = en_service"]:::ev
+    e3 -->|"declenche"| o21
+    o21 -->|"equipement non disponible"| e3
+    o21 -->|"ok"| o22
+    o22 -->|"affectation validee"| e4
+  end
+
+  subgraph P3["PROCESSUS 3 - Tickets"]
+    direction TB
+    e5["E5 : Incident signale<br/>titre, priorite, agent"]:::ev
+    o31["O31 : Creer le TICKET"]:::op
+    e6["E6 : Ticket enregistre<br/>statut = ouvert"]:::ev
+    o32["O32 : Resoudre le TICKET<br/>compte-rendu final"]:::op
+    e7["E7 : Ticket resolu<br/>statut = resolu"]:::ev
+    e5 -->|"declenche"| o31
+    o31 -->|"ticket cree"| e6
+    e6 -->|"prise en charge"| o32
+    o32 -->|"diagnostic debouche sur solution"| e7
+  end
+
+  subgraph P4["PROCESSUS 4 - Inventaire"]
+    direction TB
+    e8["E8 : Campagne lancee<br/>reference et dates"]:::ev
+    o41["O41 : Generer les lignes<br/>d inventaire"]:::op
+    o42["O42 : Saisir les constats<br/>presences et ecarts"]:::op
+    e9["E9 : Ecart releve<br/>sur un equipement"]:::ev
+    e10["E10 : Inventaire clos<br/>rapport genere"]:::ev
+    e8 -->|"lancement"| o41
+    o41 -->|"lignes pretes"| o42
+    o42 -->|"ecart constate"| e9
+    e9 -->|"correction a saisir"| o42
+    o42 -->|"tous les equipements verifies"| e10
+  end
+
+  class e1,e2,e3,e4,e5,e6,e7,e8,e9,e10 ev
+  class o11,o12,o21,o22,o31,o32,o41,o42 op
+</div>
+<div class="legende">
+<b>Convention Merise :</b> rectangle arrondi = <b>evenement</b> (E) fait notable declenchant un traitement ; rectangle = <b>operation</b> (O) sequence d actions indecomposable ; fleche = ordre d enchainement, avec mention de la condition (reprise si le controle echoue).
+</div>
+<script>
+window.addEventListener('load', function () {
+  mermaid.initialize({ startOnLoad: false, theme: 'base',
+    themeVariables: { fontFamily: 'Georgia, serif', fontSize: '15px',
+      primaryColor: '#dbeafe', primaryTextColor: '#0f172a', primaryBorderColor: '#1e40af',
+      lineColor: '#475569', clusterBkg: '#f8fafc', clusterBorder: '#94a3b8' },
+    flowchart: { useMaxWidth: false, curve: 'linear', nodeSpacing: 45, rankSpacing: 65, htmlLabels: true, padding: 12 } });
+  var src = document.getElementById('graphe').textContent.trim();
+  try {
+    mermaid.parse(src);
+    mermaid.run({ nodes: [document.getElementById('graphe')] });
+  } catch (e) {
+    document.getElementById('err').textContent = 'ERREUR MERMAID : ' + (e && (e.str || e.message || e));
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>MOT - GPI</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+body{margin:0;padding:24px;background:#fff}
+#err{font-family:monospace;color:#b91c1c;white-space:pre-wrap;max-width:1200px}
+.legende{font-family:'Times New Roman',serif;font-size:14px;color:#334155;max-width:960px}
+</style>
+</head>
+<body>
+<div id="err"></div>
+<div id="graphe" class="mermaid">
+flowchart LR
+  classDef op fill:#f1f5f9,stroke:#475569,stroke-width:1.2px,color:#0f172a
+  classDef si fill:#ede9fe,stroke:#6d28d9,stroke-width:1.6px,color:#1e1b4b
+  classDef ev fill:#dbeafe,stroke:#1e40af,stroke-width:1.4px,color:#0f172a
+
+  subgraph PO1["POSTE UTILISATEUR / AGENT"]
+    direction TB
+    u1(["U1 : Besoin d un<br/>materiel ou panne constatee"]):::ev
+    o1["O1 : Saisir une demande<br/>d affectation"]:::op
+    o2["O2 : Declarer un TICKET<br/>d incident"]:::op
+    o3["O3 : Consulter son materiel<br/>et ses affectations"]:::op
+    u1 --> o1
+    u1 --> o2
+    o1 -.-> o3
+    o2 -.-> o3
+  end
+
+  subgraph PO2["POSTE TECHNICIEN"]
+    direction TB
+    t1(["T1 : TICKET assigne<br/>ou panne signalée"]):::ev
+    o4["O4 : Diagnostiquer<br/>et resoudre le ticket"]:::op
+    o5["O5 : Planifier et suivre<br/>la MAINTENANCE"]:::op
+    o6["O6 : Reintegrer l equipement<br/>statut = en_service"]:::op
+    o7["O7 : Installer ou desinstaller<br/>un LOGICIEL"]:::op
+    o8["O8 : Faire une demande<br/>de reforme"]:::op
+    t1 --> o4
+    o4 -.-> o5
+    o5 --> o6
+    o4 -.-> o7
+    o4 -.-> o8
+  end
+
+  subgraph PO3["POSTE GESTIONNAIRE DU PARC"]
+    direction TB
+    g1(["G1 : Livraison attendue<br/>ou demande a valider"]):::ev
+    o9["O9 : Rattacher le DETAIL ACHAT<br/>a l equipement livre"]:::op
+    o10["O10 : Enregistrer<br/>les EQUIPEMENTS"]:::op
+    o11["O11 : Valider les AFFECTATIONS"]:::op
+    o12["O12 : Gerer les DOCUMENTS<br/>et les QR CODES"]:::op
+    o13["O13 : Lancer et cloturer<br/>l INVENTAIRE"]:::op
+    g1 --> o9
+    o9 --> o10
+    o10 -.-> o11
+    o11 -.-> o12
+    o11 -.-> o13
+  end
+
+  subgraph PO4["POSTE ADMINISTRATEUR"]
+    direction TB
+    a1(["A1 : Nouveau collaborateur<br/>ou changement de role"]):::ev
+    o14["O14 : Creer l UTILISATEUR<br/>et attribuer les ROLES"]:::op
+    o15["O15 : Restaurer ou vider<br/>la corbeille"]:::op
+    o16["O16 : Purger les journaux<br/>mouvements et activites"]:::op
+    a1 --> o14
+    o14 -.-> o15
+    o14 -.-> o16
+  end
+
+  SI[("SYSTEME D INFORMATION<br/>plateforme GPI")]:::si
+
+  r1(["P1 : Affichage des<br/>affectations de l agent"]):::ev
+  r2(["P2 : Affichage du suivi<br/>tickets et maintenances"]):::ev
+  r3(["P3 : Fiche equipement<br/>et historique a jour"]):::ev
+  r4(["P4 : Compte cree<br/>notification envoyee"]):::ev
+
+  o1 -->|"enregistrement"| SI
+  o2 -->|"enregistrement"| SI
+  o3 -->|"consultation"| SI
+  o4 -->|"mise a jour"| SI
+  o5 -->|"mise a jour"| SI
+  o6 -->|"mise a jour"| SI
+  o7 -->|"mise a jour"| SI
+  o8 -->|"proposition"| SI
+  o9 -->|"enregistrement"| SI
+  o10 -->|"enregistrement"| SI
+  o11 -->|"validation"| SI
+  o12 -->|"enregistrement"| SI
+  o13 -->|"enregistrement"| SI
+  o14 -->|"enregistrement"| SI
+  o15 -->|"restauration"| SI
+  o16 -->|"purge"| SI
+
+  SI -->|"donnees affichees"| r1
+  SI -->|"donnees affichees"| r2
+  SI -->|"donnees affichees"| r3
+  SI -->|"donnees affichees"| r4
+</div>
+<div class="legende">
+Le modele organisationnel de traitement repartit les operations des processus precedents entre quatre <b>postes de travail</b> : Utilisateur / Agent, Technicien, Gestionnaire du parc et Administrateur. Les fleches continues representent les <b>interactions avec le systeme d information</b> (plateforme GPI) ; les fleches pointillees montrent les enchainements de taches <b>au poste meme</b>, sans passage par le systeme ; les boites arrondies P1 a P4 sont les <b>resultats</b> affiches par la plateforme.
+</div>
+<script>
+window.addEventListener('load', function () {
+  mermaid.initialize({ startOnLoad: false, theme: 'base',
+    themeVariables: { fontFamily: 'Georgia, serif', fontSize: '15px',
+      primaryColor: '#dbeafe', primaryTextColor: '#0f172a', primaryBorderColor: '#1e40af',
+      lineColor: '#475569', clusterBkg: '#f8fafc', clusterBorder: '#94a3b8' },
+    flowchart: { useMaxWidth: false, curve: 'basis', nodeSpacing: 50, rankSpacing: 70, htmlLabels: true, padding: 14 } });
+  var src = document.getElementById('graphe').textContent.trim();
+  try {
+    mermaid.parse(src);
+    mermaid.run({ nodes: [document.getElementById('graphe')] });
+  } catch (e) {
+    document.getElementById('err').textContent = 'ERREUR MERMAID : ' + (e && (e.str || e.message || e));
+  }
+});
+</script>
+</body>
+</html>

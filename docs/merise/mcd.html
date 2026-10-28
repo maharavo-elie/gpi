@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>MCD - GPI</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+body{margin:0;padding:24px;background:#fff}
+#err{font-family:monospace;color:#b91c1c;white-space:pre-wrap;max-width:1400px}
+</style>
+</head>
+<body>
+<div id="err"></div>
+<div style="font-family:'Times New Roman',serif;color:#334155;margin-bottom:10px;font-size:14px"><b>Légende :</b> entités en bleu (l'identifiant de chaque entité est <u>souligné</u>) ; relations en losange ; cardinalités (0,n) et (1,1) indiquées sur chaque patte de la relation.</div>
+<div id="graphe" class="mermaid">
+flowchart LR
+  classDef ent fill:#dbeafe,stroke:#1e40af,stroke-width:1.3px,color:#0f172a
+  classDef tps fill:#fff7ed,stroke:#9a3412,color:#7c2d12
+
+  subgraph SOC["ORGANISATION et UTILISATEURS"]
+    direction TB
+    DIR["DIRECTION<br/><u>id_direction</u><br/>code_direction, nom_direction<br/>statut"]:::ent
+    SER["SERVICE<br/><u>id_service</u><br/>code_service, nom_service<br/>statut"]:::ent
+    AGE["AGENT<br/><u>id_agent</u><br/>matricule, nom_naiss<br/>prenom, fonction<br/>statut"]:::ent
+    UTL["UTILISATEUR<br/><u>id_utilisateur</u><br/>username, email<br/>password, actif"]:::ent
+    ROL["ROLE<br/><u>id_role</u><br/>nom_role, description"]:::ent
+  end
+
+  subgraph SLC["LOCALISATION PHYSIQUE"]
+    direction TB
+    SIT["SITE<br/><u>id_site</u><br/>code_site, nom_site<br/>ville, statut"]:::ent
+    BAT["BATIMENT<br/><u>id_batiment</u><br/>code_batiment, nom_batiment<br/>statut"]:::ent
+    LOC["LOCALISATION<br/><u>id_localisation</u><br/>code_localisation<br/>etage, bureau, statut"]:::ent
+  end
+
+  subgraph SRF["REFERENTIEL DU PARC"]
+    direction TB
+    CAT["CATEGORIE<br/><u>id_categorie</u><br/>code_categorie<br/>nom_categorie, statut"]:::ent
+    MAR["MARQUE<br/><u>id_marque</u><br/>nom_marque"]:::ent
+    MOD["MODELE<br/><u>id_modele</u><br/>reference_modele<br/>nom_modele"]:::ent
+    ETA["ETAT EQUIPEMENT<br/><u>id_etat</u><br/>nom_etat, description"]:::ent
+  end
+
+  subgraph SAC["ACHATS"]
+    direction TB
+    FOU["FOURNISSEUR<br/><u>id_fournisseur</u><br/>raison_sociale, contact<br/>telephone, statut"]:::ent
+    ACH["ACHAT<br/><u>id_achat</u><br/>reference_achat<br/>date_achat, numero_facture<br/>montant_total, statut"]:::ent
+    DAC["DETAIL ACHAT<br/><u>id_detail_achat</u><br/>quantite, prix_unitaire<br/>montant, date_livraison"]:::ent
+  end
+
+  subgraph SPE["GESTION DES EQUIPEMENTS"]
+    direction TB
+    EQU["EQUIPEMENT<br/><u>id_equipement</u><br/>code_inventaire, numero_serie<br/>designation, date_acquisition<br/>prix_acquisition, statut"]:::ent
+  end
+
+  subgraph SMA["MAINTENANCE et SUPPORT"]
+    direction TB
+    TYM["TYPE MAINTENANCE<br/><u>id_type_maintenance</u><br/>nom_type, description"]:::ent
+    MAN["MAINTENANCE<br/><u>id_maintenance</u><br/>date_demande, date_debut<br/>date_fin, statut"]:::ent
+    TIK["TICKET<br/><u>id_ticket</u><br/>reference_ticket, titre<br/>priorite, date_creation<br/>date_cloture, statut"]:::ent
+    COM["COMMENTAIRE<br/><u>id_commentaire</u><br/>contenu, date_commentaire"]:::ent
+  end
+
+  subgraph SIN["INVENTAIRE et LOGICIELS"]
+    direction TB
+    INV["INVENTAIRE<br/><u>id_inventaire</u><br/>reference, date_debut<br/>date_fin, statut"]:::ent
+    LOG["LOGICIEL<br/><u>id_logiciel</u><br/>nom, version, editeur"]:::ent
+    LIC["LICENCE<br/><u>id_licence</u><br/>reference_licence<br/>type_licence, nb_licences<br/>date_expiration, statut"]:::ent
+  end
+
+  subgraph STR["HISTORIQUE et TRACE"]
+    direction TB
+    MVT["MOUVEMENT<br/><u>id_mouvement</u><br/>type_mouvement<br/>date_mouvement"]:::ent
+    DOC["DOCUMENT<br/><u>id_document</u><br/>nom_document<br/>type_document<br/>chemin_fichier"]:::ent
+    QRC["QR CODE<br/><u>id_qrcode</u><br/>contenu, date_generation<br/>statut"]:::ent
+  end
+
+  A1{"Diriger"}:::tps
+  A2{"Regrouper"}:::tps
+  A3{"Ranger"}:::tps
+  A4{"Occuper"}:::tps
+  A5{"Personaliser"}:::tps
+  A6{"Attribuer"}:::tps
+  A7{"Abriter"}:::tps
+  A8{"Contenir"}:::tps
+  A9{"Categoriser"}:::tps
+  A10{"Fabriquer"}:::tps
+  A11{"Definir le modele"}:::tps
+  A12{"Relever de"}:::tps
+  A13{"Situer"}:::tps
+  A14{"Evaluer"}:::tps
+  A15{"Affecter<br/>date_affectation<br/>date_fin<br/>motif, commentaire"}:::tps
+  A16{"Fournir"}:::tps
+  A17{"Livrer"}:::tps
+  A18{"Decomposer"}:::tps
+  A19{"Concerner"}:::tps
+  A20{"Prescrire"}:::tps
+  A21{"Subir"}:::tps
+  A22{"Demander"}:::tps
+  A23{"Signaler"}:::tps
+  A24{"Emettre"}:::tps
+  A25{"Rediger"}:::tps
+  A26{"Publier"}:::tps
+  A27{"Constater"}:::tps
+  A28{"Piloter"}:::tps
+  A29{"Autoriser"}:::tps
+  A30{"Etre installe sur"}:::tps
+  A31{"Tracer"}:::tps
+  A32{"Saisir le mouvement"}:::tps
+  A33{"Supporter"}:::tps
+  A34{"Etiqueter"}:::tps
+
+  DIR ---|"0,n"| A1
+  A1 ---|"1,1"| SER
+  AGE ---|"1,1"| A2
+  A2 ---|"0,n"| DIR
+  AGE ---|"0,1"| A3
+  A3 ---|"0,n"| SER
+  SIT ---|"0,1"| A4
+  A4 ---|"0,n"| DIR
+  UTL ---|"1,1"| A5
+  A5 ---|"0,1"| AGE
+  UTL ---|"0,n"| A6
+  A6 ---|"0,n"| ROL
+  BAT ---|"1,1"| A7
+  A7 ---|"0,n"| SIT
+  LOC ---|"1,1"| A8
+  A8 ---|"0,n"| BAT
+  MOD ---|"1,1"| A9
+  A9 ---|"0,n"| CAT
+  MOD ---|"1,1"| A10
+  A10 ---|"0,n"| MAR
+  EQU ---|"0,1"| A11
+  A11 ---|"0,n"| MOD
+  EQU ---|"1,1"| A12
+  A12 ---|"0,n"| CAT
+  EQU ---|"0,1"| A13
+  A13 ---|"0,n"| LOC
+  EQU ---|"0,1"| A14
+  A14 ---|"0,n"| ETA
+  EQU ---|"0,n"| A15
+  A15 ---|"0,n"| AGE
+  EQU ---|"0,1"| A16
+  A16 ---|"0,n"| FOU
+  ACH ---|"1,1"| A17
+  A17 ---|"0,n"| FOU
+  DAC ---|"1,1"| A18
+  A18 ---|"0,n"| ACH
+  EQU ---|"0,n"| A19
+  A19 ---|"0,1"| DAC
+  MAN ---|"1,1"| A20
+  A20 ---|"0,n"| TYM
+  MAN ---|"1,1"| A21
+  A21 ---|"0,n"| EQU
+  MAN ---|"0,1"| A22
+  A22 ---|"0,n"| AGE
+  TIK ---|"1,1"| A23
+  A23 ---|"0,n"| EQU
+  TIK ---|"0,1"| A24
+  A24 ---|"0,n"| AGE
+  COM ---|"1,1"| A25
+  A25 ---|"0,n"| TIK
+  COM ---|"0,1"| A26
+  A26 ---|"0,n"| UTL
+  INV ---|"0,n"| A27
+  A27 ---|"0,n"| EQU
+  INV ---|"0,1"| A28
+  A28 ---|"0,n"| UTL
+  LIC ---|"1,1"| A29
+  A29 ---|"0,n"| LOG
+  LOG ---|"0,n"| A30
+  A30 ---|"0,n"| EQU
+  MVT ---|"1,1"| A31
+  A31 ---|"0,n"| EQU
+  MVT ---|"0,1"| A32
+  A32 ---|"0,n"| UTL
+  DOC ---|"0,1"| A33
+  A33 ---|"0,n"| EQU
+  QRC ---|"0,1"| A34
+  A34 ---|"0,1"| EQU
+</div>
+<script>
+window.addEventListener('load', function () {
+  mermaid.initialize({ startOnLoad: false, theme: 'base',
+    themeVariables: { fontFamily: 'Georgia, serif', fontSize: '15px',
+      primaryColor: '#dbeafe', primaryTextColor: '#0f172a', primaryBorderColor: '#1e40af',
+      lineColor: '#475569', secondaryColor: '#fff7ed', secondaryBorderColor: '#9a3412',
+      clusterBkg: '#f8fafc', clusterBorder: '#94a3b8' },
+    flowchart: { useMaxWidth: false, curve: 'basis', nodeSpacing: 50, rankSpacing: 90, htmlLabels: true, padding: 14 } });
+  var src = document.getElementById('graphe').textContent.trim();
+  try {
+    mermaid.parse(src);
+    mermaid.run({ nodes: [document.getElementById('graphe')] });
+  } catch (e) {
+    document.getElementById('err').textContent = 'ERREUR MERMAID : ' + (e && (e.str || e.message || e));
+  }
+});
+</script>
+</body>
+</html>

@@ -6,8 +6,9 @@ import {
 } from 'lucide-react';
 import { api } from '../api';
 import { Spinner, PageHeader } from '../components/ui';
-import { STATUTS_EQUIPEMENT, formatDate, formatAr } from '../lib/constants';
+import { STATUTS_EQUIPEMENT, STATUTS_TICKET, formatDate, formatAr } from '../lib/constants';
 import { useCompteur } from '../lib/useCompteur';
+import { useT } from '../lib/i18n';
 
 const ICONS = {
     Ordinateur: Monitor,
@@ -15,9 +16,122 @@ const ICONS = {
     'Équipement réseau': TrendingUp,
 };
 
+/* Couleurs du camembert — variables Tailwind, donc thématisables */
+const COULEURS_STATUT = {
+    en_service: 'var(--color-vert-500)',
+    en_stock: 'var(--color-blue-500)',
+    en_maintenance: 'var(--color-orange-400)',
+    reforme: 'var(--color-slate-400)',
+    perdu: 'var(--color-rose-500)',
+    reserve: 'var(--color-jaune-400)',
+};
+
+/* Camembert (donut) animé de la répartition par statut :
+   anneau SVG + centre dynamique + légende interactive synchronisée. */
+function Camembert({ stats }) {
+    const { t } = useT();
+    const [pret, setPret] = useState(false);
+    const [survol, setSurvol] = useState(null);
+
+    useEffect(() => {
+        const id = setTimeout(() => setPret(true), 100);
+        return () => clearTimeout(id);
+    }, []);
+
+    const parts = Object.entries(STATUTS_EQUIPEMENT)
+        .map(([key, meta]) => ({
+            key,
+            label: t(meta.label),
+            total: stats.par_statut[key] || 0,
+            couleur: COULEURS_STATUT[key] ?? 'var(--color-slate-400)',
+        }))
+        .filter((p) => p.total > 0);
+
+    const somme = parts.reduce((s, p) => s + p.total, 0);
+    const R = 64;
+    const C = 2 * Math.PI * R;
+    let cumul = 0;
+
+    const actif = survol ? parts.find((p) => p.key === survol) : null;
+
+    return (
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
+            {/* Anneau */}
+            <div className="relative shrink-0">
+                <svg width="160" height="160" viewBox="0 0 160 160" role="img" aria-label={t('Répartition par statut')}>
+                    <circle cx="80" cy="80" r={R} fill="none" strokeWidth="22" className="stroke-slate-100" />
+                    {parts.map((p) => {
+                        const len = somme ? (p.total / somme) * C : 0;
+                        const visible = Math.max(len - 3, 0);
+                        const offset = -cumul;
+                        cumul += len;
+                        return (
+                            <circle
+                                key={p.key}
+                                cx="80" cy="80" r={R} fill="none"
+                                strokeWidth={survol === p.key ? 27 : 22}
+                                stroke={p.couleur}
+                                strokeDasharray={pret ? `${visible} ${C - visible}` : `0 ${C}`}
+                                strokeDashoffset={offset}
+                                className="transition-all duration-700 ease-out cursor-pointer"
+                                style={{ opacity: survol && survol !== p.key ? 0.35 : 1 }}
+                                onMouseEnter={() => setSurvol(p.key)}
+                                onMouseLeave={() => setSurvol(null)}
+                            />
+                        );
+                    })}
+                </svg>
+                {/* Centre dynamique : total au repos, détail au survol */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <span className="text-2xl font-bold text-slate-800 tabular-nums">
+                        {actif ? actif.total : somme}
+                    </span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 max-w-[90px] text-center leading-tight">
+                        {actif ? actif.label : t('Équipements')}
+                    </span>
+                </div>
+            </div>
+
+            {/* Légende interactive */}
+            <ul className="flex-1 w-full space-y-1">
+                {parts.map((p) => {
+                    const pct = somme ? Math.round((p.total / somme) * 100) : 0;
+                    const survolSur = survol === p.key;
+                    return (
+                        <li key={p.key}>
+                            <button
+                                type="button"
+                                onMouseEnter={() => setSurvol(p.key)}
+                                onMouseLeave={() => setSurvol(null)}
+                                onFocus={() => setSurvol(p.key)}
+                                onBlur={() => setSurvol(null)}
+                                className={`w-full flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-xs transition-all ${
+                                    survolSur ? 'bg-slate-100' : 'hover:bg-slate-50'
+                                }`}
+                            >
+                                <span className="flex items-center gap-2 min-w-0">
+                                    <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: p.couleur }} />
+                                    <span className={`font-semibold truncate transition-colors ${survolSur ? 'text-slate-800' : 'text-slate-700'}`}>
+                                        {p.label}
+                                    </span>
+                                </span>
+                                <span className="tabular-nums text-slate-500 shrink-0">{p.total} · {pct}%</span>
+                            </button>
+                        </li>
+                    );
+                })}
+                {parts.length === 0 && (
+                    <li className="text-xs text-slate-400 py-3 text-center">{t('Aucun équipement trouvé')}</li>
+                )}
+            </ul>
+        </div>
+    );
+}
+
 /* Carte KPI avec compteur animé */
 function CarteKPI({ label, value, icon: Icon, accent, iconText, to }) {
     const compte = useCompteur(value);
+    const { t } = useT();
     return (
         <Link
             to={to}
@@ -34,7 +148,7 @@ function CarteKPI({ label, value, icon: Icon, accent, iconText, to }) {
                 </div>
             </div>
             <div className="mt-3 text-[11px] text-slate-500 font-medium flex items-center gap-1">
-                Gérer
+                {t('Gérer')}
                 <ArrowRight size={12} className="opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
             </div>
         </Link>
@@ -42,26 +156,27 @@ function CarteKPI({ label, value, icon: Icon, accent, iconText, to }) {
 }
 
 export default function Dashboard() {
+    const { t } = useT();
     const [stats, setStats] = useState(null);
 
     useEffect(() => {
         api.get('/dashboard').then(({ data }) => setStats(data));
     }, []);
 
-    if (! stats) return <Spinner label="Chargement du tableau de bord…" />;
+    if (! stats) return <Spinner label={t('Chargement du tableau de bord…')} />;
 
     const cards = [
-        { label: 'Matériels répertoriés', value: stats.total_equipements, icon: Monitor, accent: 'bg-blue-600', iconText: 'text-blue-400', to: '/equipements' },
-        { label: 'Tickets ouverts', value: stats.tickets_ouverts, icon: LifeBuoy, accent: 'bg-rose-500', iconText: 'text-rose-400', to: '/tickets' },
-        { label: 'Maintenances en cours', value: stats.maintenances_cours, icon: Wrench, accent: 'bg-orange-400', iconText: 'text-orange-400', to: '/maintenances' },
-        { label: 'Affectations actives', value: stats.affectations_actives, icon: ArrowLeftRight, accent: 'bg-vert-500', iconText: 'text-vert-400', to: '/affectations' },
+        { label: t('Matériels répertoriés'), value: stats.total_equipements, icon: Monitor, accent: 'bg-blue-600', iconText: 'text-blue-400', to: '/equipements' },
+        { label: t('Tickets ouverts'), value: stats.tickets_ouverts, icon: LifeBuoy, accent: 'bg-rose-500', iconText: 'text-rose-400', to: '/tickets' },
+        { label: t('Maintenances en cours'), value: stats.maintenances_cours, icon: Wrench, accent: 'bg-orange-400', iconText: 'text-orange-400', to: '/maintenances' },
+        { label: t('Affectations actives'), value: stats.affectations_actives, icon: ArrowLeftRight, accent: 'bg-vert-500', iconText: 'text-vert-400', to: '/affectations' },
     ];
 
     return (
         <div>
             <PageHeader
-                title="Tableau de bord"
-                subtitle="Vue d'ensemble du parc informatique de la DGSR"
+                title={t('Tableau de bord')}
+                subtitle={t("Vue d'ensemble du parc informatique de la DGSR")}
             />
 
             {/* Orbes décoratifs flottants en arrière-plan, teintés par l'aura du thème */}
@@ -81,40 +196,15 @@ export default function Dashboard() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-                {/* Répartition par statut */}
+                {/* Répartition par statut — en camembert */}
                 <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
-                    <h3 className="text-sm font-bold text-slate-800 mb-4">Répartition par statut</h3>
-                    <div className="space-y-2.5">
-                        {Object.entries(STATUTS_EQUIPEMENT).map(([key, meta]) => {
-                            const total = stats.par_statut[key] || 0;
-                            const pct = stats.total_equipements ? Math.round((total / stats.total_equipements) * 100) : 0;
-                            return (
-                                <div key={key}>
-                                    <div className="flex items-center justify-between text-xs mb-1">
-                                        <span className="font-semibold text-slate-700">{meta.label}</span>
-                                        <span className="text-slate-500">{total} · {pct}%</span>
-                                    </div>
-                                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                                        <div
-                                            className={`h-full rounded-full transition-all duration-700 ease-out ${
-                                                key === 'en_service' ? 'bg-vert-500'
-                                                : key === 'en_stock' ? 'bg-blue-500'
-                                                : key === 'en_maintenance' ? 'bg-orange-400'
-                                                : key === 'reforme' ? 'bg-slate-400'
-                                                : key === 'perdu' ? 'bg-rose-500' : 'bg-jaune-400'
-                                            }`}
-                                            style={{ width: stats ? `${pct}%` : '0%' }}
-                                        />
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+                    <h3 className="text-sm font-bold text-slate-800 mb-4">{t('Répartition par statut')}</h3>
+                    <Camembert stats={stats} />
                 </div>
 
                 {/* Par catégorie */}
                 <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
-                    <h3 className="text-sm font-bold text-slate-800 mb-4">Par catégorie</h3>
+                    <h3 className="text-sm font-bold text-slate-800 mb-4">{t('Par catégorie')}</h3>
                     <div className="space-y-2">
                         {stats.par_categorie.map((c) => (
                             <div key={c.nom_categorie} className="flex items-center justify-between text-sm py-1.5 border-b border-slate-100 last:border-0">
@@ -125,7 +215,7 @@ export default function Dashboard() {
                     </div>
                     <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                         <span className="text-slate-500 flex items-center gap-1.5">
-                            <CircleDollarSign size={14} /> Valeur totale du parc
+                            <CircleDollarSign size={14} /> {t('Valeur totale du parc')}
                         </span>
                         <span className="font-bold text-slate-800">{formatAr(stats.valeur_parc)}</span>
                     </div>
@@ -136,8 +226,8 @@ export default function Dashboard() {
                 {/* Derniers tickets */}
                 <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
                     <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-sm font-bold text-slate-800">Derniers tickets</h3>
-                        <Link to="/tickets" className="text-xs font-semibold text-blue-400 hover:underline">Tout voir</Link>
+                        <h3 className="text-sm font-bold text-slate-800">{t('Derniers tickets')}</h3>
+                        <Link to="/tickets" className="text-xs font-semibold text-blue-400 hover:underline">{t('Tout voir')}</Link>
                     </div>
                     <div className="space-y-2">
                         {stats.derniers_tickets.map((t) => (
@@ -154,12 +244,12 @@ export default function Dashboard() {
                                     : t.statut === 'resolu' ? 'bg-vert-100 text-vert-400 border-vert-200'
                                     : 'bg-slate-200 text-slate-500 border-slate-300'
                                 }`}>
-                                    {t.statut.replace('_', ' ')}
+                                    {STATUTS_TICKET[t.statut]?.label ?? t(t.statut.replace('_', ' '))}
                                 </span>
                             </div>
                         ))}
                         {stats.derniers_tickets.length === 0 && (
-                            <p className="text-xs text-slate-500 py-3">Aucun ticket pour le moment.</p>
+                            <p className="text-xs text-slate-500 py-3">{t('Aucun ticket pour le moment.')}</p>
                         )}
                     </div>
                 </div>
@@ -167,9 +257,9 @@ export default function Dashboard() {
                 {/* Derniers mouvements */}
                 <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
                     <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-sm font-bold text-slate-800">Derniers mouvements</h3>
+                        <h3 className="text-sm font-bold text-slate-800">{t('Derniers mouvements')}</h3>
                         <span className="text-xs text-slate-400 flex items-center gap-1">
-                            <BadgeAlert size={13} /> {stats.garanties_expirantes} garanties &lt; 60 j
+                            <BadgeAlert size={13} /> {stats.garanties_expirantes} {t('garanties < 60 j')}
                         </span>
                     </div>
                     <div className="space-y-2">
@@ -177,7 +267,7 @@ export default function Dashboard() {
                             <div key={m.id_mouvement} className="flex items-center justify-between gap-3 text-sm py-2 border-b border-slate-100 last:border-0">
                                 <div className="min-w-0">
                                     <div className="font-semibold text-slate-800 truncate">
-                                        {m.equipement?.designation ?? 'Équipement'}
+                                        {m.equipement?.designation ?? t('Équipement')}
                                     </div>
                                     <div className="text-[11px] text-slate-500">
                                         {m.type_mouvement} · {formatDate(m.date_mouvement)}
@@ -196,7 +286,7 @@ export default function Dashboard() {
                 <div className="mt-4 rounded-2xl bg-blue-50 border border-blue-200 p-4 flex items-center gap-3 text-sm text-blue-300">
                     <Boxes size={18} className="text-blue-400" />
                     <span>
-                        Un inventaire est <strong>en cours</strong> — {stats.inventaires_cours} campagne(s) active(s).
+                        {t('Un inventaire est ')}<strong>{t('en cours')}</strong> — {stats.inventaires_cours} {t(' campagne(s) active(s).')}
                     </span>
                 </div>
             )}

@@ -8,6 +8,7 @@ import { Spinner, PageHeader, EmptyState, Badge, ConfirmModal } from '../compone
 import { useAuth, ROLES_ECRITURE, aRole } from '../auth';
 import { STATUTS_EQUIPEMENT, formatDate, formatAr } from '../lib/constants';
 import { sons } from '../lib/sons';
+import { useT } from '../lib/i18n';
 
 /* ============================================================
    Méta : types de mouvements, journal, presets de période
@@ -24,7 +25,7 @@ const TYPES_MOUVEMENT = {
 const ONGLETS = [
     { key: 'synthese', label: 'Synthèse', icon: FileBarChart2 },
     { key: 'mouvements', label: 'Mouvements de matériel', icon: ArrowLeftRight },
-    { key: 'journal', label: 'Journal d\u2019activité', icon: History },
+    { key: 'journal', label: "Journal d'activité", icon: History },
 ];
 
 const PRESETS = [
@@ -73,11 +74,12 @@ function EnteteCarte({ title, action }) {
 
 /* Histogramme « entrées / sorties » en CSS pur (2 barres par mois) */
 function GraphiqueFlux({ data }) {
+    const { t } = useT();
     const max = Math.max(1, ...data.flatMap((d) => [d.entrees, d.sorties]));
     return (
         <div className="flex items-end gap-2 h-44">
             {data.map((d) => (
-                <div key={d.mois} className="flex-1 flex flex-col items-center gap-1.5 min-w-0" title={`${d.mois} — ${d.entrees} entrée(s), ${d.sorties} sortie(s)`}>
+                <div key={d.mois} className="flex-1 flex flex-col items-center gap-1.5 min-w-0" title={`${d.mois} — ${d.entrees} ${t('entrée(s)')}, ${d.sorties} ${t('sortie(s)')}`}>
                     <div className="w-full flex items-end justify-center gap-0.5 h-32">
                         <div className="w-1/3 max-w-4 rounded-t bg-blue-500 transition-all duration-700" style={{ height: `${(d.entrees / max) * 100}%` }} />
                         <div className="w-1/3 max-w-4 rounded-t bg-vert-500 transition-all duration-700" style={{ height: `${(d.sorties / max) * 100}%` }} />
@@ -105,11 +107,12 @@ function BarreProportion({ label, total, max, color = 'bg-blue-500' }) {
 }
 
 function Pagination({ page, lastPage, total, onNavigate }) {
+    const { t } = useT();
     if (!total) return null;
     return (
         <div className="flex items-center justify-between pt-3 mt-1 border-t border-slate-100">
             <span className="text-[11px] text-slate-500">
-                Page {page} / {lastPage} — {total} entrée{total > 1 ? 's' : ''}
+                {t('Page ')}{page} / {lastPage} — {total} {t('entrée(s)')}
             </span>
             <div className="flex items-center gap-1">
                 <button
@@ -158,13 +161,14 @@ function ChampDate({ value, onChange }) {
 }
 
 function BoutonExport({ onClick, busy }) {
+    const { t } = useT();
     return (
         <button
             onClick={onClick}
             disabled={busy}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-200 bg-slate-100 hover:bg-slate-200 disabled:opacity-60 text-slate-600 text-xs font-bold transition-all active:scale-[.97]"
         >
-            <Download size={14} /> {busy ? 'Export…' : 'CSV'}
+            <Download size={14} /> {busy ? t('Export…') : 'CSV'}
         </button>
     );
 }
@@ -183,13 +187,14 @@ function telecharger(url, params, nomFichier) {
 }
 
 function BoutonPDF({ onClick, busy }) {
+    const { t } = useT();
     return (
         <button
             onClick={onClick}
             disabled={busy}
             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-xs font-bold shadow-sm shadow-blue-600/30 transition-all active:scale-[.97]"
         >
-            <FileText size={14} /> {busy ? 'Génération…' : 'Imprimer PDF'}
+            <FileText size={14} /> {busy ? t('Génération…') : t('Imprimer PDF')}
         </button>
     );
 }
@@ -198,6 +203,7 @@ function BoutonPDF({ onClick, busy }) {
    Onglet 1 — Synthèse consolidée
    ============================================================ */
 function OngletSynthese({ dates }) {
+    const { t } = useT();
     const [data, setData] = useState(null);
     const [pdfBusy, setPdfBusy] = useState(false);
 
@@ -215,7 +221,7 @@ function OngletSynthese({ dates }) {
         }
     };
 
-    if (! data) return <Spinner label="Calcul de la synthèse…" />;
+    if (! data) return <Spinner label={t('Calcul de la synthèse…')} />;
 
     const k = data.kpi;
     const maxDirection = Math.max(1, ...data.par_direction.map((d) => d.total));
@@ -230,28 +236,28 @@ function OngletSynthese({ dates }) {
 
             {/* KPI principaux */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                <CarteKPI label="Matériels répertoriés" value={k.total_equipements} icon={Monitor} iconText="text-blue-400" />
-                <CarteKPI label="Valeur du parc" value={formatAr(k.valeur_parc)} icon={CircleDollarSign} iconText="text-vert-400" />
-                <CarteKPI label="Mouvements sur la période" value={k.mouvements_periode} icon={ArrowLeftRight} iconText="text-orange-400" />
-                <CarteKPI label="Achats sur la période" value={`${k.achats_periode} · ${formatAr(k.depenses_periode)}`} icon={ShoppingCart} iconText="text-blue-400" />
+                <CarteKPI label={t('Matériels répertoriés')} value={k.total_equipements} icon={Monitor} iconText="text-blue-400" />
+                <CarteKPI label={t('Valeur du parc')} value={formatAr(k.valeur_parc)} icon={CircleDollarSign} iconText="text-vert-400" />
+                <CarteKPI label={t('Mouvements sur la période')} value={k.mouvements_periode} icon={ArrowLeftRight} iconText="text-orange-400" />
+                <CarteKPI label={t('Achats sur la période')} value={`${k.achats_periode} · ${formatAr(k.depenses_periode)}`} icon={ShoppingCart} iconText="text-blue-400" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mt-3">
-                <CarteKPI label="En service" value={k.en_service} icon={Monitor} iconText="text-vert-400" />
-                <CarteKPI label="En stock" value={k.en_stock} icon={Boxes} iconText="text-blue-400" />
-                <CarteKPI label="En maintenance" value={k.en_maintenance} icon={Wrench} iconText="text-orange-400" />
-                <CarteKPI label="Tickets ouverts" value={k.tickets_ouverts} icon={LifeBuoy} iconText="text-rose-400" />
-                <CarteKPI label="Affectations actives" value={k.affectations_actives} icon={ArrowLeftRight} iconText="text-vert-400" />
+                <CarteKPI label={t('En service')} value={k.en_service} icon={Monitor} iconText="text-vert-400" />
+                <CarteKPI label={t('En stock')} value={k.en_stock} icon={Boxes} iconText="text-blue-400" />
+                <CarteKPI label={t('En maintenance')} value={k.en_maintenance} icon={Wrench} iconText="text-orange-400" />
+                <CarteKPI label={t('Tickets ouverts')} value={k.tickets_ouverts} icon={LifeBuoy} iconText="text-rose-400" />
+                <CarteKPI label={t('Affectations actives')} value={k.affectations_actives} icon={ArrowLeftRight} iconText="text-vert-400" />
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Flux mensuels */}
                 <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
                     <EnteteCarte
-                        title="Flux de matériel — 12 derniers mois"
+                        title={t('Flux de matériel — 12 derniers mois')}
                         action={(
                             <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-blue-500" /> Entrées</span>
-                                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-vert-500" /> Sorties</span>
+                                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-blue-500" /> {t('Entrées')}</span>
+                                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-vert-500" /> {t('Sorties')}</span>
                             </div>
                         )}
                     />
@@ -260,7 +266,7 @@ function OngletSynthese({ dates }) {
 
                 {/* Mouvements par type sur la période */}
                 <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
-                    <EnteteCarte title={`Transactions par type — ${formatDate(data.periode.debut)} → ${formatDate(data.periode.fin)}`} />
+                    <EnteteCarte title={t('Transactions par type — ') + `${formatDate(data.periode.debut)} → ${formatDate(data.periode.fin)}`} />
                     <div className="space-y-2">
                         {Object.entries(TYPES_MOUVEMENT).map(([type, meta]) => {
                             const total = data.mouvements_par_type[type] ?? 0;
@@ -273,7 +279,7 @@ function OngletSynthese({ dates }) {
                                 <div key={type}>
                                     <div className="flex items-center justify-between text-xs mb-1">
                                         <span className="font-semibold text-slate-700 flex items-center gap-1.5">
-                                            <meta.icon size={13} className="text-slate-400" /> {meta.label}
+                                            <meta.icon size={13} className="text-slate-400" /> {t(meta.label)}
                                         </span>
                                         <span className="text-slate-500 tabular-nums">{total}</span>
                                     </div>
@@ -288,9 +294,9 @@ function OngletSynthese({ dates }) {
 
                 {/* Répartition par direction */}
                 <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
-                    <EnteteCarte title="Parc par direction (top 8)" />
+                    <EnteteCarte title={t('Parc par direction (top 8)')} />
                     <div className="space-y-2.5">
-                        {data.par_direction.length === 0 && <p className="text-xs text-slate-500">Aucune direction rattachée.</p>}
+                        {data.par_direction.length === 0 && <p className="text-xs text-slate-500">{t('Aucune direction rattachée.')}</p>}
                         {data.par_direction.map((d) => (
                             <BarreProportion
                                 key={d.code_direction}
@@ -304,7 +310,7 @@ function OngletSynthese({ dates }) {
 
                 {/* Répartition par catégorie */}
                 <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
-                    <EnteteCarte title="Parc par catégorie" />
+                    <EnteteCarte title={t('Parc par catégorie')} />
                     <div className="space-y-2.5">
                         {data.par_categorie.map((c) => (
                             <BarreProportion key={c.nom_categorie} label={c.nom_categorie} total={c.total} max={maxCategorie} color="bg-vert-500" />
@@ -315,18 +321,18 @@ function OngletSynthese({ dates }) {
 
             {/* Matériel le plus mobile */}
             <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
-                <EnteteCarte title="Matériel le plus mobile de la période (affectations cumulées)" />
+                <EnteteCarte title={t('Matériel le plus mobile de la période (affectations cumulées)')} />
                 {data.top_mobiles.length === 0
-                    ? <p className="text-xs text-slate-500">Aucune affectation sur la période.</p>
+                    ? <p className="text-xs text-slate-500">{t('Aucune affectation sur la période.')}</p>
                     : (
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                                 <thead>
                                     <tr className="text-left text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
-                                        <th className="py-2 pr-3">Code inventaire</th>
-                                        <th className="py-2 pr-3">Désignation</th>
-                                        <th className="py-2 pr-3">Modèle</th>
-                                        <th className="py-2 text-right">Affectations</th>
+                                        <th className="py-2 pr-3">{t('Code inventaire')}</th>
+                                        <th className="py-2 pr-3">{t('Désignation')}</th>
+                                        <th className="py-2 pr-3">{t('Modèle')}</th>
+                                        <th className="py-2 text-right">{t('Affectations')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -352,6 +358,7 @@ function OngletSynthese({ dates }) {
    ============================================================ */
 function OngletMouvements() {
     const { user } = useAuth();
+    const { t } = useT();
     const peutEffacer = aRole(user, ROLES_ECRITURE);
     const [items, setItems] = useState(null);
     const [meta, setMeta] = useState({ current_page: 1, last_page: 1, total: 0 });
@@ -418,7 +425,7 @@ function OngletMouvements() {
     return (
         <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
             <EnteteCarte
-                title="Historique des transactions de matériel"
+                title={t('Historique des transactions de matériel')}
                 action={(
                     <div className="flex items-center gap-2">
                         <BoutonExport onClick={exporter} busy={exportBusy} />
@@ -428,7 +435,7 @@ function OngletMouvements() {
                                 onClick={() => { sons.clic(); setASupprimer('tout'); }}
                                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-400 text-xs font-bold transition-all active:scale-[.97]"
                             >
-                                <Trash2 size={14} /> Tout supprimer
+                                <Trash2 size={14} /> {t('Tout supprimer')}
                             </button>
                         )}
                     </div>
@@ -437,14 +444,14 @@ function OngletMouvements() {
 
             {/* Filtres */}
             <div className="flex flex-wrap items-center gap-2 mb-4">
-                <ChampRecherche value={q} onChange={setQ} placeholder="Code inventaire, n° série, motif, utilisateur…" />
+                <ChampRecherche value={q} onChange={setQ} placeholder={t('Code inventaire, n° série, motif, utilisateur…')} />
                 <select
                     value={type}
                     onChange={(e) => setType(e.target.value)}
                     className="h-9 px-2.5 bg-card-high rounded-lg text-slate-700 text-xs border border-slate-200 focus:outline-none"
                 >
-                    <option value="">Tous les types</option>
-                    {Object.entries(TYPES_MOUVEMENT).map(([v, m]) => <option key={v} value={v}>{m.label}</option>)}
+                    <option value="">{t('Tous les types')}</option>
+                    {Object.entries(TYPES_MOUVEMENT).map(([v, m]) => <option key={v} value={v}>{t(m.label)}</option>)}
                 </select>
                 <ChampDate value={dateDebut} onChange={setDateDebut} />
                 <span className="text-xs text-slate-400">→</span>
@@ -452,32 +459,32 @@ function OngletMouvements() {
             </div>
 
             {! items
-                ? <Spinner label="Chargement des mouvements…" />
+                ? <Spinner label={t('Chargement des mouvements…')} />
                 : items.length === 0
-                    ? <EmptyState icon={ArrowLeftRight} title="Aucun mouvement trouvé." hint="Ajustez les filtres ou la période." />
+                    ? <EmptyState icon={ArrowLeftRight} title={t('Aucun mouvement trouvé.')} hint={t('Ajustez les filtres ou la période.')} />
                     : (
                         <>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-sm">
                                     <thead>
                                         <tr className="text-left text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
-                                            <th className="py-2 pr-3">Date</th>
-                                            <th className="py-2 pr-3">Type</th>
-                                            <th className="py-2 pr-3">Équipement</th>
-                                            <th className="py-2 pr-3">Motif</th>
-                                            <th className="py-2 pr-3">Localisation</th>
-                                            <th className="py-2 pr-3">Effectué par</th>
-                                            {peutEffacer && <th className="py-2 text-right">Actions</th>}
+                                            <th className="py-2 pr-3">{t('Date')}</th>
+                                            <th className="py-2 pr-3">{t('Type')}</th>
+                                            <th className="py-2 pr-3">{t('Équipement')}</th>
+                                            <th className="py-2 pr-3">{t('Motif')}</th>
+                                            <th className="py-2 pr-3">{t('Localisation')}</th>
+                                            <th className="py-2 pr-3">{t('Effectué par')}</th>
+                                            {peutEffacer && <th className="py-2 text-right">{t('Actions')}</th>}
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {items.map((m) => {
-                                            const t = TYPES_MOUVEMENT[m.type_mouvement] ?? TYPES_MOUVEMENT.stock;
+                                            const meta = TYPES_MOUVEMENT[m.type_mouvement] ?? TYPES_MOUVEMENT.stock;
                                             const loc = [m.ancienne_localisation?.nom_localisation, m.nouvelle_localisation?.nom_localisation].filter(Boolean).join(' → ');
                                             return (
                                                 <tr key={m.id_mouvement} className="border-b border-slate-100 last:border-0 hover:bg-slate-100/60 align-top">
                                                     <td className="py-2.5 pr-3 whitespace-nowrap text-xs text-slate-500">{formatDate(m.date_mouvement)}</td>
-                                                    <td className="py-2.5 pr-3"><Badge color={t.color}>{t.label}</Badge></td>
+                                                    <td className="py-2.5 pr-3"><Badge color={meta.color}>{t(meta.label)}</Badge></td>
                                                     <td className="py-2.5 pr-3">
                                                         {m.equipement
                                                             ? (
@@ -490,12 +497,12 @@ function OngletMouvements() {
                                                     </td>
                                                     <td className="py-2.5 pr-3 text-xs text-slate-600 max-w-64"><span className="line-clamp-2">{m.motif ?? '—'}</span></td>
                                                     <td className="py-2.5 pr-3 text-xs text-slate-600">{loc || '—'}</td>
-                                                    <td className="py-2.5 pr-3 text-xs text-slate-600">{m.utilisateur?.nom_complet ?? m.utilisateur?.username ?? 'Système'}</td>
+                                                    <td className="py-2.5 pr-3 text-xs text-slate-600">{m.utilisateur?.nom_complet ?? m.utilisateur?.username ?? t('Système')}</td>
                                                     {peutEffacer && (
                                                         <td className="py-2.5 text-right">
                                                             <button
                                                                 onClick={() => { sons.clic(); setASupprimer(m); }}
-                                                                title="Supprimer cette entrée"
+                                                                title={t('Supprimer cette entrée')}
                                                                 className="p-1.5 rounded-lg text-rose-600 hover:text-rose-700 hover:bg-rose-100 transition-colors"
                                                             >
                                                                 <Trash2 size={14} />
@@ -521,10 +528,10 @@ function OngletMouvements() {
                 <ConfirmModal
                     open
                     busy={busy}
-                    title={aSupprimer === 'tout' ? 'Tout supprimer ?' : 'Supprimer cette entrée ?'}
+                    title={aSupprimer === 'tout' ? t('Tout supprimer ?') : t('Supprimer cette entrée ?')}
                     message={aSupprimer === 'tout'
-                        ? `L'intégralité de l'historique des mouvements (${meta.total} entrée(s)) sera définitivement effacée. Cette action est irréversible.`
-                        : 'Cette entrée de l\'historique des mouvements sera définitivement effacée. Cette action est irréversible.'}
+                        ? `${t("L'intégralité de l'historique des mouvements (")}${meta.total}${t(' entrée(s)) sera définitivement effacée. Cette action est irréversible.')}`
+                        : t("Cette entrée de l'historique des mouvements sera définitivement effacée. Cette action est irréversible.")}
                     onConfirm={supprimer}
                     onClose={() => setASupprimer(null)}
                 />
@@ -538,6 +545,7 @@ function OngletMouvements() {
    ============================================================ */
 function OngletJournal() {
     const { user } = useAuth();
+    const { t, langue } = useT();
     const peutEffacer = aRole(user, ROLES_ECRITURE);
     const [items, setItems] = useState(null);
     const [meta, setMeta] = useState({ current_page: 1, last_page: 1, total: 0 });
@@ -610,7 +618,7 @@ function OngletJournal() {
     return (
         <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
             <EnteteCarte
-                title="Journal d'activité — traçabilité des opérations"
+                title={t("Journal d'activité — traçabilité des opérations")}
                 action={(
                     <div className="flex items-center gap-2">
                         <BoutonExport onClick={exporter} busy={exportBusy} />
@@ -620,7 +628,7 @@ function OngletJournal() {
                                 onClick={() => { sons.clic(); setASupprimer('tout'); }}
                                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-400 text-xs font-bold transition-all active:scale-[.97]"
                             >
-                                <Trash2 size={14} /> Tout supprimer
+                                <Trash2 size={14} /> {t('Tout supprimer')}
                             </button>
                         )}
                     </div>
@@ -628,49 +636,49 @@ function OngletJournal() {
             />
 
             <div className="flex flex-wrap items-center gap-2 mb-4">
-                <ChampRecherche value={q} onChange={setQ} placeholder="Action, table, utilisateur, adresse IP…" />
+                <ChampRecherche value={q} onChange={setQ} placeholder={t('Action, table, utilisateur, adresse IP…')} />
                 <ChampDate value={dateDebut} onChange={setDateDebut} />
                 <span className="text-xs text-slate-400">→</span>
                 <ChampDate value={dateFin} onChange={setDateFin} />
             </div>
 
             {! items
-                ? <Spinner label="Chargement du journal…" />
+                ? <Spinner label={t('Chargement du journal…')} />
                 : items.length === 0
-                    ? <EmptyState icon={History} title="Aucune activité enregistrée." hint="Ajustez les filtres ou la période." />
+                    ? <EmptyState icon={History} title={t('Aucune activité enregistrée.')} hint={t('Ajustez les filtres ou la période.')} />
                     : (
                         <>
                             <div className="overflow-x-auto">
                                 <table className="w-full text-sm">
                                     <thead>
                                         <tr className="text-left text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
-                                            <th className="py-2 pr-3">Horodatage</th>
-                                            <th className="py-2 pr-3">Action</th>
-                                            <th className="py-2 pr-3">Table</th>
-                                            <th className="py-2 pr-3">Élément</th>
-                                            <th className="py-2 pr-3">Utilisateur</th>
-                                            <th className="py-2 pr-3">Adresse IP</th>
-                                            {peutEffacer && <th className="py-2 text-right">Actions</th>}
+                                            <th className="py-2 pr-3">{t('Horodatage')}</th>
+                                            <th className="py-2 pr-3">{t('Action')}</th>
+                                            <th className="py-2 pr-3">{t('Table')}</th>
+                                            <th className="py-2 pr-3">{t('Élément')}</th>
+                                            <th className="py-2 pr-3">{t('Utilisateur')}</th>
+                                            <th className="py-2 pr-3">{t('Adresse IP')}</th>
+                                            {peutEffacer && <th className="py-2 text-right">{t('Actions')}</th>}
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {items.map((l) => (
                                             <tr key={l.id_log} className="border-b border-slate-100 last:border-0 hover:bg-slate-100/60">
                                                 <td className="py-2.5 pr-3 whitespace-nowrap text-xs text-slate-500 font-mono">
-                                                    {l.date_action ? new Date(l.date_action).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) : '—'}
+                                                    {l.date_action ? new Date(l.date_action).toLocaleString(langue === 'en' ? 'en-GB' : 'fr-FR', { dateStyle: 'short', timeStyle: 'short' }) : '—'}
                                                 </td>
                                                 <td className="py-2.5 pr-3"><Badge color={couleurAction(l.action)}>{l.action}</Badge></td>
                                                 <td className="py-2.5 pr-3 text-xs font-mono text-slate-600">{l.table_concernee ?? '—'}</td>
                                                 <td className="py-2.5 pr-3 text-xs text-slate-600 tabular-nums">{l.id_element ?? '—'}</td>
                                                 <td className="py-2.5 pr-3 text-xs text-slate-800 font-semibold">
-                                                    {l.utilisateur?.nom_complet ?? l.utilisateur?.username ?? 'Système'}
+                                                    {l.utilisateur?.nom_complet ?? l.utilisateur?.username ?? t('Système')}
                                                 </td>
                                                 <td className="py-2.5 pr-3 text-xs font-mono text-slate-500">{l.adresse_ip ?? '—'}</td>
                                                 {peutEffacer && (
                                                     <td className="py-2.5 text-right">
                                                         <button
                                                             onClick={() => { sons.clic(); setASupprimer(l); }}
-                                                            title="Supprimer cette entrée"
+                                                            title={t('Supprimer cette entrée')}
                                                             className="p-1.5 rounded-lg text-rose-600 hover:text-rose-700 hover:bg-rose-100 transition-colors"
                                                         >
                                                             <Trash2 size={14} />
@@ -695,10 +703,10 @@ function OngletJournal() {
                 <ConfirmModal
                     open
                     busy={busy}
-                    title={aSupprimer === 'tout' ? 'Tout supprimer ?' : 'Supprimer cette entrée ?'}
+                    title={aSupprimer === 'tout' ? t('Tout supprimer ?') : t('Supprimer cette entrée ?')}
                     message={aSupprimer === 'tout'
-                        ? `L'intégralité du journal d'activité (${meta.total} entrée(s)) sera définitivement effacée. Cette action est irréversible.`
-                        : 'Cette entrée du journal d\'activité sera définitivement effacée. Cette action est irréversible.'}
+                        ? `${t("L'intégralité du journal d'activité (")}${meta.total}${t(' entrée(s)) sera définitivement effacée. Cette action est irréversible.')}`
+                        : t("Cette entrée du journal d'activité sera définitivement effacée. Cette action est irréversible.")}
                     onConfirm={supprimer}
                     onClose={() => setASupprimer(null)}
                 />
@@ -711,6 +719,7 @@ function OngletJournal() {
    Page — Rapports
    ============================================================ */
 export default function Rapports() {
+    const { t } = useT();
     const [onglet, setOnglet] = useState('synthese');
     const [preset, setPreset] = useState('annee');
     const dates = useMemo(() => presetVersDates(preset), [preset]);
@@ -718,8 +727,8 @@ export default function Rapports() {
     return (
         <div>
             <PageHeader
-                title="Rapports & Historiques"
-                subtitle="Synthèse du parc, historique des transactions de matériel et traçabilité des opérations"
+                title={t('Rapports & Historiques')}
+                subtitle={t('Synthèse du parc, historique des transactions de matériel et traçabilité des opérations')}
             />
 
             {/* Onglets + période */}
@@ -735,7 +744,7 @@ export default function Rapports() {
                                     : 'text-slate-600 hover:text-slate-800'
                             }`}
                         >
-                            <Icon size={14} /> {label}
+                            <Icon size={14} /> {t(label)}
                         </button>
                     ))}
                 </div>
@@ -750,7 +759,7 @@ export default function Rapports() {
                                     preset === p.key ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/30' : 'text-slate-600 hover:text-slate-800'
                                 }`}
                             >
-                                {p.label}
+                                {t(p.label)}
                             </button>
                         ))}
                     </div>

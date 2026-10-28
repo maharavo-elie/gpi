@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>MCT - GPI</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  themeVariables: {
+    fontFamily: 'Georgia, serif',
+    fontSize: '15px',
+    primaryColor: '#dbeafe',
+    primaryTextColor: '#0f172a',
+    primaryBorderColor: '#1e40af',
+    lineColor: '#475569',
+    clusterBkg: '#f8fafc',
+    clusterBorder: '#94a3b8'
+  },
+  flowchart: { useMaxWidth: false, curve: 'linear', nodeSpacing: 40, rankSpacing: 60, htmlLabels: true, padding: 12 },
+  securityLevel: 'loose'
+});</script>
+<style>
+body{margin:0;padding:20px;background:#fff}
+.legende{font-family:'Times New Roman',serif;font-size:14px;color:#334155;max-width:950px}
+.legende b{color:#1e40af}
+</style>
+</head>
+<body>
+<div class="mermaid">
+flowchart LR
+  classDef ev fill:#dbeafe,stroke:#1e40af,stroke-width:1.4px,color:#0f172a
+  classDef op fill:#f1f5f9,stroke:#475569,stroke-width:1.2px,color:#0f172a
+
+  subgraph P1["PROCESSUS 1 - Inscription du parc"]
+    direction TB
+    e1(["E1 : Equipement <= (code inventaire, serie, modele)"]):::ev
+    o11["O11 : Verifier l unicite<br/>du code inventaire"]:::op
+    o12["O12 : Creer la fiche EQUIPEMENT"]:::op
+    e2(["E2 : Equipement enregistre<br/>statut = en_stock"]):::ev
+    e1 => o11
+    o11 -- "code deja utilise" --> e1
+    o11 => o12
+    o12 => e2
+  end
+
+  subgraph P2["PROCESSUS 2 - Affectation d un equipement"]
+    direction TB
+    e3(["E3 : Demande d affectation<br/>(agent, equipement)"]):::ev
+    o21["O21 : Controler la disponibilite<br/>de l equipement"]:::op
+    o22["O22 : Creer l AFFECTATION<br/>gere le mouvement associe"]:::op
+    e4(["E4 : Affectation confirmee<br/>position mise a jour"]):::ev
+    e3 => o21
+    o21 -- "equipement non disponible" --> e3
+    o21 => o22
+    o22 => e4
+  end
+
+  subgraph P3["PROCESSUS 3 - Gestion des tickets"]
+    direction TB
+    e5(["E5 : Incident signale<br/>(titre, priorite, agent)"]):::ev
+    o31["O31 : Creer le TICKET"]:::op
+    e6(["E6 : Ticket enregistre<br/>statut = ouvert"]):::ev
+    o32["O32 : Resoudre le TICKET<br/>(compte rendu)"]:::op
+    e7(["E7 : Ticket resolu et<br/>supprimable du SUJET"]):::ev
+    e5 => o31
+    o31 => e6
+    e6 => o32
+    o32 => e7
+  end
+
+  subgraph P4["PROCESSUS 4 - Inventaire du parc"]
+    direction TB
+    e8(["E8 : Campagne d inventaire<br/>lancee (reference, dates)"]):::ev
+    o41["O41 : Consulter les equilibrages<br/>par equEQUIPEMENT"]:::op
+    o42["O42 : Saisir les constats<br/>(presence, statut)"]:::op
+    e9(["E9 : Ecart releve<br/>(equipement manquant)"]):::ev
+    e10(["E10 : Inventaire cloture<br/>rapport genere"]):::ev
+    e8 => o41
+    o41 => o42
+    o42 -- "ecart" --> e9
+    e9 => o42
+    o42 => e10
+  end
+
+  class e1,e2,e3,e4,e5,e6,e7,e8,e9,e10 ev
+  class o11,o12,o21,o22,o31,o32,o41,o42 op
+</div>
+<div class="legende">
+<b>Convention Merise : </b> <b>E</b> (rectangle arrondi) = evenement, fait notable declenchant un traitement ; <b>O</b> (rectangle) = operation, sequence d actions indecomposable ; le fleche grasse indique l ordre d declenchement, la fleche retour avec mention porte une <b>condition de non-remplissement</b> (le controle echoue et l operation est relancee).
+</div>
+</body>
+</html>

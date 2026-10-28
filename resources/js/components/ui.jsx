@@ -1,6 +1,7 @@
 import { X, TriangleAlert, Trash2 } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { sons } from '../lib/sons';
+import { useT } from '../lib/i18n';
 
 function Badge({ children, color = 'bg-slate-100 text-slate-500 border-slate-200' }) {
     return (
@@ -30,6 +31,7 @@ export function EditButton({ onClick, label = 'Modifier', icon: Icon }) {
 /* Modale d'édition réutilisable (création + modification) — backdrop en fondu, contenu en pop.
    Rendue via un portail dans <body> : un ancêtre animé (transform) capterait sinon le position: fixed. */
 export function EditModal({ open, onClose, title, mode = 'create', children, onSubmit, busy, submitLabel, width = 'max-w-2xl' }) {
+    const { t } = useT();
     if (! open) return null;
     const fermer = () => { sons.fermer(); onClose(); };
     return createPortal(
@@ -43,7 +45,7 @@ export function EditModal({ open, onClose, title, mode = 'create', children, onS
                                 ? 'bg-orange-100 text-orange-400'
                                 : 'bg-vert-100 text-vert-400'
                         }`}>
-                            {mode === 'edit' ? 'EDITION' : 'NOUVEAU'}
+                            {mode === 'edit' ? t('EDITION') : t('NOUVEAU')}
                         </span>
                     </h2>
                     <button onClick={fermer} className="p-1.5 text-slate-400 hover:text-slate-800 transition hover:rotate-90"><X size={18} /></button>
@@ -52,13 +54,13 @@ export function EditModal({ open, onClose, title, mode = 'create', children, onS
                     <div className="p-4 sm:p-5 overflow-y-auto flex-1">{children}</div>
                     <div className="flex justify-end gap-2 px-4 sm:px-5 py-3 sm:py-4 border-t border-slate-200/50 shrink-0">
                         <button type="button" onClick={fermer} className="px-3 sm:px-4 py-2 rounded-lg border border-slate-200/50 text-xs sm:text-sm font-semibold text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition">
-                            Annuler
+                            {t('Annuler')}
                         </button>
                         <button
                             disabled={busy}
                             className="px-3 sm:px-4 py-2 rounded-lg bg-vert-600 hover:bg-vert-700 disabled:opacity-60 text-white text-xs sm:text-sm font-bold shadow-sm shadow-vert-600/30 inline-flex items-center gap-1.5"
                         >
-                            {busy ? 'Enregistrement…' : (submitLabel ?? (mode === 'edit' ? 'Enregistrer les modifications' : 'Créer'))}
+                            {busy ? t('Enregistrement…') : (submitLabel ?? (mode === 'edit' ? t('Enregistrer les modifications') : t('Créer')))}
                         </button>
                     </div>
                 </form>
@@ -72,18 +74,23 @@ export function EditModal({ open, onClose, title, mode = 'create', children, onS
    Usage : <ConfirmModal open message="…" onConfirm={…} onClose={…} /> */
 export function ConfirmModal({
     open,
-    title = 'Confirmer la suppression',
+    title,
     message,
-    confirmLabel = 'Supprimer',
-    cancelLabel = 'Annuler',
-    busyLabel = 'Suppression…',
+    confirmLabel,
+    cancelLabel,
+    busyLabel,
     danger = true,
     icone = null, // icône du bouton de confirmation (poubelle par défaut en mode danger)
     busy = false,
     onConfirm,
     onClose,
 }) {
+    const { t } = useT();
     if (! open) return null;
+    const titre = title ?? t('Confirmer la suppression');
+    const libConfirmer = confirmLabel ?? t('Supprimer');
+    const libAnnuler = cancelLabel ?? t('Annuler');
+    const libBusy = busyLabel ?? t('Suppression…');
     const fermer = () => { sons.fermer(); onClose(); };
     return createPortal(
         <div
@@ -97,7 +104,7 @@ export function ConfirmModal({
                     }`}>
                         <TriangleAlert size={24} />
                     </div>
-                    <h2 className="font-bold text-slate-800 text-sm">{title}</h2>
+                    <h2 className="font-bold text-slate-800 text-sm">{titre}</h2>
                     <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">{message}</p>
                 </div>
                 <div className="flex gap-2 px-5 pb-5">
@@ -107,7 +114,7 @@ export function ConfirmModal({
                         disabled={busy}
                         className="flex-1 px-4 py-2 rounded-lg border border-slate-200/50 text-sm font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition disabled:opacity-60"
                     >
-                        {cancelLabel}
+                        {libAnnuler}
                     </button>
                     <button
                         type="button"
@@ -120,7 +127,7 @@ export function ConfirmModal({
                         }`}
                     >
                         {! busy && (danger && icone === null ? <Trash2 size={15} /> : icone)}
-                        {busy ? busyLabel : confirmLabel}
+                        {busy ? libBusy : libConfirmer}
                     </button>
                 </div>
             </div>
@@ -143,11 +150,12 @@ export function PrimaryButton({ children, onClick, disabled, type = 'button', cl
     );
 }
 
-export function Spinner({ label = 'Chargement…' }) {
+export function Spinner({ label }) {
+    const { t } = useT();
     return (
         <div className="flex flex-col items-center justify-center py-16 text-slate-500">
             <div className="w-8 h-8 border-3 border-slate-300 border-t-blue-600 rounded-full animate-spin" />
-            <p className="mt-3 text-sm">{label}</p>
+            <p className="mt-3 text-sm">{label ?? t('Chargement…')}</p>
         </div>
     );
 }

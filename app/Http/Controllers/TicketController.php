@@ -44,6 +44,12 @@ class TicketController extends CrudController
         $data = $request->validate($this->rules());
         $data['date_creation'] = today();
 
+        // Le déclarant est celui qui dépose le ticket : s'il n'est pas
+        // explicitement désigné, l'agent rattaché au compte connecté le devient.
+        if (empty($data['id_agent']) && ($agentConnecte = auth()->user()->agent)) {
+            $data['id_agent'] = $agentConnecte->id_agent;
+        }
+
         // Référence dérivée de l'id auto-increment (unique par construction) :
         // insensible aux créations concurrentes et aux suppressions, contrairement
         // à un comptage count()+1. La colonne étant NOT NULL, une référence
@@ -77,7 +83,18 @@ class TicketController extends CrudController
     public function update(Request $request, int $id): JsonResponse
     {
         $ticket = Ticket::findOrFail($id);
-        $data = $request->validate($this->rules());
+
+        // Le changement rapide de statut (page des tickets) n'envoie qu'un objet
+        // { statut } : à la mise à jour, les champs obligatoires de la création
+        // (titre, priorite) deviennent donc facultatifs s'ils ne sont pas envoyés.
+        $reglesMaj = array_map(
+            static fn (array $contraintes): array => array_map(
+                static fn ($contrainte) => $contrainte === 'required' ? 'sometimes' : $contrainte,
+                $contraintes
+            ),
+            $this->rules()
+        );
+        $data = $request->validate($reglesMaj);
 
         if (($data['statut'] ?? null) && in_array($data['statut'], ['resolu', 'ferme']) && ! $ticket->date_cloture) {
             $data['date_cloture'] = today();

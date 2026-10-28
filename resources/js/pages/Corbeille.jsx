@@ -4,6 +4,7 @@ import { api } from '../api';
 import { Spinner, PageHeader, EmptyState, Badge, ConfirmModal } from '../components/ui';
 import { useAuth, ROLES_ECRITURE, aRole } from '../auth';
 import { sons } from '../lib/sons';
+import { useT } from '../lib/i18n';
 
 /* Onglets : un par section de la corbeille (style identique à Rapports). */
 const SECTIONS = [
@@ -21,6 +22,7 @@ const formatDateTime = (iso) => {
 };
 
 function Ligne({ item, peutEffacer, onRestaurer, onSupprimer }) {
+    const { t } = useT();
     const equipement = item.code_inventaire !== undefined;
     return (
         <tr className="border-b border-slate-100 last:border-0 hover:bg-slate-100/60">
@@ -47,14 +49,14 @@ function Ligne({ item, peutEffacer, onRestaurer, onSupprimer }) {
                 <td className="py-2.5 text-right whitespace-nowrap">
                     <button
                         onClick={() => { sons.clic(); onRestaurer(item); }}
-                        title="Restaurer cet élément"
+                        title={t('Restaurer cet élément')}
                         className="p-1.5 rounded-lg text-vert-600 hover:text-vert-700 hover:bg-vert-100 transition-colors mr-1"
                     >
                         <RotateCcw size={14} />
                     </button>
                     <button
                         onClick={() => { sons.clic(); onSupprimer(item); }}
-                        title="Supprimer définitivement"
+                        title={t('Supprimer définitivement')}
                         className="p-1.5 rounded-lg text-rose-600 hover:text-rose-700 hover:bg-rose-100 transition-colors"
                     >
                         <Trash2 size={14} />
@@ -66,6 +68,7 @@ function Ligne({ item, peutEffacer, onRestaurer, onSupprimer }) {
 }
 
 function OngletSection({ section, items, loading, peutEffacer, onRestaurer, onSupprimer, onVider }) {
+    const { t } = useT();
     const { label, icon: Icon } = SECTIONS.find((s) => s.key === section);
 
     const colonnes = section === 'equipements'
@@ -77,7 +80,7 @@ function OngletSection({ section, items, loading, peutEffacer, onRestaurer, onSu
             <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                 <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
                     <Icon size={16} className={items?.length ? 'text-rose-600' : 'text-slate-400'} />
-                    Corbeille des {label.toLowerCase()}
+                    {t('Corbeille des ')}{t(label).toLowerCase()}
                     <Badge color={items?.length ? 'bg-vert-100 text-vert-400 border-vert-200' : 'bg-slate-200 text-slate-500 border-slate-300'}>
                         {items?.length ?? 0}
                     </Badge>
@@ -88,19 +91,19 @@ function OngletSection({ section, items, loading, peutEffacer, onRestaurer, onSu
                         className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold transition-colors"
                     >
                         <Trash2 size={13} />
-                        Vider
+                        {t('Vider')}
                     </button>
                 )}
             </div>
 
-            {loading ? <Spinner label="Chargement de la corbeille…" /> : (
+            {loading ? <Spinner label={t('Chargement de la corbeille…')} /> : (
                 items?.length ? (
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="text-left text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
-                                    {colonnes.map((c) => <th key={c} className="py-2 pr-3">{c}</th>)}
-                                    {peutEffacer && <th className="py-2 text-right">Actions</th>}
+                                    {colonnes.map((c) => <th key={c} className="py-2 pr-3">{t(c)}</th>)}
+                                    {peutEffacer && <th className="py-2 text-right">{t('Actions')}</th>}
                                 </tr>
                             </thead>
                             <tbody>
@@ -117,7 +120,7 @@ function OngletSection({ section, items, loading, peutEffacer, onRestaurer, onSu
                         </table>
                     </div>
                 ) : (
-                    <EmptyState icon={Archive} title={`Corbeille des ${label.toLowerCase()} : vide`} hint="Aucun élément supprimé pour le moment." />
+                    <EmptyState icon={Archive} title={`${t('Corbeille des ')}${t(label).toLowerCase()}${t(' : vide')}`} hint={t('Aucun élément supprimé pour le moment.')} />
                 )
             )}
         </div>
@@ -125,6 +128,7 @@ function OngletSection({ section, items, loading, peutEffacer, onRestaurer, onSu
 }
 
 export default function Corbeille() {
+    const { t } = useT();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [busy, setBusy] = useState(false);
@@ -190,8 +194,8 @@ export default function Corbeille() {
     return (
         <div>
             <PageHeader
-                title="Corbeille"
-                subtitle="Équipements et agents supprimés — restaurez-les ou effacez-les définitivement"
+                title={t('Corbeille')}
+                subtitle={t('Équipements et agents supprimés — restaurez-les ou effacez-les définitivement')}
             />
 
             {/* Onglets : choisir la section (style identique à Rapports) */}
@@ -206,7 +210,7 @@ export default function Corbeille() {
                                 : 'text-slate-600 hover:text-slate-800'
                         }`}
                     >
-                        <Icon size={14} /> {label}
+                        <Icon size={14} /> {t(label)}
                         <Badge
                             color={data?.[key]?.length
                                 ? 'bg-vert-100 text-vert-400 border-vert-200'
@@ -233,11 +237,11 @@ export default function Corbeille() {
             {/* Restaurer */}
             <ConfirmModal
                 open={!! aRestaurer}
-                title="Restaurer cet élément ?"
-                message={<>L'élément redeviendra visible normalement dans l'application.</>}
-                confirmLabel="Restaurer"
-                cancelLabel="Annuler"
-                busyLabel="Restauration…"
+                title={t('Restaurer cet élément ?')}
+                message={t("L'élément redeviendra visible normalement dans l'application.")}
+                confirmLabel={t('Restaurer')}
+                cancelLabel={t('Annuler')}
+                busyLabel={t('Restauration…')}
                 busy={busy}
                 danger={false}
                 icone={<RotateCcw size={15} />}
@@ -248,11 +252,11 @@ export default function Corbeille() {
             {/* Supprimer définitivement */}
             <ConfirmModal
                 open={!! aSupprimer}
-                title="Supprimer définitivement ?"
-                message={<>L'élément sera effacé de la base de données. Cette action est <strong className="text-slate-700">irréversible</strong>.</>}
-                confirmLabel="Supprimer définitivement"
-                cancelLabel="Annuler"
-                busyLabel="Suppression…"
+                title={t('Supprimer définitivement ?')}
+                message={<>{t("L'élément sera effacé de la base de données. Cette action est ")}<strong className="text-slate-700">{t('irréversible')}</strong>.</>}
+                confirmLabel={t('Supprimer définitivement')}
+                cancelLabel={t('Annuler')}
+                busyLabel={t('Suppression…')}
                 busy={busy}
                 onConfirm={() => supprimerDefinitivement(aSupprimer)}
                 onClose={() => setASupprimer(null)}
@@ -261,11 +265,11 @@ export default function Corbeille() {
             {/* Vider une section */}
             <ConfirmModal
                 open={!! sectionAVider}
-                title="Vider cette corbeille ?"
-                message={<>Tous les éléments supprimés de cette section seront effacés définitivement. Action <strong className="text-slate-700">irréversible</strong>.</>}
-                confirmLabel="Vider"
-                cancelLabel="Annuler"
-                busyLabel="Purge…"
+                title={t('Vider cette corbeille ?')}
+                message={<>{t('Tous les éléments supprimés de cette section seront effacés définitivement. Action ')}<strong className="text-slate-700">{t('irréversible')}</strong>.</>}
+                confirmLabel={t('Vider')}
+                cancelLabel={t('Annuler')}
+                busyLabel={t('Purge…')}
                 busy={busy}
                 onConfirm={() => viderSection(sectionAVider)}
                 onClose={() => setSectionAVider(null)}

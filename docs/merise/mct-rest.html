@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>MCT - restitutions</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  themeVariables: {
+    fontFamily: 'Georgia, serif',
+    fontSize: '15px',
+    primaryColor: '#dbeafe',
+    primaryTextColor: '#0f172a',
+    primaryBorderColor: '#1e40af',
+    lineColor: '#475569',
+    clusterBkg: '#f8fafc',
+    clusterBorder: '#94a3b8'
+  },
+  flowchart: { useMaxWidth: false, curve: 'linear', nodeSpacing: 40, rankSpacing: 60, htmlLabels: true, padding: 12 },
+  securityLevel: 'loose'
+});</script>
+<style>
+body{margin:0;padding:20px;background:#fff}
+.legende{font-family:'Times New Roman',serif;font-size:14px;color:#334155;max-width:950px}
+</style>
+</head>
+<body>
+<div class="mermaid">
+flowchart LR
+  classDef ev fill:#dbeafe,stroke:#1e40af,stroke-width:1.4px,color:#0f172a
+  classDef op fill:#f1f5f9,stroke:#475569,stroke-width:1.2px,color:#0f172a
+
+  subgraph P5["PROCESSUS 5 - Restitution par un equipment"]
+    direction TB
+    e11(["E11 : fin de mission<br/>ou demande de restitution"]):::ev
+    o51["O51 : Verifier l etat<br/>de l equipement"]:::op
+    e12(["E12 : equipement conforme<br/>restitue"]):::ev
+    o52["O52 : Cloturer l AFFECTATION"]:::op
+    o53["O53 : Creer le<br/>MOUVEMENT de restitution"]:::op
+    e13(["E13 : equipement possible<br/>pour mise en stock"]):::ev
+    e11 => o51
+    o51 -- "equipement au titre de maintenance" --> P3
+    o51 => o52
+    o52 => o53
+    o53 => e13
+  end
+
+  subgraph P6["PROCESSUS 6 - Reforme d un equipement"]
+    direction TB
+    e14(["E14 : equipment non reparable<br/>ou hors service"]):::ev
+    o61["O61 : Proposer la reforme<br/>DE EQUIPEMENT"]:::op
+    o62["O62 : Faire verifier<br/> furnished la reforme"]:::op
+    e15(["E15 : equipement reforme<br/>ou sorti du parc"]):::ev
+    e14 => o61
+    o61 => o62
+    o62 -- "reforme refusee" --> e14
+    o62 => e15
+  end
+
+  classDef ev2 fill:#dbeafe,stroke:#1e40af
+  class e11,e12,e13,e14,e15 ev2
+  class o51,o52,o53,o61,o62 op
+</div>
+<div class="legende">
+Suite du modele conceptuel de traitement : processus de <b>restitution</b> et de <b>reforme</b> des equipements.
+</div>
+</body>
+</html>

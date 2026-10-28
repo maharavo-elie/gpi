@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>MLD - GPI</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+body{margin:0;padding:24px;background:#fff}
+#err{font-family:monospace;color:#b91c1c;white-space:pre-wrap;max-width:1400px}
+</style>
+</head>
+<body>
+<div id="err"></div>
+<div id="graphe" class="mermaid">
+erDiagram
+  DIRECTIONS ||--o{ SERVICES : "id_direction"
+  DIRECTIONS ||--o{ AGENTS : "id_direction"
+  SERVICES |o--o{ AGENTS : "id_service"
+  DIRECTIONS |o--o{ SITES : "id_direction"
+  SITES ||--o{ BATIMENTS : "id_site"
+  BATIMENTS ||--o{ LOCALISATIONS : "id_batiment"
+  CATEGORIES ||--o{ MODELES : "id_categorie"
+  MARQUES ||--o{ MODELES : "id_marque"
+  MODELES |o--o{ EQUIPEMENTS : "id_modele"
+  CATEGORIES |o--o{ EQUIPEMENTS : "id_categorie"
+  MARQUES |o--o{ EQUIPEMENTS : "id_marque"
+  ETAT_EQUIPEMENTS |o--o{ EQUIPEMENTS : "id_etat"
+  LOCALISATIONS |o--o{ EQUIPEMENTS : "id_localisation"
+  FOURNISSEURS |o--o{ EQUIPEMENTS : "id_fournisseur"
+  FOURNISSEURS |o--o{ ACHATS : "id_fournisseur"
+  ACHATS ||--o{ DETAIL_ACHATS : "id_achat"
+  EQUIPEMENTS |o--o{ DETAIL_ACHATS : "id_detail_achat"
+  EQUIPEMENTS ||--o{ AFFECTATIONS : "id_equipement"
+  AGENTS ||--o{ AFFECTATIONS : "id_agent"
+  EQUIPEMENTS ||--o{ MAINTENANCES : "id_equipement"
+  TYPE_MAINTENANCES ||--o{ MAINTENANCES : "id_type_maintenance"
+  AGENTS |o--o{ MAINTENANCES : "id_agent"
+  EQUIPEMENTS |o--o{ TICKETS : "id_equipement"
+  AGENTS |o--o{ TICKETS : "id_agent"
+  TICKETS ||--o{ TICKET_COMMENTAIRES : "id_ticket"
+  UTILISATEURS |o--o{ TICKET_COMMENTAIRES : "id_utilisateur"
+  AGENTS |o--o{ UTILISATEURS : "id_agent"
+  UTILISATEURS ||--o{ ROLE_UTILISATEUR : "id_utilisateur"
+  ROLES ||--o{ ROLE_UTILISATEUR : "id_role"
+  UTILISATEURS |o--o{ INVENTAIRES : "id_utilisateur"
+  INVENTAIRES ||--o{ INVENTAIRE_DETAILS : "id_inventaire"
+  EQUIPEMENTS ||--o{ INVENTAIRE_DETAILS : "id_equipement"
+  LOGICIELS ||--o{ LICENCES : "id_logiciel"
+  LOGICIELS ||--o{ INSTALLATION_LOGICIELS : "id_logiciel"
+  EQUIPEMENTS ||--o{ INSTALLATION_LOGICIELS : "id_equipement"
+  EQUIPEMENTS ||--o{ MOUVEMENTS : "id_equipement"
+  LOCALISATIONS |o--o{ MOUVEMENTS : "ancienne_localisation"
+  LOCALISATIONS |o--o{ MOUVEMENTS : "nouvelle_localisation"
+  UTILISATEURS |o--o{ MOUVEMENTS : "id_utilisateur"
+  MOUVEMENTS ||--o{ MOUVEMENT_HISTORIQUES : "id_mouvement"
+  UTILISATEURS |o--o{ MOUVEMENT_HISTORIQUES : "id_utilisateur"
+  EQUIPEMENTS |o--o{ DOCUMENTS : "id_equipement"
+  UTILISATEURS |o--o{ DOCUMENTS : "id_utilisateur"
+  EQUIPEMENTS ||--|| QR_CODES : "id_equipement"
+  UTILISATEURS |o--o{ NOTIFICATIONS : "id_utilisateur"
+  UTILISATEURS |o--o{ JOURNAL_ACTIVITES : "id_utilisateur"
+  EQUIPEMENTS {
+    bigint id_equipement PK
+    string code_inventaire UK
+    string numero_serie UK
+    string designation
+    date date_acquisition
+    decimal prix_acquisition
+    enum statut
+    bigint id_modele FK
+    bigint id_categorie FK
+    bigint id_marque FK
+    bigint id_direction FK
+    bigint id_service FK
+    bigint id_fournisseur FK
+    bigint id_localisation FK
+    bigint id_etat FK
+    bigint id_detail_achat FK
+  }
+  AFFECTATIONS {
+    bigint id_affectation PK
+    date date_affectation
+    date date_fin
+    string motif
+    bigint id_equipement FK
+    bigint id_agent FK
+  }
+  AGENTS {
+    bigint id_agent PK
+    string matricule UK
+    string nom_naiss
+    string prenom
+    string fonction
+    enum statut
+    bigint id_direction FK
+    bigint id_service FK
+  }
+  UTILISATEURS {
+    bigint id_utilisateur PK
+    string username UK
+    string email UK
+    string password
+    boolean actif
+    bigint id_agent FK
+  }
+  ROLES {
+    bigint id_role PK
+    string nom_role UK
+  }
+  ROLE_UTILISATEUR {
+    bigint id_utilisateur PK, FK
+    bigint id_role PK, FK
+  }
+  DIRECTIONS {
+    bigint id_direction PK
+    string code_direction UK
+    string nom_direction
+    string telephone
+    string email
+    enum statut
+  }
+  SERVICES {
+    bigint id_service PK
+    string code_service UK
+    string nom_service
+    bigint id_direction FK
+    enum statut
+  }
+  SITES {
+    bigint id_site PK
+    string code_site UK
+    string nom_site
+    string ville
+    bigint id_direction FK
+  }
+  BATIMENTS {
+    bigint id_batiment PK
+    string code_batiment UK
+    string nom_batiment
+    bigint id_site FK
+  }
+  LOCALISATIONS {
+    bigint id_localisation PK
+    string code_localisation UK
+    string etage
+    string bureau
+    bigint id_batiment FK
+  }
+  CATEGORIES {
+    bigint id_categorie PK
+    string code_categorie UK
+    string nom_categorie
+    enum statut
+  }
+  MARQUES {
+    bigint id_marque PK
+    string nom_marque UK
+  }
+  MODELES {
+    bigint id_modele PK
+    string reference_modele UK
+    string nom_modele
+    bigint id_categorie FK
+    bigint id_marque FK
+  }
+  ETAT_EQUIPEMENTS {
+    bigint id_etat PK
+    string nom_etat UK
+  }
+  FOURNISSEURS {
+    bigint id_fournisseur PK
+    string raison_sociale
+    string contact
+    string telephone
+    string rcs
+    enum statut
+  }
+  ACHATS {
+    bigint id_achat PK
+    string reference_achat UK
+    date date_achat
+    string numero_facture
+    decimal montant_total
+    enum statut
+    bigint id_fournisseur FK
+  }
+  DETAIL_ACHATS {
+    bigint id_detail_achat PK
+    int quantite
+    decimal prix_unitaire
+    decimal montant
+    date date_livraison
+    bigint id_achat FK
+    bigint id_equipement FK
+  }
+  TYPE_MAINTENANCES {
+    bigint id_type_maintenance PK
+    string nom_type UK
+  }
+  MAINTENANCES {
+    bigint id_maintenance PK
+    date date_demande
+    date date_debut
+    date date_fin
+    string technicien
+    enum statut
+    bigint id_equipement FK
+    bigint id_type_maintenance FK
+    bigint id_agent FK
+  }
+  TICKETS {
+    bigint id_ticket PK
+    string reference_ticket UK
+    string titre
+    enum priorite
+    date date_creation
+    date date_cloture
+    enum statut
+    bigint id_equipement FK
+    bigint id_agent FK
+  }
+  TICKET_COMMENTAIRES {
+    bigint id_commentaire PK
+    text contenu
+    timestamp date_commentaire
+    bigint id_ticket FK
+    bigint id_utilisateur FK
+  }
+  INVENTAIRES {
+    bigint id_inventaire PK
+    string reference UK
+    date date_debut
+    date date_fin
+    enum statut
+    bigint id_utilisateur FK
+  }
+  INVENTAIRE_DETAILS {
+    bigint id_detail PK
+    boolean presence
+    date date_constat
+    enum statut
+    bigint id_inventaire FK
+    bigint id_equipement FK
+  }
+  LOGICIELS {
+    bigint id_logiciel PK
+    string nom
+    string version
+    string editeur
+  }
+  LICENCES {
+    bigint id_licence PK
+    string reference_licence UK
+    string type_licence
+    int nb_licences
+    date date_expiration
+    enum statut
+    bigint id_logiciel FK
+  }
+  INSTALLATION_LOGICIELS {
+    bigint id_installation PK
+    date date_installation
+    string version_installee
+    enum statut
+    bigint id_logiciel FK
+    bigint id_equipement FK
+  }
+  MOUVEMENTS {
+    bigint id_mouvement PK
+    enum type_mouvement
+    date date_mouvement
+    text motif
+    bigint id_equipement FK
+    bigint id_utilisateur FK
+    bigint ancienne_localisation FK
+    bigint nouvelle_localisation FK
+  }
+  MOUVEMENT_HISTORIQUES {
+    bigint id_historique PK
+    string table_concernee
+    string champ
+    string ancienne_valeur
+    string nouvelle_valeur
+    bigint id_mouvement FK
+    bigint id_utilisateur FK
+  }
+  DOCUMENTS {
+    bigint id_document PK
+    string nom_document
+    string chemin_fichier
+    bigint id_equipement FK
+    bigint id_utilisateur FK
+  }
+  QR_CODES {
+    bigint id_qrcode PK
+    text contenu
+    timestamp date_generation
+    enum statut
+    bigint id_equipement UK, FK
+  }
+  NOTIFICATIONS {
+    bigint id_notification PK
+    string titre
+    enum type
+    boolean lu
+    timestamp date_creation
+    bigint id_utilisateur FK
+  }
+  JOURNAL_ACTIVITES {
+    bigint id_log PK
+    string action
+    string table_concernee
+    timestamp date_action
+    string adresse_ip
+    bigint id_utilisateur FK
+  }
+</div>
+<script>
+window.addEventListener('load', function () {
+  mermaid.initialize({ startOnLoad: false, theme: 'base',
+    themeVariables: { fontFamily: 'Georgia, serif', fontSize: '14px',
+      primaryColor: '#e0f2fe', primaryTextColor: '#0f172a', primaryBorderColor: '#0369a1',
+      lineColor: '#475569' },
+    er: { useMaxWidth: false, fontSize: 14, minEntityWidth: 180, minEntityHeight: 110, entityPadding: 14 } });
+  var src = document.getElementById('graphe').textContent.trim();
+  try {
+    mermaid.parse(src);
+    mermaid.run({ nodes: [document.getElementById('graphe')] });
+  } catch (e) {
+    document.getElementById('err').textContent = 'ERREUR MERMAID : ' + (e && (e.str || e.message || e));
+  }
+});
+</script>
+</body>
+</html>

@@ -5,6 +5,7 @@ import { useAuth, aRole, ROLES_ECRITURE } from '../auth';
 import { Spinner, PageHeader, EmptyState, Badge, Field, inputClass, ErrorText, EditModal, ConfirmModal } from './ui';
 import { formatDate } from '../lib/constants';
 import { sons } from '../lib/sons';
+import { useT } from '../lib/i18n';
 import { telechargerExport, nomExport } from '../lib/exports';
 
 /**
@@ -28,6 +29,8 @@ export default function ResourcePage({
     rolesEcriture = ROLES_ECRITURE, // rôles autorisés à créer/modifier/supprimer
 }) {
     const { user } = useAuth();
+    const { t, langue } = useT();
+    const titreT = t(titre);
     const peutEcrire = aRole(user, rolesEcriture);
     const [items, setItems] = useState(null);
     const [ref, setRef] = useState(null);
@@ -54,7 +57,7 @@ export default function ResourcePage({
             const params = Object.fromEntries(Object.entries({ q, statut: statutFiltre }).filter(([, v]) => v !== ''));
             await telechargerExport(`/rapports/pdf/ressource/${nomRessource}`, params, nomExport(`registre_${nomRessource}`));
         } catch {
-            setMessage({ text: 'Génération du PDF impossible.', type: 'error' });
+            setMessage({ text: t('Génération du PDF impossible.'), type: 'error' });
             setTimeout(() => setMessage(null), 4000);
         } finally {
             setPdfEnCours(false);
@@ -113,16 +116,16 @@ export default function ResourcePage({
             const payload = Object.fromEntries(Object.entries(form).map(([k, v]) => [k, v === '' ? null : v]));
             if (modal?.mode === 'edit') {
                 await api.put(`${endpoint}/${modal.item[idKey]}`, payload);
-                notifier('Modifications enregistrées.');
+                notifier(t('Modifications enregistrées.'));
             } else {
                 await api.post(endpoint, payload);
-                notifier(`${labelElement ?? 'Élément'} créé(e).`);
+                notifier(`${labelElement ? t(labelElement) : t('Élément')} ${t('créé(e).')}`);
             }
             setModal(null);
             sons.succes();
             await load();
         } catch (err) {
-            setErrors(err.response?.data?.errors ?? { erreur: [err.response?.data?.message ?? 'Enregistrement impossible.'] });
+            setErrors(err.response?.data?.errors ?? { erreur: [t('Enregistrement impossible.')] });
         } finally {
             setBusy(false);
         }
@@ -140,25 +143,25 @@ export default function ResourcePage({
         setBusySuppression(true);
         try {
             await api.delete(`${endpoint}/${aSupprimer[idKey]}`);
-            notifier('Élément supprimé.');
+            notifier(t('Élément supprimé.'));
             sons.succes();
             setASupprimer(null);
             await load();
         } catch (err) {
-            notifier(err.response?.data?.message ?? 'Suppression impossible (élément utilisé ailleurs).', 'error');
+            notifier(err.response?.data?.message ?? t('Suppression impossible (élément utilisé ailleurs).'), 'error');
             sons.alerte();
         } finally {
             setBusySuppression(false);
         }
     };
 
-    if (! items) return <Spinner label={`Chargement ${titre.toLowerCase()}…`} />;
+    if (! items) return <Spinner label={`${t('Chargement')} ${titreT.toLowerCase()}…`} />;
 
     return (
         <div className="anim-fade-up">
             <PageHeader
-                title={titre}
-                subtitle={sousTitre ?? `${items.length} élément(s)`}
+                title={titreT}
+                subtitle={sousTitre ?? `${items.length} ${t('élément(s)')}`}
                 actions={
                     <>
                         {nomRessource && (
@@ -167,12 +170,12 @@ export default function ResourcePage({
                                 disabled={pdfEnCours}
                                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 active:scale-[.97] text-blue-300 text-sm font-bold transition-all disabled:opacity-60"
                             >
-                                <FileDown size={15} /> {pdfEnCours ? 'Génération…' : 'Imprimer PDF'}
+                                <FileDown size={15} /> {pdfEnCours ? t('Génération…') : t('Imprimer PDF')}
                             </button>
                         )}
                         {peutEcrire && (
                             <button onClick={ouvrirCreation} className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-vert-600 hover:bg-vert-700 active:scale-[.97] text-white text-sm font-bold shadow-sm shadow-vert-600/30 transition-all">
-                                <Plus size={15} /> Ajouter
+                                <Plus size={15} /> {t('Ajouter')}
                             </button>
                         )}
                     </>
@@ -191,13 +194,13 @@ export default function ResourcePage({
             <div className="bg-card rounded-2xl border border-slate-200/50 shadow-sm p-3 mb-4 flex flex-col sm:flex-row gap-2">
                 <div className="relative flex-1">
                     <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Rechercher…" className={`${inputClass} pl-9`} />
+                    <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('Rechercher…')} className={`${inputClass} pl-9`} />
                 </div>
                 {filtreStatut && (
                     <select value={statutFiltre} onChange={(e) => setStatutFiltre(e.target.value)} className={`${inputClass} sm:w-48`}>
-                        <option value="">Tous les statuts</option>
+                        <option value="">{t('Tous les statuts')}</option>
                         {filtreStatut.map(([v, l]) => (
-                            <option key={v} value={v}>{l}</option>
+                            <option key={v} value={v}>{t(l)}</option>
                         ))}
                     </select>
                 )}
@@ -210,9 +213,9 @@ export default function ResourcePage({
                         <thead>
                             <tr className="bg-slate-100 text-left text-[11px] uppercase tracking-wide text-slate-500 border-b border-slate-200/50">
                                 {colonnes.map((c) => (
-                                    <th key={c.key} className={`px-4 py-2.5 font-bold ${c.width ?? ''}`}>{c.label}</th>
+                                    <th key={c.key} className={`px-4 py-2.5 font-bold ${c.width ?? ''}`}>{t(c.label)}</th>
                                 ))}
-                                <th className="px-4 py-2.5 text-right font-bold w-44">Actions</th>
+                                <th className="px-4 py-2.5 text-right font-bold w-44">{t('Actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -227,7 +230,7 @@ export default function ResourcePage({
                                             {c.render
                                                 ? c.render(item)
                                                 : c.badge
-                                                    ? <Badge color={c.badge(item[c.key])}>{c.badgeLabel?.(item[c.key]) ?? item[c.key] ?? '—'}</Badge>
+                                                    ? <Badge color={c.badge(item[c.key])}>{t(c.badgeLabel?.(item[c.key]) ?? item[c.key] ?? '—')}</Badge>
                                                     : c.date
                                                         ? formatDate(item[c.key])
                                                         : c.mono
@@ -241,23 +244,23 @@ export default function ResourcePage({
                                                 <button
                                                     onMouseEnter={() => sons.clic()}
                                                     onClick={() => ouvrirEdition(item)}
-                                                    title="Modifier"
+                                                    title={t('Modifier')}
                                                     className="anim-wiggle inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-orange-200/60 bg-orange-100 hover:bg-orange-200 active:scale-[.95] text-orange-400 text-xs font-semibold transition-all"
                                                 >
-                                                    <Pencil size={13} /> Modifier
+                                                    <Pencil size={13} /> {t('Modifier')}
                                                 </button>
                                             )}
                                             {peutEcrire && (
                                                 <button
                                                     onClick={() => supprimer(item)}
-                                                    title="Supprimer"
+                                                    title={t('Supprimer')}
                                                     className="inline-flex items-center px-2.5 py-1.5 rounded-lg border border-rose-200/60 bg-rose-100 hover:bg-rose-200 active:scale-[.95] text-rose-400 text-xs font-semibold transition-all"
                                                 >
-                                                    <Trash2 size={13} /> Supprimer
+                                                    <Trash2 size={13} /> {t('Supprimer')}
                                                 </button>
                                             )}
                                             {!peutEcrire && (
-                                                <span className="text-xs text-slate-400 italic">Lecture seule</span>
+                                                <span className="text-xs text-slate-400 italic">{t('Lecture seule')}</span>
                                             )}
                                         </div>
                                     </td>
@@ -266,7 +269,7 @@ export default function ResourcePage({
                             {items.length === 0 && (
                                 <tr>
                                     <td colSpan={colonnes.length + 1}>
-                                        <EmptyState title="Aucun élément" hint="Ajoutez le premier ou ajustez la recherche." />
+                                        <EmptyState title={t('Aucun élément')} hint={t('Ajoutez le premier ou ajustez la recherche.')} />
                                     </td>
                                 </tr>
                             )}
@@ -278,7 +281,7 @@ export default function ResourcePage({
             {/* Modale de confirmation de suppression */}
             <ConfirmModal
                 open={!! aSupprimer}
-                message={aSupprimer ? <>Voulez-vous vraiment supprimer <strong className="text-slate-700">« {nomSuppression} »</strong> ? Cette action est définitive.</> : ''}
+                message={aSupprimer ? <>{t('Voulez-vous vraiment supprimer ')}<strong className="text-slate-700">« {nomSuppression} »</strong>{t(' ? Cette action est définitive.')}</> : ''}
                 busy={busySuppression}
                 onConfirm={confirmerSuppression}
                 onClose={() => setASupprimer(null)}
@@ -292,14 +295,14 @@ export default function ResourcePage({
                 onSubmit={submit}
                 busy={busy}
                 title={modal?.mode === 'edit'
-                    ? `Modifier — ${colonnes.find((c) => c.mono)?.render?.(modal.item) ?? modal.item[idKey]}`
-                    : `Nouvel élément — ${titre}`}
+                    ? `${t('Modifier — ')}${colonnes.find((c) => c.mono)?.render?.(modal.item) ?? modal.item[idKey]}`
+                    : `${t('Nouvel élément — ')}${titreT}`}
                 width="max-w-xl"
             >
                 <ErrorText key={errors ? JSON.stringify(errors) : 'aucune'} errors={errors} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {champs.map((c) => (
-                        <Field key={c.key} label={c.label} required={c.required}>
+                        <Field key={c.key} label={t(c.label)} required={c.required}>
                             {c.type === 'select' ? (
                                 <select value={form[c.key] ?? ''} onChange={(e) => setForm({ ...form, [c.key]: e.target.value })} className={inputClass}>
                                     {(c.options ?? []).map(([v, l]) => (

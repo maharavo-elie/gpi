@@ -7,6 +7,7 @@ import {
 import { api } from '../../api';
 import { Spinner, Badge, EmptyState } from '../../components/ui';
 import { STATUTS_EQUIPEMENT, STATUTS_MAINTENANCE, STATUTS_TICKET, formatDate, formatAr } from '../../lib/constants';
+import { useT } from '../../lib/i18n';
 
 function Section({ icon: Icon, title, children }) {
     return (
@@ -30,6 +31,7 @@ function Row({ label, children }) {
 
 export default function EquipementDetail() {
     const { id } = useParams();
+    const { t } = useT();
     const [eq, setEq] = useState(null);
     const [error, setError] = useState(null);
 
@@ -39,8 +41,8 @@ export default function EquipementDetail() {
             .catch(() => setError('Équipement introuvable.'));
     }, [id]);
 
-    if (error) return <EmptyState icon={Monitor} title={error} hint={<Link to="/equipements" className="text-blue-400 underline">Retour à la liste</Link>} />;
-    if (! eq) return <Spinner label="Chargement de la fiche…" />;
+    if (error) return <EmptyState icon={Monitor} title={t('Équipement introuvable.')} hint={<Link to="/equipements" className="text-blue-400 underline">{t('Retour à la liste')}</Link>} />;
+    if (! eq) return <Spinner label={t('Chargement de la fiche…')} />;
 
     const actives = eq.affectations?.filter((a) => ! a.date_fin) ?? [];
     const affectationActive = actives[0] ?? null;
@@ -67,13 +69,13 @@ export default function EquipementDetail() {
         <div>
             <div className="flex items-center justify-between mb-3">
                 <Link to="/equipements" className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-blue-300">
-                    <ArrowLeft size={14} /> Retour aux équipements
+                    <ArrowLeft size={14} /> {t('Retour aux équipements')}
                 </Link>
                 <button
                     onClick={imprimerFiche}
                     className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm shadow-blue-600/30 transition-all active:scale-[.97]"
                 >
-                    <FileDown size={13} /> Fiche PDF
+                    <FileDown size={13} /> {t('Fiche PDF')}
                 </button>
             </div>
 
@@ -96,59 +98,55 @@ export default function EquipementDetail() {
                                 <span>·</span>
                                 <span>{eq.marque?.nom_marque} {eq.modele?.nom_modele}</span>
                                 <span>·</span>
-                                <span className="font-mono">{eq.numero_serie ?? 'sans n° série'}</span>
+                                <span className="font-mono">{eq.numero_serie ?? t('sans n° série')}</span>
                             </div>
                         </div>
                     </div>
-                    {eq.etat && <Badge color="bg-slate-100 text-slate-700 border-slate-200">État : {eq.etat.nom_etat}</Badge>}
+                    {eq.etat && <Badge color="bg-slate-100 text-slate-700 border-slate-200">{t('État : ')}{eq.etat.nom_etat}</Badge>}
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {/* Caractéristiques */}
-                <Section icon={Monitor} title="Caractéristiques">
-                    <Row label="Catégorie">{eq.categorie?.nom_categorie ?? '—'}</Row>
-                    <Row label="Modèle">{eq.modele?.nom_modele ?? '—'}</Row>
-                    <Row label="Direction">
-                        {directionEffective ?? '—'}
-                        {affectationActive && eq.direction && eq.direction.nom_direction !== directionEffective && (
-                            <span className="text-[11px] text-slate-400"> (fiche : {eq.direction.nom_direction})</span>
-                        )}
-                    </Row>
-                    <Row label="Service">
+                {/* Caractéristiques */}                <Section icon={Monitor} title={t('Caractéristiques')}>
+                    <Row label={t('Catégorie')}>{eq.categorie?.nom_categorie ?? '—'}</Row>
+                    <Row label={t('Modèle')}>{eq.modele?.nom_modele ?? '—'}</Row>
+                    <Row label={t('Direction')}>{directionEffective ?? '—'}{affectationActive && eq.direction && eq.direction.nom_direction !== directionEffective && (
+                            <span className="text-[11px] text-slate-400">{t(' (fiche : ')}{eq.direction.nom_direction})</span>
+                        )}</Row>
+                    <Row label={t('Service')}>
                         {serviceEffectif
                             ? <span className="inline-flex items-center gap-1"><MapPin size={13} className="text-blue-400" />{serviceEffectif}</span>
                             : '—'}
                     </Row>
-                    <Row label="Fournisseur">{eq.fournisseur?.raison_sociale ?? '—'}</Row>
-                    <Row label="Localisation">
+                    <Row label={t('Fournisseur')}>{eq.fournisseur?.raison_sociale ?? '—'}</Row>
+                    <Row label={t('Localisation')}>
                         {eq.localisation
                             ? <span className="inline-flex items-center gap-1"><MapPin size={13} className="text-slate-400" />{eq.localisation.nom_localisation}</span>
-                            : 'Stock'}
+                            : t('Stock')}
                     </Row>
                 </Section>
 
                 {/* Cycle de vie */}
-                <Section icon={CalendarDays} title="Cycle de vie">
-                    <Row label="Acquisition">{formatDate(eq.date_acquisition)}</Row>
-                    <Row label="Mise en service">{formatDate(eq.date_mise_service)}</Row>
-                    <Row label="Prix d'acquisition">
+                <Section icon={CalendarDays} title={t('Cycle de vie')}>
+                    <Row label={t('Acquisition')}>{formatDate(eq.date_acquisition)}</Row>
+                    <Row label={t('Mise en service')}>{formatDate(eq.date_mise_service)}</Row>
+                    <Row label={t("Prix d'acquisition")}>
                         <span className="inline-flex items-center gap-1"><CircleDollarSign size={13} className="text-blue-400" />{formatAr(eq.prix_acquisition)}</span>
                     </Row>
-                    <Row label="Garantie">
+                    <Row label={t('Garantie')}>
                         {eq.garantie_fin
                             ? <span className="inline-flex items-center gap-1">
                                 <ShieldCheck size={13} className={new Date(eq.garantie_fin) > new Date() ? 'text-blue-400' : 'text-slate-500'} />
-                                jusqu'au {formatDate(eq.garantie_fin)}
+                                {t("jusqu'au ")}{formatDate(eq.garantie_fin)}
                               </span>
                             : '—'}
                     </Row>
-                    <Row label="Créée le">{formatDate(eq.created_at)}</Row>
+                    <Row label={t('Créée le')}>{formatDate(eq.created_at)}</Row>
                 </Section>
 
                 {/* Affectations */}
-                <Section icon={User} title={`Affectations (${eq.affectations?.length ?? 0})`}>
-                    {eq.affectations?.length === 0 && <p className="text-xs text-slate-500">Jamais affecté.</p>}
+                <Section icon={User} title={`${t('Affectations (')}${eq.affectations?.length ?? 0})`}>
+                    {eq.affectations?.length === 0 && <p className="text-xs text-slate-500">{t('Jamais affecté.')}</p>}
                     <div className="space-y-2">
                         {actives.map((a) => (
                             <div key={a.id_affectation} className="rounded-xl bg-blue-50 border border-blue-200 p-3">
@@ -159,7 +157,7 @@ export default function EquipementDetail() {
                                     {a.agent?.fonction && <>{a.agent.fonction} · </>}
                                     {a.agent?.service?.nom_service && <>{a.agent.service.nom_service} · </>}
                                     {a.agent?.direction?.nom_direction ?? a.agent?.direction?.code_direction ?? ''}
-                                    {' '}· depuis le {formatDate(a.date_affectation)}
+                                    {' '}{t(' · depuis le ')}{formatDate(a.date_affectation)}
                                 </div>
                             </div>
                         ))}
@@ -173,9 +171,9 @@ export default function EquipementDetail() {
                 </Section>
 
                 {/* Maintenance & tickets */}
-                <Section icon={Wrench} title="Maintenance & tickets">
+                <Section icon={Wrench} title={t('Maintenance & tickets')}>
                     {(eq.maintenances?.length ?? 0) === 0 && (eq.tickets?.length ?? 0) === 0 && (
-                        <p className="text-xs text-slate-500">Aucune intervention enregistrée.</p>
+                        <p className="text-xs text-slate-500">{t('Aucune intervention enregistrée.')}</p>
                     )}
                     <div className="space-y-2">
                         {eq.maintenances?.map((m) => (
@@ -187,23 +185,23 @@ export default function EquipementDetail() {
                                 <Badge color={STATUTS_MAINTENANCE[m.statut]?.color}>{STATUTS_MAINTENANCE[m.statut]?.label ?? m.statut}</Badge>
                             </div>
                         ))}
-                        {eq.tickets?.map((t) => (
-                            <div key={`t${t.id_ticket}`} className="flex items-center justify-between gap-2 text-sm py-2 border-b border-slate-100 last:border-0">
+                        {eq.tickets?.map((tk) => (
+                            <div key={`t${tk.id_ticket}`} className="flex items-center justify-between gap-2 text-sm py-2 border-b border-slate-100 last:border-0">
                                 <div className="min-w-0">
                                     <div className="font-semibold text-slate-800 truncate flex items-center gap-1.5">
-                                        <LifeBuoy size={13} className="text-slate-500" /> {t.titre}
+                                        <LifeBuoy size={13} className="text-slate-500" /> {tk.titre}
                                     </div>
-                                    <div className="text-[11px] text-slate-500">{t.reference_ticket} · priorité {t.priorite}</div>
+                                    <div className="text-[11px] text-slate-500">{tk.reference_ticket} · {t('priorité ')}{tk.priorite}</div>
                                 </div>
-                                <Badge color={STATUTS_TICKET[t.statut]?.color}>{STATUTS_TICKET[t.statut]?.label ?? t.statut}</Badge>
+                                <Badge color={STATUTS_TICKET[tk.statut]?.color}>{STATUTS_TICKET[tk.statut]?.label ?? tk.statut}</Badge>
                             </div>
                         ))}
                     </div>
                 </Section>
 
                 {/* Logiciels installés */}
-                <Section icon={Disc} title={`Logiciels installés (${eq.installations?.length ?? 0})`}>
-                    {(eq.installations?.length ?? 0) === 0 && <p className="text-xs text-slate-500">Aucun logiciel enregistré.</p>}
+                <Section icon={Disc} title={`${t('Logiciels installés (')}${eq.installations?.length ?? 0})`}>
+                    {(eq.installations?.length ?? 0) === 0 && <p className="text-xs text-slate-500">{t('Aucun logiciel enregistré.')}</p>}
                     <div className="space-y-1.5">
                         {eq.installations?.map((inst) => (
                             <div key={inst.id_installation} className="flex items-center justify-between text-sm py-1.5 border-b border-slate-100 last:border-0">
@@ -215,13 +213,13 @@ export default function EquipementDetail() {
                 </Section>
 
                 {/* Mouvements */}
-                <Section icon={ArrowLeftRight} title={`Mouvements (${eq.mouvements?.length ?? 0})`}>
-                    {(eq.mouvements?.length ?? 0) === 0 && <p className="text-xs text-slate-500">Aucun mouvement.</p>}
+                <Section icon={ArrowLeftRight} title={`${t('Mouvements (')}${eq.mouvements?.length ?? 0})`}>
+                    {(eq.mouvements?.length ?? 0) === 0 && <p className="text-xs text-slate-500">{t('Aucun mouvement.')}</p>}
                     <div className="space-y-1.5">
                         {eq.mouvements?.map((m) => (
                             <div key={m.id_mouvement} className="flex items-center justify-between text-sm py-1.5 border-b border-slate-100 last:border-0">
                                 <div>
-                                    <span className="font-semibold text-slate-700 capitalize">{m.type_mouvement}</span>
+                                    <span className="font-semibold text-slate-700 capitalize">{t(m.type_mouvement)}</span>
                                     <span className="text-[11px] text-slate-500 block">{m.motif}</span>
                                 </div>
                                 <span className="text-[11px] text-slate-400 whitespace-nowrap">{formatDate(m.date_mouvement)}</span>
@@ -233,8 +231,8 @@ export default function EquipementDetail() {
 
             {/* Documents */}
             <div className="mt-4">
-                <Section icon={FileText} title={`Documents (${eq.documents?.length ?? 0})`}>
-                    {(eq.documents?.length ?? 0) === 0 && <p className="text-xs text-slate-500">Aucun document attaché.</p>}
+                <Section icon={FileText} title={`${t('Documents (')}${eq.documents?.length ?? 0})`}>
+                    {(eq.documents?.length ?? 0) === 0 && <p className="text-xs text-slate-500">{t('Aucun document attaché.')}</p>}
                 </Section>
             </div>
         </div>

@@ -42,6 +42,7 @@ import Logiciels from './pages/referentiels/Logiciels';
 // Système
 import Parametres from './pages/systeme/Parametres';
 import { Spinner } from './components/ui';
+import { LangueProvider } from './lib/i18n';
 
 function Protected({ children }) {
     const { user, loading } = useAuth();
@@ -67,6 +68,7 @@ window.addEventListener('pointerdown', deverrouillerAudio, { once: true, capture
 createRoot(document.getElementById('app')).render(
     <SettingsProvider>
     <AuthProvider>
+    <LangueProvider>
         <BrowserRouter>
             <Routes>
                 <Route path="/connexion" element={<PublicOnly><Connexion /></PublicOnly>} />
@@ -97,6 +99,7 @@ createRoot(document.getElementById('app')).render(
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
         </BrowserRouter>
+    </LangueProvider>
     </AuthProvider>
     </SettingsProvider>,
 );

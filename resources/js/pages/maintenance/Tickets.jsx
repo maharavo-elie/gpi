@@ -6,9 +6,11 @@ import { Spinner, PageHeader, EmptyState, Badge, Field, inputClass, ErrorText, E
 import { PRIORITES, STATUTS_TICKET, formatDate } from '../../lib/constants';
 import { telechargerExport, nomExport } from '../../lib/exports';
 import { useAuth, aRole, ROLES_INTERVENTION } from '../../auth';
+import { useT } from '../../lib/i18n';
 
 export default function Tickets() {
     const { user } = useAuth();
+    const { t } = useT();
     const peutEcrire = aRole(user, ROLES_INTERVENTION);
     const [tickets, setTickets] = useState(null);
     const [equipements, setEquipements] = useState([]);
@@ -34,7 +36,7 @@ export default function Tickets() {
             await load();
         } catch (err) {
             setASupprimer(null);
-            alert(err.response?.data?.message ?? 'Suppression impossible (élément utilisé ailleurs).');
+            alert(err.response?.data?.message ?? t('Suppression impossible (élément utilisé ailleurs).'));
         } finally {
             setBusySuppression(false);
         }
@@ -99,7 +101,7 @@ export default function Tickets() {
             setModal(null);
             await load();
         } catch (err) {
-            setErrors(err.response?.data?.errors ?? { erreur: ['Enregistrement impossible.'] });
+            setErrors(err.response?.data?.errors ?? { erreur: [t('Enregistrement impossible.')] });
         } finally {
             setBusy(false);
         }
@@ -119,13 +121,13 @@ export default function Tickets() {
         setCommentaire('');
     };
 
-    if (! tickets) return <Spinner label="Chargement des tickets…" />;
+    if (! tickets) return <Spinner label={t('Chargement des tickets…')} />;
 
     return (
         <div>
             <PageHeader
-                title="Tickets d'assistance"
-                subtitle={`${tickets.length} ticket(s)`}
+                title={t("Tickets d'assistance")}
+                subtitle={`${tickets.length} ${t(' ticket(s)')}`}
                 actions={
                     <>
                         <button
@@ -133,11 +135,11 @@ export default function Tickets() {
                             disabled={pdfEnCours}
                             className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-300 text-sm font-bold transition-all disabled:opacity-60"
                         >
-                            <FileDown size={15} /> {pdfEnCours ? 'Génération…' : 'Imprimer PDF'}
+                            <FileDown size={15} /> {pdfEnCours ? t('Génération…') : t('Imprimer PDF')}
                         </button>
                         {peutEcrire && (
                             <button onClick={ouvrirCreation} className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-sm shadow-blue-600/25">
-                                <Plus size={15} /> Nouveau ticket
+                                <Plus size={15} /> {t('Nouveau ticket')}
                             </button>
                         )}
                     </>
@@ -147,10 +149,10 @@ export default function Tickets() {
             <div className="bg-card rounded-2xl border border-slate-200/50 shadow-sm p-3 mb-4 flex flex-col sm:flex-row gap-2">
                 <div className="relative flex-1">
                     <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Rechercher un ticket…" className={`${inputClass} pl-9`} />
+                    <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('Rechercher un ticket…')} className={`${inputClass} pl-9`} />
                 </div>
                 <select value={statut} onChange={(e) => setStatut(e.target.value)} className={`${inputClass} sm:w-44`}>
-                    <option value="">Tous les statuts</option>
+                    <option value="">{t('Tous les statuts')}</option>
                     {Object.entries(STATUTS_TICKET).map(([k, m]) => (
                         <option key={k} value={k}>{m.label}</option>
                     ))}
@@ -171,14 +173,14 @@ export default function Tickets() {
                                 <div className="text-[11px] text-slate-500">
                                     {t.equipement ? `${t.equipement.code_inventaire} · ` : ''}
                                     {t.agent ? `${t.agent.prenom} ${t.agent.nom_naiss} · ` : ''}
-                                    créé le {formatDate(t.date_creation)}
+                                    {t('créé le ')}{formatDate(t.date_creation)}
                                 </div>
                             </div>
                             <div className="flex items-center gap-1.5 shrink-0">
                                 {peutEcrire && (
                                     <button
                                         onClick={() => setASupprimer(t)}
-                                        title="Supprimer ce ticket"
+                                        title={t('Supprimer ce ticket')}
                                         className="inline-flex items-center px-2.5 py-1.5 rounded-lg border border-rose-200/60 bg-rose-100 hover:bg-rose-200 active:scale-[.95] text-rose-500 text-xs font-semibold transition-all"
                                     >
                                         <Trash2 size={13} />
@@ -187,17 +189,17 @@ export default function Tickets() {
                                 {peutEcrire && (
                                     <button
                                         onClick={() => ouvrirEdition(t)}
-                                        title="Modifier ce ticket"
+                                        title={t('Modifier ce ticket')}
                                         className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200/50 bg-slate-100 hover:bg-card-high text-slate-600 hover:text-sky-400 text-xs font-semibold transition-colors"
                                     >
-                                        <Pencil size={13} /> Modifier
+                                        <Pencil size={13} /> {t('Modifier')}
                                     </button>
                                 )}
                                 {peutEcrire ? (
                                     <select
                                         value={t.statut}
                                         onChange={(e) => changeStatut(t.id_ticket, e.target.value)}
-                                        title="Changer le statut"
+                                        title={t('Changer le statut')}
                                         className="text-xs border border-slate-200/50 rounded-lg px-2 py-1.5 bg-card-high text-slate-700"
                                     >
                                         {Object.entries(STATUTS_TICKET).map(([k, m]) => (
@@ -210,7 +212,7 @@ export default function Tickets() {
                             </div>
                         </div>
                     ))}
-                    {tickets.length === 0 && <EmptyState icon={LifeBuoy} title="Aucun ticket" hint="Créez le premier ticket d'assistance." />}
+                    {tickets.length === 0 && <EmptyState icon={LifeBuoy} title={t('Aucun ticket')} hint={t("Créez le premier ticket d'assistance.")} />}
                 </div>
             </div>
 
@@ -221,33 +223,33 @@ export default function Tickets() {
                 onClose={() => setModal(null)}
                 onSubmit={submit}
                 busy={busy}
-                title={modal?.mode === 'edit' ? `Modifier — ${modal.ticket.reference_ticket}` : 'Nouveau ticket'}
+                title={modal?.mode === 'edit' ? `${t('Modifier — ')}${modal.ticket.reference_ticket}` : t('Nouveau ticket')}
                 width="max-w-lg"
             >
                 <ErrorText errors={errors} />
                 <div className="space-y-3">
-                    <Field label="Titre" required>
+                    <Field label={t('Titre')} required>
                         <input required value={form.titre} onChange={(e) => setForm({ ...form, titre: e.target.value })} className={inputClass} />
                     </Field>
-                    <Field label="Description">
+                    <Field label={t('Description')}>
                         <textarea rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className={inputClass} />
                     </Field>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <Field label="Priorité" required>
+                        <Field label={t('Priorité')} required>
                             <select value={form.priorite} onChange={(e) => setForm({ ...form, priorite: e.target.value })} className={inputClass}>
                                 {Object.entries(PRIORITES).map(([k, m]) => (
                                     <option key={k} value={k}>{m.label}</option>
                                 ))}
                             </select>
                         </Field>
-                        <Field label="Statut">
+                        <Field label={t('Statut')}>
                             <select value={form.statut} onChange={(e) => setForm({ ...form, statut: e.target.value })} className={inputClass}>
                                 {Object.entries(STATUTS_TICKET).map(([k, m]) => (
                                     <option key={k} value={k}>{m.label}</option>
                                 ))}
                             </select>
                         </Field>
-                        <Field label="Équipement">
+                        <Field label={t('Équipement')}>
                             <select value={form.id_equipement} onChange={(e) => setForm({ ...form, id_equipement: e.target.value })} className={inputClass}>
                                 <option value="">—</option>
                                 {equipements.map((eq) => (
@@ -255,7 +257,7 @@ export default function Tickets() {
                                 ))}
                             </select>
                         </Field>
-                        <Field label="Agent déclarant">
+                        <Field label={t('Agent déclarant')}>
                             <select value={form.id_agent} onChange={(e) => setForm({ ...form, id_agent: e.target.value })} className={inputClass}>
                                 <option value="">—</option>
                                 {agents.map((ag) => (
@@ -271,7 +273,7 @@ export default function Tickets() {
             <ConfirmModal
                 open={!! aSupprimer}
                 message={aSupprimer
-                    ? <>Voulez-vous vraiment supprimer le ticket <strong className="text-slate-700">« {aSupprimer.reference_ticket} — {aSupprimer.titre} »</strong> ? Cette action est définitive.</>
+                    ? <>{t('Voulez-vous vraiment supprimer le ticket ')}<strong className="text-slate-700">« {aSupprimer.reference_ticket} — {aSupprimer.titre} »</strong>{t(' ? Cette action est définitive.')}</>
                     : ''}
                 busy={busySuppression}
                 onConfirm={confirmerSuppression}
@@ -290,10 +292,10 @@ export default function Tickets() {
                             <div className="flex items-center gap-1.5">
                                 <button
                                     onClick={() => { ouvrirEdition(selected); setSelected(null); }}
-                                    title="Modifier ce ticket"
+                                    title={t('Modifier ce ticket')}
                                     className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200/50 bg-slate-100 hover:bg-card-high text-slate-600 hover:text-sky-400 text-xs font-semibold transition-colors"
                                 >
-                                    <Pencil size={13} /> Modifier
+                                    <Pencil size={13} /> {t('Modifier')}
                                 </button>
                                 <button onClick={() => setSelected(null)} className="p-1.5 text-slate-400 hover:text-slate-800"><X size={18} /></button>
                             </div>
@@ -301,12 +303,12 @@ export default function Tickets() {
                         <div className="p-5 overflow-y-auto space-y-4 flex-1">
                             {selected.description && <p className="text-sm text-slate-600">{selected.description}</p>}
                             <div className="flex gap-2 flex-wrap">
-                                <Badge color={PRIORITES[selected.priorite]?.color}>Priorité {PRIORITES[selected.priorite]?.label}</Badge>
+                                <Badge color={PRIORITES[selected.priorite]?.color}>{t('Priorité ')}{PRIORITES[selected.priorite]?.label}</Badge>
                                 <Badge color={STATUTS_TICKET[selected.statut]?.color}>{STATUTS_TICKET[selected.statut]?.label}</Badge>
-                                <Badge>Clôturé le {formatDate(selected.date_cloture) === '—' ? '—' : formatDate(selected.date_cloture)}</Badge>
+                                <Badge>{t('Clôturé le ')}{formatDate(selected.date_cloture) === '—' ? '—' : formatDate(selected.date_cloture)}</Badge>
                             </div>
                             <div className="border-t border-slate-100 pt-3">
-                                <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">Commentaires ({selected.commentaires?.length ?? 0})</h4>
+                                <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wide mb-2">{t('Commentaires (')}{selected.commentaires?.length ?? 0})</h4>
                                 <div className="space-y-2">
                                     {selected.commentaires?.map((c) => (
                                         <div key={c.id_commentaire} className="rounded-xl bg-slate-50 border border-slate-200/50 p-3">
@@ -314,7 +316,7 @@ export default function Tickets() {
                                             <p className="text-sm text-slate-600">{c.contenu}</p>
                                         </div>
                                     ))}
-                                    {(selected.commentaires?.length ?? 0) === 0 && <p className="text-xs text-slate-500">Aucun commentaire.</p>}
+                                    {(selected.commentaires?.length ?? 0) === 0 && <p className="text-xs text-slate-500">{t('Aucun commentaire.')}</p>}
                                 </div>
                             </div>
                         </div>
@@ -322,7 +324,7 @@ export default function Tickets() {
                             <input
                                 value={commentaire}
                                 onChange={(e) => setCommentaire(e.target.value)}
-                                placeholder="Ajouter un commentaire…"
+                                placeholder={t('Ajouter un commentaire…')}
                                 className={inputClass}
                             />
                             <button className="shrink-0 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white">

@@ -10,6 +10,7 @@ import { useSettings, THEMES } from '../../settings';
 import { sons, PACKS_SONS } from '../../lib/sons';
 import { SCENES } from '../../components/FondEcran';
 import { useAuth, aRole, ROLES_ECRITURE } from '../../auth';
+import { useT } from '../../lib/i18n';
 
 /* Boutons d'écoute de la section Sons */
 const SONS_TEST = [
@@ -175,6 +176,7 @@ const ONGLETS = [
 
 export default function Parametres() {
     const { user } = useAuth();
+    const { t } = useT();
     const peutEcrire = aRole(user, ROLES_ECRITURE);
     const { settings, update, reset } = useSettings();
     const [urlPerso, setUrlPerso] = useState('');
@@ -230,15 +232,15 @@ export default function Parametres() {
             const payload = Object.fromEntries(Object.entries(form).map(([k, v]) => [k, v === '' ? null : v]));
             if (modal?.mode === 'edit') {
                 await api.put(`/referentiel/${type}/${modal.item[idKey]}`, payload);
-                notifier('Modifications enregistrées.');
+                notifier(t('Modifications enregistrées.'));
             } else {
                 await api.post(`/referentiel/${type}`, payload);
-                notifier('Élément créé.');
+                notifier(t('Élément créé.'));
             }
             setModal(null);
             await chargeRef();
         } catch (err) {
-            setErrors(err.response?.data?.errors ?? { erreur: [err.response?.data?.message ?? 'Enregistrement impossible.'] });
+            setErrors(err.response?.data?.errors ?? { erreur: [err.response?.data?.message ?? t('Enregistrement impossible.')] });
         } finally {
             setBusy(false);
         }
@@ -253,21 +255,21 @@ export default function Parametres() {
         setBusySuppression(true);
         try {
             await api.delete(`/referentiel/${type}/${aSupprimer[idKey]}`);
-            notifier('Élément supprimé.');
+            notifier(t('Élément supprimé.'));
             setASupprimer(null);
             await chargeRef();
         } catch (err) {
-            notifier(err.response?.data?.message ?? 'Suppression impossible (élément utilisé ailleurs).', 'error');
+            notifier(err.response?.data?.message ?? t('Suppression impossible (élément utilisé ailleurs).'), 'error');
         } finally {
             setBusySuppression(false);
         }
     };
 
-    if (! ref) return <Spinner label="Chargement des paramètres…" />;
+    if (! ref) return <Spinner label={t('Chargement des paramètres…')} />;
 
     return (
         <div>
-            <PageHeader title="Paramètres" subtitle="Préférences d'interface et configuration des référentiels" />
+            <PageHeader title={t('Paramètres')} subtitle={t("Préférences d'interface et configuration des référentiels")} />
 
             {message && (
                 <div className={`mb-4 rounded-lg border p-3 text-sm ${
@@ -282,14 +284,14 @@ export default function Parametres() {
             {/* Thème : mode clair / sombre + 15 thèmes */}
             <div className="bg-card rounded-2xl border border-slate-200/50 shadow-sm p-5 mb-6">
                 <h3 className="flex items-center gap-2 text-sm font-bold text-slate-800 mb-4">
-                    <Sun size={16} className="text-sky-400" /> Thème de l'interface
+                    <Sun size={16} className="text-sky-400" /> {t("Thème de l'interface")}
                 </h3>
                 {(() => {
                     const modeActuel = THEMES.find((t) => t.id === settings.theme)?.mode ?? 'sombre';
                     const modes = [
-                        { id: 'sombre', cible: 'navy', label: 'Mode sombre' },
-                        { id: 'clair', cible: 'clair-bleu', label: 'Mode clair' },
-                        { id: 'anime', cible: 'jjk', label: '⚡ Anime' },
+                        { id: 'sombre', cible: 'navy', label: t('Mode sombre') },
+                        { id: 'clair', cible: 'clair-bleu', label: t('Mode clair') },
+                        { id: 'anime', cible: 'jjk', label: t('⚡ Anime') },
                     ];
                     return (
                         <div className="flex gap-2 mb-4 flex-wrap">
@@ -353,13 +355,13 @@ export default function Parametres() {
             {/* Préférences d'interface */}
             <div className="bg-card rounded-2xl border border-slate-200/50 shadow-sm p-5 mb-6">
                 <h3 className="flex items-center gap-2 text-sm font-bold text-slate-800 mb-4">
-                    <Layout size={16} className="text-sky-400" /> Interface
+                    <Layout size={16} className="text-sky-400" /> {t('Interface')}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <label className="flex items-center justify-between gap-3 rounded-xl border border-slate-200/50 bg-slate-100 p-3.5 cursor-pointer hover:bg-card-high transition">
                         <div>
-                            <div className="text-sm font-semibold text-slate-800">Sidebar élargie</div>
-                            <div className="text-[11px] text-slate-500">320px au lieu de 288px</div>
+                            <div className="text-sm font-semibold text-slate-800">{t('Sidebar élargie')}</div>
+                            <div className="text-[11px] text-slate-500">{t('320px au lieu de 288px')}</div>
                         </div>
                         <input
                             type="checkbox"
@@ -370,8 +372,8 @@ export default function Parametres() {
                     </label>
                     <label className="flex items-center justify-between gap-3 rounded-xl border border-slate-200/50 bg-slate-100 p-3.5 cursor-pointer hover:bg-card-high transition">
                         <div>
-                            <div className="text-sm font-semibold text-slate-800">Sidebar repliée</div>
-                            <div className="text-[11px] text-slate-500">Icônes seules (76px)</div>
+                            <div className="text-sm font-semibold text-slate-800">{t('Sidebar repliée')}</div>
+                            <div className="text-[11px] text-slate-500">{t('Icônes seules (76px)')}</div>
                         </div>
                         <input
                             type="checkbox"
@@ -380,22 +382,21 @@ export default function Parametres() {
                             className="w-4 h-4 accent-blue-600"
                         />
                     </label>
-                    <div className="rounded-xl border border-slate-200/50 bg-slate-100 p-3.5">
-                        <div className="text-sm font-semibold text-slate-800 mb-1">Densité</div>
+                    <div className="rounded-xl border border-slate-200/50 bg-slate-100 p-3.5">                            <div className="text-sm font-semibold text-slate-800 mb-1">{t("Densité")}</div>
                         <select
                             value={settings.densite}
                             onChange={(e) => update({ densite: e.target.value })}
                             className={`${inputClass} py-1.5 text-xs`}
                         >
-                            <option value="compacte">Compacte</option>
-                            <option value="confortable">Confortable</option>
-                            <option value="spacieuse">Spacieuse</option>
+                            <option value="compacte">{t("Compacte")}</option>
+                            <option value="confortable">{t("Confortable")}</option>
+                            <option value="spacieuse">{t("Spacieuse")}</option>
                         </select>
                     </div>
                     <label className="flex items-center justify-between gap-3 rounded-xl border border-slate-200/50 bg-slate-100 p-3.5 cursor-pointer hover:bg-card-high transition">
                         <div>
-                            <div className="text-sm font-semibold text-slate-800">Sons d'interface</div>
-                            <div className="text-[11px] text-slate-500">Retour sonore sur les actions</div>
+                            <div className="text-sm font-semibold text-slate-800">{t("Sons d'interface")}</div>
+                            <div className="text-[11px] text-slate-500">{t('Retour sonore sur les actions')}</div>
                         </div>
                         <input
                             type="checkbox"
@@ -406,8 +407,8 @@ export default function Parametres() {
                     </label>
                     <div className="rounded-xl border border-slate-200/50 bg-slate-100 p-3.5 flex items-center justify-between gap-3">
                         <div>
-                            <div className="text-sm font-semibold text-slate-800">Sons d'interface</div>
-                            <div className="text-[11px] text-slate-500">Réglages complets dans la section ci-dessous</div>
+                            <div className="text-sm font-semibold text-slate-800">{t("Sons d'interface")}</div>
+                            <div className="text-[11px] text-slate-500">{t('Réglages complets dans la section ci-dessous')}</div>
                         </div>
                         <input
                             type="checkbox"
@@ -422,7 +423,7 @@ export default function Parametres() {
                         onClick={reset}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200/50 bg-slate-100 hover:bg-card-high text-slate-600 hover:text-slate-800 text-xs font-semibold"
                     >
-                        <RotateCcw size={13} /> Réinitialiser les préférences
+                        <RotateCcw size={13} /> {t('Réinitialiser les préférences')}
                     </button>
                 </div>
             </div>
@@ -433,7 +434,7 @@ export default function Parametres() {
             <div className="bg-card rounded-2xl border border-slate-200/50 shadow-sm p-5 mb-6">
                 <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
                     <h3 className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                        <Volume2 size={16} className="text-sky-400" /> Sons
+                        <Volume2 size={16} className="text-sky-400" /> {t("Sons")}
                     </h3>
                     {/* Master switch visuel */}
                     <button
@@ -455,7 +456,7 @@ export default function Parametres() {
                         <div className="rounded-xl border border-slate-200/50 bg-slate-100 p-3.5">
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-sm font-semibold text-slate-800 flex items-center gap-1.5">
-                                    <Volume1 size={14} className="text-sky-400" /> Volume général
+                                    <Volume1 size={14} className="text-sky-400" /> {t('Volume général')}
                                 </span>
                                 <span className="font-mono text-xs font-bold text-blue-400">{settings.volumeSon ?? 70}%</span>
                             </div>
@@ -471,13 +472,13 @@ export default function Parametres() {
                                 className="w-full accent-blue-600 cursor-pointer"
                             />
                             <div className="flex justify-between text-[9px] uppercase tracking-wider text-slate-400 mt-0.5">
-                                <span>Discret</span><span>Fort</span>
+                                <span>{t('Discret')}</span><span>{t('Fort')}</span>
                             </div>
                         </div>
 
                         <div className="rounded-xl border border-slate-200/50 bg-slate-100 p-3.5">
                             <div className="text-sm font-semibold text-slate-800 mb-1 flex items-center gap-1.5">
-                                <Zap size={13} className="text-blue-400" /> Pack de sons
+                                <Zap size={13} className="text-blue-400" /> {t('Pack de sons')}
                             </div>
                             <div className="flex gap-2">
                                 <select
@@ -499,7 +500,7 @@ export default function Parametres() {
                     {/* Test de chaque son du pack actif */}
                     <div className="rounded-xl border border-slate-200/50 bg-slate-100 p-3.5">
                         <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2.5">
-                            Tester les sons du pack «&nbsp;{packActuel?.nom}&nbsp;» ({packActuel?.univers})
+                            {t("Tester les sons du pack « ")}{packActuel?.nom}{t(" » (")}{packActuel?.univers}{t(')')}
                         </div>
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
                             {SONS_TEST.map(({ id, label }) => (
@@ -509,14 +510,12 @@ export default function Parametres() {
                                     onClick={() => sons[id]()}
                                     className="inline-flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg border border-slate-200/50 bg-card hover:bg-card-high hover:-translate-y-0.5 text-slate-600 hover:text-blue-400 text-xs font-semibold transition-all active:scale-[.95]"
                                 >
-                                    <Play size={11} className="shrink-0" /> {label}
+                                    <Play size={11} className="shrink-0" /> {t(label)}
                                 </button>
                             ))}
                         </div>
                         <p className="text-[10px] text-slate-500 mt-2.5">
-                            💡 Les sons sont synthétisés en direct (Web Audio API) — aucun fichier à télécharger.
-                            Ils se déclenchent automatiquement sur les actions de l'application. Une pastille 🔊 apparaît en bas à droite à chaque son joué —
-                            si elle apparaît mais que vous n'entendez rien, montez le volume système ou vérifiez votre périphérique de sortie.
+                            {t("💡 Les sons sont synthétisés en direct (Web Audio API) — aucun fichier à télécharger. Ils se déclenchent automatiquement sur les actions de l'application. Une pastille 🔊 apparaît en bas à droite à chaque son joué — si elle apparaît mais que vous n'entendez rien, montez le volume système ou vérifiez votre périphérique de sortie.")}
                         </p>
                     </div>
                 </div>
@@ -528,7 +527,7 @@ export default function Parametres() {
             <div className="bg-card rounded-2xl border border-slate-200/50 shadow-sm p-5 mb-6">
                 <div className="flex items-center justify-between mb-1 flex-wrap gap-3">
                     <h3 className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                        <ImageIcon size={16} className="text-sky-400" /> Fond d'écran (thèmes anime)
+                        <ImageIcon size={16} className="text-sky-400" /> {t("Fond d'écran (thèmes anime)")}
                     </h3>
                     <button
                         type="button"
@@ -541,9 +540,7 @@ export default function Parametres() {
                     </button>
                 </div>
                 <p className="text-[11px] text-slate-500 mb-4">
-                    Chaque thème anime affiche sa scène : Shibuya la nuit (JJK), l'allée des glycines (Demon Slayer),
-                    le château de Clover, le portail du Système, la Vallée de la Fin (Naruto), le Grand Line (One Piece).
-                    Importez votre propre image de personnage si vous préférez.
+                    {t("Chaque thème anime affiche sa scène : Shibuya la nuit (JJK), l'allée des glycines (Demon Slayer), le château de Clover, le portail du Système, la Vallée de la Fin (Naruto), le Grand Line (One Piece). Importez votre propre image de personnage si vous préférez.")}
                 </p>
 
                 <div className={settings.wallpaper === false ? 'opacity-40 pointer-events-none select-none' : ''}>
@@ -574,7 +571,7 @@ export default function Parametres() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div className="rounded-xl border border-slate-200/50 bg-slate-100 p-3.5">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm font-semibold text-slate-800">Voile de lisibilité</span>
+                                <span className="text-sm font-semibold text-slate-800">{t('Voile de lisibilité')}</span>
                                 <span className="font-mono text-xs font-bold text-blue-400">{settings.wallpaperVoile ?? 55}%</span>
                             </div>
                             <input
@@ -587,12 +584,12 @@ export default function Parametres() {
                                 className="w-full accent-blue-600 cursor-pointer"
                             />
                             <div className="flex justify-between text-[9px] uppercase tracking-wider text-slate-400 mt-0.5">
-                                <span>Fond visible</span><span>Contenu net</span>
+                                <span>{t('Fond visible')}</span><span>{t('Contenu net')}</span>
                             </div>
                         </div>
 
                         <div className="rounded-xl border border-slate-200/50 bg-slate-100 p-3.5">
-                            <div className="text-sm font-semibold text-slate-800 mb-2">Image personnalisée</div>
+                            <div className="text-sm font-semibold text-slate-800 mb-2">{t('Image personnalisée')}</div>
                             {settings.wallpaperPerso ? (
                                 <div className="flex items-center gap-2.5">
                                     <img src={settings.wallpaperPerso} alt="Fond personnalisé" className="w-16 h-11 object-cover rounded-lg border border-slate-300" />
@@ -601,13 +598,13 @@ export default function Parametres() {
                                         onClick={() => { update({ wallpaperPerso: null }); sons.alerte(); }}
                                         className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-rose-200/60 bg-rose-100 hover:bg-rose-200 text-rose-400 text-xs font-semibold transition active:scale-[.95]"
                                     >
-                                        <Trash2 size={12} /> Retirer l'image
+                                        <Trash2 size={12} /> {t("Retirer l'image")}
                                     </button>
                                 </div>
                             ) : (
                                 <div className="space-y-2">
                                     <label className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-blue-200/50 bg-blue-100 hover:bg-blue-200 text-blue-400 text-xs font-bold cursor-pointer transition active:scale-[.97]">
-                                        <Upload size={13} /> Importer depuis votre PC…
+                                        <Upload size={13} /> {t('Importer depuis votre PC…')}
                                         <input
                                             type="file"
                                             accept="image/*"
@@ -616,7 +613,7 @@ export default function Parametres() {
                                                 const fichier = e.target.files?.[0];
                                                 if (! fichier) return;
                                                 if (fichier.size > 4 * 1024 * 1024) {
-                                                    notifier('Image trop lourde (max 4 Mo).', 'error');
+                                                    notifier(t('Image trop lourde (max 4 Mo).'), 'error');
                                                     sons.alerte();
                                                     return;
                                                 }
@@ -624,7 +621,7 @@ export default function Parametres() {
                                                 lecteur.onload = () => {
                                                     update({ wallpaperPerso: lecteur.result });
                                                     sons.succes();
-                                                    notifier('Fond d\u2019écran personnalisé appliqué.');
+                                                    notifier(t("Fond d'écran personnalisé appliqué."));
                                                 };
                                                 lecteur.readAsDataURL(fichier);
                                             }}
@@ -633,7 +630,7 @@ export default function Parametres() {
                                     <div className="flex gap-1.5">
                                         <input
                                             type="url"
-                                            placeholder="Ou collez l'URL d'une image…"
+                                            placeholder={t("Ou collez l'URL d'une image…")}
                                             value={urlPerso}
                                             onChange={(e) => setUrlPerso(e.target.value)}
                                             className={`${inputClass} py-1.5 text-xs flex-1`}
@@ -645,18 +642,17 @@ export default function Parametres() {
                                                 update({ wallpaperPerso: urlPerso.trim() });
                                                 setUrlPerso('');
                                                 sons.succes();
-                                                notifier('Image appliquée depuis l\u2019URL.');
+                                                notifier(t("Image appliquée depuis l'URL."));
                                             }}
                                             className="shrink-0 inline-flex items-center px-2.5 py-1.5 rounded-lg border border-blue-200/50 bg-blue-100 hover:bg-blue-200 text-blue-400 text-xs font-bold transition active:scale-[.95]"
                                         >
-                                            Appliquer
+                                            {t('Appliquer')}
                                         </button>
                                     </div>
                                 </div>
                             )}
                             <p className="text-[10px] text-slate-500 mt-2">
-                                Votre image (fichier ou URL) remplace la scène — stockée localement, jamais envoyée au serveur.
-                                Trouvez n'importe quelle image de personnage sur le web et collez son adresse ici.
+                                {t("Votre image (fichier ou URL) remplace la scène — stockée localement, jamais envoyée au serveur. Trouvez n'importe quelle image de personnage sur le web et collez son adresse ici.")}
                             </p>
                         </div>
                     </div>
@@ -667,14 +663,14 @@ export default function Parametres() {
             <div className="bg-card rounded-2xl border border-slate-200/50 shadow-sm overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200/50 flex-wrap gap-3">
                     <h3 className="flex items-center gap-2 text-sm font-bold text-slate-800">
-                        <SlidersHorizontal size={16} className="text-sky-400" /> Configuration des interfaces (référentiels)
+                        <SlidersHorizontal size={16} className="text-sky-400" /> {t('Configuration des interfaces (référentiels)')}
                     </h3>
                     {peutEcrire && (
                         <button
                             onClick={ouvrirCreation}
                             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-sm shadow-blue-600/25"
                         >
-                            <Plus size={15} /> Ajouter
+                            <Plus size={15} /> {t('Ajouter')}
                         </button>
                     )}
                 </div>
@@ -691,7 +687,7 @@ export default function Parametres() {
                                     : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
                             }`}
                         >
-                            <Icon size={13} /> {label}
+                            <Icon size={13} /> {t(label)}
                         </button>
                     ))}
                 </div>
@@ -702,9 +698,9 @@ export default function Parametres() {
                         <thead>
                             <tr className="bg-slate-100 text-left text-[11px] uppercase tracking-wide text-slate-500 border-b border-slate-200/50">
                                 {colonnes.map((c) => (
-                                    <th key={c.key} className={`px-4 py-2.5 font-bold ${c.width ?? ''}`}>{c.label}</th>
+                                    <th key={c.key} className={`px-4 py-2.5 font-bold ${c.width ?? ''}`}>{t(c.label)}</th>
                                 ))}
-                                <th className="px-4 py-2.5 text-right font-bold w-40">Actions</th>
+                                <th className="px-4 py-2.5 text-right font-bold w-40">{t('Actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -715,7 +711,7 @@ export default function Parametres() {
                                             {c.relation
                                                 ? c.relation(item)
                                                 : c.badge
-                                                    ? <Badge color={item[c.key] === 'inactif' ? 'bg-rose-100 text-rose-400 border-rose-200' : 'bg-vert-100 text-vert-400 border-vert-200'}>{item[c.key] ?? '—'}</Badge>
+                                                    ? <Badge color={item[c.key] === 'inactif' ? 'bg-rose-100 text-rose-400 border-rose-200' : 'bg-vert-100 text-vert-400 border-vert-200'}>{item[c.key] ? t(item[c.key]) : '—'}</Badge>
                                                     : c.mono
                                                         ? <span className="font-mono text-xs font-semibold text-blue-300">{item[c.key] ?? '—'}</span>
                                                         : (item[c.key] ?? '—')}
@@ -726,23 +722,23 @@ export default function Parametres() {
                                             {peutEcrire && (
                                                 <button
                                                     onClick={() => ouvrirEdition(item)}
-                                                    title="Modifier"
+                                                    title={t('Modifier')}
                                                     className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200/50 bg-slate-100 hover:bg-card-high text-slate-600 hover:text-sky-400 text-xs font-semibold transition-colors"
                                                 >
-                                                    <Pencil size={13} /> Modifier
+                                                    <Pencil size={13} /> {t('Modifier')}
                                                 </button>
                                             )}
                                             {peutEcrire && (
                                                 <button
                                                     onClick={() => supprimer(item)}
-                                                    title="Supprimer"
+                                                    title={t('Supprimer')}
                                                     className="inline-flex items-center px-2.5 py-1.5 rounded-lg border border-slate-200/50 bg-slate-100 hover:bg-rose-50 hover:text-rose-500 text-slate-600 text-xs font-semibold transition-colors"
                                                 >
                                                     <Trash2 size={13} />
                                                 </button>
                                             )}
                                             {!peutEcrire && (
-                                                <span className="text-xs text-slate-400 italic">Lecture seule</span>
+                                                <span className="text-xs text-slate-400 italic">{t('Lecture seule')}</span>
                                             )}
                                         </div>
                                     </td>
@@ -751,7 +747,7 @@ export default function Parametres() {
                             {items.length === 0 && (
                                 <tr>
                                     <td colSpan={colonnes.length + 1} className="px-4 py-8 text-center text-sm text-slate-500">
-                                        Aucun élément — cliquez sur « Ajouter » pour créer le premier.
+                                        {t("Aucun élément — cliquez sur « Ajouter » pour créer le premier.")}
                                     </td>
                                 </tr>
                             )}
@@ -767,17 +763,17 @@ export default function Parametres() {
                 onClose={() => setModal(null)}
                 onSubmit={submit}
                 busy={busy}
-                title={modal?.mode === 'edit' ? `Modifier — ${ONGLETS.find((o) => o.key === type)?.label}` : `Nouvel élément — ${ONGLETS.find((o) => o.key === type)?.label}`}
+                title={modal?.mode === 'edit' ? t('Modifier — ') + (ONGLETS.find((o) => o.key === type)?.label ?? '') : t('Nouvel élément — ') + (ONGLETS.find((o) => o.key === type)?.label ?? '')}
                 width="max-w-lg"
             >
                 <ErrorText errors={errors} />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {champs.map((c) => (
-                        <Field key={c.key} label={c.label} required={c.required}>
+                        <Field key={c.key} label={t(c.label)} required={c.required}>
                             {c.type === 'select' ? (
                                 <select value={form[c.key] ?? ''} onChange={(e) => setForm({ ...form, [c.key]: e.target.value })} className={inputClass}>
                                     {c.options.map(([v, l]) => (
-                                        <option key={v} value={v}>{l}</option>
+                                        <option key={v} value={v}>{t(l)}</option>
                                     ))}
                                 </select>
                             ) : c.type === 'ref' ? (
@@ -807,7 +803,7 @@ export default function Parametres() {
             <ConfirmModal
                 open={!! aSupprimer}
                 message={aSupprimer
-                    ? <>Voulez-vous vraiment supprimer <strong className="text-slate-700">« {aSupprimer[colonnes.find((c) => ! c.relation)?.key ?? idKey] ?? aSupprimer[idKey]} »</strong> ? Cette action est définitive.</>
+                    ? <>{t('Voulez-vous vraiment supprimer ')}<strong className="text-slate-700">« {aSupprimer[colonnes.find((c) => ! c.relation)?.key ?? idKey] ?? aSupprimer[idKey]} »</strong>{t(' ? Cette action est définitive.')}</>
                     : ''}
                 busy={busySuppression}
                 onConfirm={confirmerSuppression}
