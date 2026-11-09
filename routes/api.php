@@ -3,6 +3,7 @@
 use App\Http\Controllers\AchatController;
 use App\Http\Controllers\AffectationController;
 use App\Http\Controllers\AgentController;
+use App\Http\Controllers\AssistantController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CorbeilleController;
 use App\Http\Controllers\DashboardController;
@@ -26,7 +27,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/dashboard', [DashboardController::class, 'stats']);
+
+    // Assistance IA : question courte + historique, réponses limitées au
+    // fonctionnement de l'application. La clé du fournisseur reste serveur.
+    Route::post('/assistant', [AssistantController::class, 'ask'])->middleware('throttle:20,1');
     Route::get('/inventaire-details', [InventaireController::class, 'details']);
+
+    // Vue d'inventaire du parc : filtres, tri, récap et statistiques + PDF.
+    Route::get('/inventaire-parc', [InventaireController::class, 'parc']);
+    Route::get('/inventaire-parc/pdf', [InventaireController::class, 'parcPdf']);
 
     // Centre de notifications : fil personnel de l'utilisateur connecté.
     Route::get('/notifications', [NotificationController::class, 'index']);

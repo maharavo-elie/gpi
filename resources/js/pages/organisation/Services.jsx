@@ -17,13 +17,13 @@ export default function Services() {
             colonnes={[
                 { key: 'code_service', label: 'Code', width: 'w-24', mono: true },
                 { key: 'nom_service', label: 'Nom' },
-                { key: 'direction', label: 'Direction', render: (s) => s.direction?.code_direction ?? '—' },
+                { key: 'direction', label: 'Direction', render: (s) => s.direction?.nom_direction ?? '—' },
                 { key: 'statut', label: 'Statut', badge: badgeStatut },
             ]}
             champs={[
-                { key: 'code_service', label: 'Code' },
+                { key: 'id_direction', label: "Direction d'attachement", type: 'ref', source: 'directions', idSource: 'id_direction', get: (d) => d.nom_direction, required: true },
                 { key: 'nom_service', label: 'Nom du service', required: true },
-                { key: 'id_direction', label: 'Direction', type: 'ref', source: 'directions', idSource: 'id_direction', get: (d) => d.nom_direction, required: true },
+                { key: 'code_service', label: 'Code (généré si vide)' },
                 { key: 'statut', label: 'Statut', type: 'select', options: [['actif', 'Actif'], ['inactif', 'Inactif']] },
             ]}
         />

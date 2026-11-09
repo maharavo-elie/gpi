@@ -37,12 +37,19 @@ class MaintenanceController extends CrudController
             'description_probleme' => ['nullable', 'string'],
             'diagnostic' => ['nullable', 'string'],
             'technicien' => ['nullable', 'string', 'max:150'],
-            'statut' => ['required', Rule::in(['demandee', 'planifiee', 'en_cours', 'terminee', 'annulee'])],
+            'mode_intervention' => ['nullable', Rule::in(['interne', 'externe'])],
+            'statut' => ['required', Rule::in([
+                'demandee', 'planifiee', 'en_cours', 'en_attente_piece',
+                'terminee', 'succes', 'hors_service', 'annulee',
+            ])],
             'id_equipement' => ['required', 'exists:equipements,id_equipement'],
             'id_type_maintenance' => ['required', 'exists:type_maintenances,id_type_maintenance'],
             'id_agent' => ['nullable', 'exists:agents,id_agent'],
         ];
     }
+
+    /** Statuts qui marquent la fin d'une intervention (matériel rendu). */
+    private const STATUTS_FIN = ['terminee', 'succes', 'hors_service', 'annulee'];
 
     public function index(Request $request): JsonResponse
     {
@@ -62,6 +69,9 @@ class MaintenanceController extends CrudController
     {
         $data = $request->validate($this->rules());
         $data['date_demande'] ??= today();
+        if ($data['statut'] === 'en_cours') {
+            $data['date_debut'] ??= today();
+        }
 
         $maintenance = DB::transaction(function () use ($data) {
             $maintenance = Maintenance::create($data);
@@ -87,24 +97,48 @@ class MaintenanceController extends CrudController
         $nouveauStatut = $data['statut'] ?? $ancienStatut;
 
         DB::transaction(function () use ($maintenance, $data, $ancienStatut, $nouveauStatut) {
+            // Dates posées automatiquement selon le cycle de vie de l'intervention
+            // : ouverture au démarrage, clôture à l'issue — aucune intervention
+            // ne finit sans date.
+            if ($nouveauStatut === 'en_cours' && $ancienStatut !== 'en_cours' && empty($data['date_debut'])) {
+                $data['date_debut'] ??= today();
+            }
+            if (in_array($nouveauStatut, self::STATUTS_FIN, true) && $ancienStatut === 'en_cours' && empty($data['date_fin'])) {
+                $data['date_fin'] = today();
+            }
+
             $maintenance->update($data);
 
             if ($nouveauStatut === 'en_cours' && $ancienStatut !== 'en_cours') {
                 $this->passerEnMaintenance($maintenance);
-            } elseif (in_array($nouveauStatut, ['terminee', 'annulee']) && $ancienStatut === 'en_cours') {
-                // Fin d'intervention : le matériel redevient disponible au stock.
+            } elseif (in_array($nouveauStatut, self::STATUTS_FIN, true) && $ancienStatut === 'en_cours') {
+                // Fin d'intervention : le sort du matériel dépend de l'issue.
                 $equipement = Equipement::find($maintenance->id_equipement);
                 if ($equipement && $equipement->statut === 'en_maintenance') {
-                    $equipement->update(['statut' => 'en_stock']);
-                    Mouvement::create([
-                        'type_mouvement' => 'stock',
-                        'motif' => $nouveauStatut === 'annulee'
-                            ? 'Maintenance annulée — matériel de nouveau disponible'
-                            : 'Fin de maintenance — matériel de nouveau disponible',
-                        'date_mouvement' => now(),
-                        'id_equipement' => $equipement->id_equipement,
-                        'id_utilisateur' => auth()->id(),
-                    ]);
+                    if ($nouveauStatut === 'hors_service') {
+                        // Matériel jugé irréparable : il quitte le parc.
+                        $equipement->update(['statut' => 'reforme']);
+                        Mouvement::create([
+                            'type_mouvement' => 'reforme',
+                            'motif' => 'Hors service à l\'issue de la maintenance #'.$maintenance->id_maintenance,
+                            'date_mouvement' => now(),
+                            'id_equipement' => $equipement->id_equipement,
+                            'id_utilisateur' => auth()->id(),
+                        ]);
+                    } else {
+                        // Succès (ou cas antérieur « terminée » / annulée) : matériel
+                        // de nouveau disponible au stock.
+                        $equipement->update(['statut' => 'en_stock']);
+                        Mouvement::create([
+                            'type_mouvement' => 'stock',
+                            'motif' => $nouveauStatut === 'annulee'
+                                ? 'Maintenance annulée — matériel de nouveau disponible'
+                                : "Fin de maintenance — matériel de nouveau disponible",
+                            'date_mouvement' => now(),
+                            'id_equipement' => $equipement->id_equipement,
+                            'id_utilisateur' => auth()->id(),
+                        ]);
+                    }
                 }
             }
         });
@@ -124,13 +158,14 @@ class MaintenanceController extends CrudController
                     'info'
                 );
             }
-            if (in_array($nouveauStatut, ['terminee', 'annulee'])) {
-                $verbe = $nouveauStatut === 'terminee' ? 'terminée' : 'annulée';
+            if (in_array($nouveauStatut, self::STATUTS_FIN, true)) {
+                $verbes = ['terminee' => 'terminée', 'succes' => 'réparée avec succès', 'hors_service' => 'clôturée en hors service', 'annulee' => 'annulée'];
+                $verbe = $verbes[$nouveauStatut] ?? 'clôturée';
                 NotificationsMetier::notifier(
                     NotificationsMetier::idsParRoles(['admin', 'gestionnaire_parc']),
-                    'Matériel de nouveau disponible — '.$code,
-                    'Intervention '.$verbe.' : l\'équipement redevient disponible au stock.',
-                    $nouveauStatut === 'terminee' ? 'succes' : 'warning'
+                    $nouveauStatut === 'hors_service' ? 'Matériel réformé — '.$code : 'Matériel de nouveau disponible — '.$code,
+                    'Intervention '.$verbe.' : '.($nouveauStatut === 'hors_service' ? "l'équipement est déclaré hors service." : "l'équipement redevient disponible au stock."),
+                    $nouveauStatut === 'succes' ? 'succes' : 'warning'
                 );
             }
         }

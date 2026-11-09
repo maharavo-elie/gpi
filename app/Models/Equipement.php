@@ -15,6 +15,7 @@ class Equipement extends Model
 
     protected $fillable = [
         'code_inventaire', 'numero_serie', 'designation', 'description',
+        'processeur', 'ram', 'disque',
         'date_acquisition', 'date_mise_service', 'prix_acquisition',
         'garantie_debut', 'garantie_fin', 'statut',
         'id_modele', 'id_categorie', 'id_marque', 'id_direction', 'id_service',
@@ -66,6 +67,35 @@ class Equipement extends Model
     public function detailAchat(): BelongsTo
     {
         return $this->belongsTo(DetailAchat::class, 'id_detail_achat');
+    }
+
+    /** Lignes d'achat qui mentionnent directement ce matériel (lien ancien sens). */
+    public function detailAchats(): HasMany
+    {
+        return $this->hasMany(DetailAchat::class, 'id_equipement');
+    }
+
+    /**
+     * Ligne d'achat à retenir pour la traçabilité financière : le lien
+     * direct (id_detail_achat) s'il existe, sinon la dernière ligne
+     * d'achat qui référence ce matériel via detail_achats.id_equipement.
+     */
+    public function ligneAchat(): ?DetailAchat
+    {
+        if ($this->id_detail_achat) {
+            return $this->detailAchat()->with('achat.fournisseur')->first();
+        }
+
+        return $this->detailAchats()->with('achat.fournisseur')->latest('id_detail_achat')->first();
+    }
+
+    /** Achat / facture d'origine du matériel, pour la traçabilité financière. */
+    public function achat()
+    {
+        return $this->hasOneThrough(
+            Achat::class, DetailAchat::class,
+            'id_detail_achat', 'id_achat', 'id_equipement', 'id_achat',
+        );
     }
 
     public function localisation(): BelongsTo

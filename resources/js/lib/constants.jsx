@@ -36,8 +36,16 @@ export const STATUTS_MAINTENANCE = {
     demandee: { ...L('Demandée', 'Requested'), color: 'bg-slate-100 text-slate-500 border-slate-200' },
     planifiee: { ...L('Planifiée', 'Scheduled'), color: 'bg-jaune-100 text-jaune-400 border-jaune-200' },
     en_cours: { ...L('En cours', 'In progress'), color: 'bg-orange-100 text-orange-400 border-orange-200' },
+    en_attente_piece: { ...L('En attente de pièce', 'Awaiting part'), color: 'bg-jaune-100 text-jaune-400 border-jaune-200' },
+    succes: { ...L('Succès', 'Success'), color: 'bg-vert-100 text-vert-400 border-vert-200' },
+    hors_service: { ...L('Hors service', 'Out of service'), color: 'bg-rose-100 text-rose-400 border-rose-200' },
     terminee: { ...L('Terminée', 'Completed'), color: 'bg-vert-100 text-vert-400 border-vert-200' },
     annulee: { ...L('Annulée', 'Cancelled'), color: 'bg-rose-100 text-rose-400 border-rose-200' },
+};
+
+export const MODES_INTERVENTION = {
+    interne: { ...L('Technicien interne', 'Internal technician'), color: 'bg-blue-100 text-blue-300 border-blue-200' },
+    externe: { ...L('Technicien externe', 'External technician'), color: 'bg-orange-100 text-orange-400 border-orange-200' },
 };
 
 export const STATUTS_ACHAT = {

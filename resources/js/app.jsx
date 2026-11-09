@@ -65,7 +65,9 @@ function PublicOnly({ children }) {
 const deverrouillerAudio = () => sons.clic();
 window.addEventListener('pointerdown', deverrouillerAudio, { once: true, capture: true });
 
-createRoot(document.getElementById('app')).render(
+const root = createRoot(document.getElementById('app'));
+
+root.render(
     <SettingsProvider>
     <AuthProvider>
     <LangueProvider>
@@ -103,3 +105,9 @@ createRoot(document.getElementById('app')).render(
     </AuthProvider>
     </SettingsProvider>,
 );
+
+// Vite remplace le module à chaud en développement : libérer le root évite
+// de rappeler createRoot() sur un conteneur qui a déjà été monté.
+if (import.meta.hot) {
+    import.meta.hot.dispose(() => root.unmount());
+}

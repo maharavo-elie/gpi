@@ -17,6 +17,7 @@ import FondEcran from './FondEcran';
 import { ConfirmModal } from './ui';
 import ProfilModal from './Profil';
 import Notifications from './Notifications';
+import Assistant from './Assistant';
 import { User } from 'lucide-react';
 
 const sections = [
@@ -336,6 +337,8 @@ export default function Layout() {
                     <Outlet />
                 </main>
             </div>
+
+            <Assistant />
         </div>
     );
 }

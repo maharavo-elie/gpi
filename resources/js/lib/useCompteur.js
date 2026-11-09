@@ -25,7 +25,16 @@ export function useCompteur(valeur, duree = 900) {
         };
 
         refAnim.current = requestAnimationFrame(tick);
-        return () => cancelAnimationFrame(refAnim.current);
+
+        // Filet de sécurité : certains navigateurs suspendent requestAnimationFrame
+        // quand l'onglet passe en arrière-plan ; la valeur finale doit tout de même
+        // s'afficher (sinon le KPI reste bloqué à 0).
+        const secours = setTimeout(() => setAffiche(cible), duree + 150);
+
+        return () => {
+            cancelAnimationFrame(refAnim.current);
+            clearTimeout(secours);
+        };
     }, [valeur, duree]);
 
     return affiche;

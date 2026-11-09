@@ -24,7 +24,7 @@ class EquipementController extends CrudController
 
     protected function withRelations(): array
     {
-        return ['modele.categorie', 'modele.marque', 'categorie', 'marque', 'direction', 'service', 'fournisseur', 'localisation.batiment.site', 'etat'];
+        return ['modele.categorie', 'modele.marque', 'categorie', 'marque', 'direction', 'service', 'fournisseur', 'detailAchat.achat.fournisseur', 'localisation.batiment.site', 'etat'];
     }
 
     protected function rules(): array
@@ -34,6 +34,9 @@ class EquipementController extends CrudController
             'numero_serie' => ['nullable', 'string', 'max:100', Rule::unique('equipements', 'numero_serie')->ignore($this->routeId(), 'id_equipement')],
             'designation' => ['required', 'string', 'max:200'],
             'description' => ['nullable', 'string'],
+            'processeur' => ['nullable', 'string', 'max:150'],
+            'ram' => ['nullable', 'string', 'max:100'],
+            'disque' => ['nullable', 'string', 'max:150'],
             'date_acquisition' => ['nullable', 'date'],
             'date_mise_service' => ['nullable', 'date'],
             'prix_acquisition' => ['nullable', 'numeric', 'min:0'],
@@ -85,11 +88,18 @@ class EquipementController extends CrudController
             'affectations.agent.direction',
             'affectations.agent.service',
             'maintenances.type',
-            'tickets',
+            'maintenances.agent',
+            'tickets.agent', 'tickets.direction', 'tickets.service', 'tickets.site', 'tickets.etatAppareilAvant',
+            'mouvements.ancienneLocalisation.batiment.site',
+            'mouvements.nouvelleLocalisation.batiment.site',
             'mouvements.utilisateur',
             'documents',
             'installations.logiciel',
         ]))->findOrFail($id);
+
+        // Traçabilité d'achat exposée quoi qu'il arrive : ligne directe
+        // (id_detail_achat) ou référence inverse via detail_achats.
+        $equipement->setRelation('ligne_achat', $equipement->ligneAchat());
 
         return response()->json($equipement);
     }

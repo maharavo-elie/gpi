@@ -84,7 +84,7 @@ class RapportController extends Controller
                 'id_equipement' => $e->id_equipement,
                 'code_inventaire' => $e->code_inventaire,
                 'designation' => $e->designation,
-                'libelle' => trim(($e->modele?->marque?->nom_marque ?? '').' '.($e->modele?->nom_modele ?? '')),
+                'libelle' => $this->libelleModele($e),
                 'total' => $e->affectations_count,
             ])->values();
 
@@ -288,9 +288,11 @@ class RapportController extends Controller
             'fournisseur', 'localisation.batiment.site', 'etat',
             'affectations.agent.direction',
             'affectations.agent.service',
-            'maintenances.type',
-            'tickets',
+            'maintenances.type', 'maintenances.agent',
+            'tickets.agent', 'tickets.direction', 'tickets.service', 'tickets.site', 'tickets.etatAppareilAvant',
             'mouvements.utilisateur.agent',
+            'mouvements.ancienneLocalisation.batiment.site',
+            'mouvements.nouvelleLocalisation.batiment.site',
             'installations.logiciel',
         ]);
 
@@ -441,9 +443,11 @@ class RapportController extends Controller
             'fournisseur', 'localisation.batiment.site', 'etat',
             'detailAchat.achat.fournisseur',
             'affectations.agent',
-            'maintenances.type',
-            'tickets',
+            'maintenances.type', 'maintenances.agent',
+            'tickets.agent', 'tickets.direction', 'tickets.service', 'tickets.site', 'tickets.etatAppareilAvant',
             'mouvements.utilisateur.agent',
+            'mouvements.ancienneLocalisation.batiment.site',
+            'mouvements.nouvelleLocalisation.batiment.site',
             'installations.logiciel',
         ]);
 
@@ -472,7 +476,7 @@ class RapportController extends Controller
                 fn ($q) => $q->with('categorie', 'marque', 'modele.marque', 'direction', 'service', 'localisation.batiment.site', 'etat')
                     ->orderBy('code_inventaire'),
                 fn ($e) => [$e->code_inventaire, $e->designation, $e->categorie?->nom_categorie,
-                    trim(($e->marque?->nom_marque ?? '').' '.($e->modele?->nom_modele ?? '')),
+                    $this->libelleModele($e),
                     $e->numero_serie ?? '—',
                     $e->localisation
                         ? trim(($e->localisation->batiment?->site?->nom_site ?? '').' — '.$e->localisation->nom_localisation, ' —')
@@ -491,13 +495,16 @@ class RapportController extends Controller
                     $a->agent?->service?->nom_service,
                     $a->date_affectation?->format('d/m/Y'), $a->date_fin?->format('d/m/Y') ?? 'en cours', $a->motif]],
             'tickets' => [Ticket::class, 'Registre des tickets d\'assistance', 'GPI/RPT/TIK/',
-                fn ($q) => $q->with('equipement', 'agent'),
-                fn ($t) => [$t->reference_ticket, $t->titre, $t->priorite, $t->statut,
-                    $t->equipement?->code_inventaire, $t->agent?->nom_complet,
-                    $t->date_creation?->format('d/m/Y'), $t->date_cloture?->format('d/m/Y')]],
+                fn ($q) => $q->with('equipement', 'agent', 'direction', 'service', 'site'),
+                fn ($t) => [$t->reference_ticket, $t->motif ?: $t->titre,
+                    $t->service?->nom_service ?? $t->direction?->nom_direction ?? '—',
+                    $t->site?->nom_site ?? '—', $t->equipement?->code_inventaire,
+                    $t->agent?->nom_complet, $t->priorite, $t->statut,
+                    $t->date_creation?->format('d/m/Y')]],
             'maintenances' => [Maintenance::class, 'Registre des maintenances', 'GPI/RPT/MNT/',
                 fn ($q) => $q->with('equipement', 'type', 'agent'),
                 fn ($m) => [$m->equipement?->code_inventaire, $m->type?->nom_type, $m->technicien,
+                    $m->mode_intervention === 'externe' ? 'Externe' : ($m->mode_intervention === 'interne' ? 'Interne' : '—'),
                     $m->statut, $m->date_demande?->format('d/m/Y'), $m->date_debut?->format('d/m/Y'),
                     $m->date_fin?->format('d/m/Y'), $m->description_probleme]],
             'achats' => [Achat::class, 'Registre des achats et marchés', 'GPI/RPT/ACH/',
@@ -634,8 +641,8 @@ class RapportController extends Controller
             'equipements' => [10, 14, 9, 12, 11, 17, 7, 8, 12],
             'agents' => [10, 18, 12, 7, 15, 12, 18, 8],
             'affectations' => [10, 16, 14, 12, 14, 10, 10, 14],
-            'tickets' => [12, 20, 9, 11, 12, 15, 11, 10],
-            'maintenances' => [10, 12, 12, 10, 10, 10, 10, 26],
+            'tickets' => [10, 20, 13, 10, 10, 14, 7, 8, 8],
+            'maintenances' => [10, 11, 12, 7, 10, 10, 10, 10, 20],
             'achats' => [13, 10, 20, 14, 11, 14, 18],
             'logiciels' => [20, 12, 18, 50],
             'directions' => [12, 34, 26, 16, 12],
@@ -660,8 +667,8 @@ class RapportController extends Controller
             'equipements' => ['Code', 'Désignation', 'Catégorie', 'Modèle', 'N° série', 'Localisation', 'État', 'Statut', 'Prix'],
             'agents' => ['Matricule', 'Nom complet', 'Fonction', 'Dir.', 'Service', 'Téléphone', 'Email', 'Statut'],
             'affectations' => ['Code inv.', 'Matériel', 'Agent', 'Fonction', 'Service', 'Depuis', 'Fin', 'Motif'],
-            'tickets' => ['Référence', 'Titre', 'Priorité', 'Statut', 'Équipement', 'Déclarant', 'Créé le', 'Clôturé le'],
-            'maintenances' => ['Équipement', 'Type', 'Technicien', 'Statut', 'Demandée', 'Début', 'Fin', 'Problème'],
+            'tickets' => ['Référence', 'Motif', 'Service / Direction', 'Centre', 'Équipement', 'Déclarant', 'Priorité', 'Statut', 'Créé le'],
+            'maintenances' => ['Équipement', 'Type', 'Technicien', 'Mode', 'Statut', 'Demandée', 'Ouverture', 'Clôture', 'Problème'],
             'achats' => ['Référence', 'Date', 'Fournisseur', 'Montant', 'Statut', 'Facture', 'Bon cmd'],
             'logiciels' => ['Nom', 'Version', 'Éditeur', 'Description'],
             'directions' => ['Code', 'Nom', 'Email', 'Téléphone', 'Statut'],
@@ -764,5 +771,16 @@ class RapportController extends Controller
         }, "rapport_{$type}_".now()->format('Y-m-d').'.csv', [
             'Content-Type' => 'text/csv; charset=UTF-8',
         ]);
+    }
+
+    /** Marque + modèle, sans doublon quand le nom du modèle contient déjà la marque. */
+    private function libelleModele(Equipement $e): string
+    {
+        $nom = $e->modele?->nom_modele ?? '';
+        $marque = $e->modele?->marque?->nom_marque ?? $e->marque?->nom_marque ?? '';
+
+        return $marque && ! str_starts_with(mb_strtolower($nom), mb_strtolower($marque))
+            ? trim($marque.' '.$nom)
+            : $nom;
     }
 }

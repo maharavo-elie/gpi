@@ -74,18 +74,22 @@
     <h2>2. Historique des mouvements</h2>
     <table>
         <thead>
-            <tr><th style="width:58px;">Date</th><th style="width:80px;">Type</th><th>Motif</th><th style="width:95px;">Effectué par</th></tr>
+            <tr><th style="width:48px;">Date</th><th style="width:62px;">Type</th><th>Motif</th><th style="width:150px;">Emplacement</th><th style="width:75px;">Effectué par</th></tr>
         </thead>
         <tbody>
             @forelse ($equipement->mouvements as $m)
                 <tr>
                     <td class="mono">{{ \Illuminate\Support\Carbon::parse($m->date_mouvement)->format('d/m/y') }}</td>
                     <td><span class="badge {{ $m->type_mouvement === 'affectation' ? 'b-vert' : ($m->type_mouvement === 'reforme' ? 'b-gris' : ($m->type_mouvement === 'stock' ? 'b-bleu' : 'b-orange')) }}">{{ $m->type_mouvement }}</span></td>
-                    <td>{{ Str::limit($m->motif, 100) }}</td>
+                    <td>{{ Str::limit($m->motif, 80) }}</td>
+                    <td class="muted">
+                        {{ $m->ancienneLocalisation?->nom_localisation ?? 'Stock' }}
+                        → {{ $m->nouvelleLocalisation?->nom_localisation ?? 'Stock' }}
+                    </td>
                     <td>{{ $m->utilisateur?->nom_complet ?? 'Système' }}</td>
                 </tr>
             @empty
-                <tr><td colspan="4" class="muted">Aucun mouvement enregistré.</td></tr>
+                <tr><td colspan="5" class="muted">Aucun mouvement enregistré.</td></tr>
             @endforelse
         </tbody>
     </table>
@@ -121,8 +125,11 @@
                 <tr>
                     <td class="mono">{{ $m->date_demande?->format('d/m/y') ?? '—' }}</td>
                     <td>Maintenance — {{ $m->type?->nom_type ?? '—' }}</td>
-                    <td>{{ Str::limit($m->description_probleme, 90) }}</td>
-                    <td><span class="badge {{ $m->statut === 'terminee' ? 'b-vert' : ($m->statut === 'annulee' ? 'b-rouge' : 'b-orange') }}">{{ str_replace('_', ' ', $m->statut) }}</span></td>
+                    <td>{{ Str::limit($m->description_probleme, 70) }}
+                        @if ($m->diagnostic)<div class="muted">Diagnostic : {{ Str::limit($m->diagnostic, 60) }}</div>@endif
+                        @if ($m->technicien)<div class="muted">Technicien : {{ $m->technicien }}</div>@endif
+                    </td>
+                    <td><span class="badge {{ $m->statut === 'terminee' || $m->statut === 'succes' ? 'b-vert' : ($m->statut === 'annulee' || $m->statut === 'hors_service' ? 'b-rouge' : 'b-orange') }}">{{ str_replace('_', ' ', $m->statut) }}</span></td>
                 </tr>
             @empty
             @endforelse
@@ -130,7 +137,11 @@
                 <tr>
                     <td class="mono">{{ $t->date_creation?->format('d/m/y') ?? '—' }}</td>
                     <td>Ticket — <span class="mono">{{ $t->reference_ticket }}</span></td>
-                    <td>{{ $t->titre }}</td>
+                    <td>{{ $t->titre }}
+                        @if ($t->motif && $t->motif !== $t->titre)<div class="muted">Motif : {{ Str::limit($t->motif, 70) }}</div>@endif
+                        @if ($t->etat_probleme_avant)<div class="muted">Avant intervention : {{ Str::limit($t->etat_probleme_avant, 90) }}</div>@endif
+                        @if ($t->service || $t->site)<div class="muted">{{ $t->service?->nom_service }} {{ $t->site?->nom_site ? '— ' . $t->site->nom_site : '' }}</div>@endif
+                    </td>
                     <td><span class="badge {{ $t->statut === 'resolu' || $t->statut === 'ferme' ? 'b-gris' : 'b-rouge' }}">{{ str_replace('_', ' ', $t->statut) }}</span></td>
                 </tr>
             @empty

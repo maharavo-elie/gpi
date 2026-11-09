@@ -27,7 +27,7 @@ class MaintenanceSeeder extends Seeder
 
         $typeIds = TypeMaintenance::pluck('id_type_maintenance');
         $agents = Agent::all();
-        $equipements = Equipement::inRandomOrder()->take(8)->get();
+        $equipements = Equipement::with('localisation.batiment')->inRandomOrder()->take(8)->get();
         $techs = Utilisateur::whereHas('roles', fn ($q) => $q->where('nom_role', 'technicien'))->get();
         $statuts = ['demandee', 'planifiee', 'en_cours', 'terminee', 'terminee'];
 
@@ -57,13 +57,26 @@ class MaintenanceSeeder extends Seeder
         ];
         $priorites = ['haute', 'moyenne', 'haute', 'basse', 'moyenne'];
         $statutsTicket = ['ouvert', 'en_cours', 'resolu', 'ferme', 'ouvert'];
+        $etatsProbleme = [
+            'Aucun voyant, aucun affichage au démarrage.',
+            'Bourrage papier récurrent, impression interrompue.',
+            'Déconnexions répétées, perte d’accès au réseau.',
+            'Session Windows verrouillée, identifiants oubliés.',
+            'Poste opérationnel, logiciel métier non installé.',
+        ];
 
         foreach ($refs as $i => $ref) {
             $statut = $statutsTicket[$i];
             $ticket = Ticket::create([
                 'reference_ticket' => $ref,
                 'titre' => $titres[$i],
+                'motif' => $titres[$i],
                 'description' => 'Signalé par un agent du service. Merci d\'intervenir rapidement.',
+                'etat_probleme_avant' => $etatsProbleme[$i],
+                'id_etat_appareil_avant' => $equipements[$i]->id_etat,
+                'id_direction' => $equipements[$i]->id_direction,
+                'id_service' => $equipements[$i]->id_service,
+                'id_site' => $equipements[$i]->localisation?->batiment?->id_site,
                 'priorite' => $priorites[$i],
                 'date_creation' => now()->subDays(rand(2, 20)),
                 'date_cloture' => in_array($statut, ['resolu', 'ferme']) ? now()->subDays(rand(0, 2)) : null,

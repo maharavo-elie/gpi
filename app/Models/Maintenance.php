@@ -12,7 +12,8 @@ class Maintenance extends Model
 
     protected $fillable = [
         'date_demande', 'date_debut', 'date_fin', 'description_probleme',
-        'diagnostic', 'technicien', 'statut', 'id_equipement', 'id_type_maintenance', 'id_agent',
+        'diagnostic', 'technicien', 'mode_intervention', 'statut',
+        'id_equipement', 'id_type_maintenance', 'id_agent',
     ];
 
     protected function casts(): array

@@ -10,23 +10,44 @@ import { useT } from '../../lib/i18n';
 
 const VIDE_FORM = {
     code_inventaire: '', numero_serie: '', designation: '', description: '',
+    processeur: '', ram: '', disque: '',
     date_acquisition: '', date_mise_service: '', prix_acquisition: '',
     garantie_debut: '', garantie_fin: '', statut: 'en_stock',
-    id_modele: '', id_direction: '', id_service: '', id_localisation: '', id_etat: '', id_fournisseur: '',
+    id_modele: '', id_categorie: '', id_marque: '', id_direction: '', id_service: '',
+    id_localisation: '', id_etat: '', id_fournisseur: '',
 };
+
+/* Le nom du modèle contient souvent déjà la marque : on évite « HP HP … ». */
+const libelleModele = (modele, marque) => {
+    const nom = modele?.nom_modele ?? '';
+    const marqueNom = marque?.nom_marque ?? '';
+    if (! nom) return marqueNom;
+    return marqueNom && ! nom.toLowerCase().startsWith(marqueNom.toLowerCase())
+        ? `${marqueNom} ${nom}`
+        : nom;
+};
+
+/* L'API renvoie des dates ISO : les champs <input type="date"> n'acceptent
+   que la partie AAAA-MM-JJ. */
+const jour = (valeur) => (valeur ? String(valeur).slice(0, 10) : '');
 
 const versForm = (eq) => ({
     code_inventaire: eq.code_inventaire ?? '',
     numero_serie: eq.numero_serie ?? '',
     designation: eq.designation ?? '',
     description: eq.description ?? '',
-    date_acquisition: eq.date_acquisition ?? '',
-    date_mise_service: eq.date_mise_service ?? '',
+    processeur: eq.processeur ?? '',
+    ram: eq.ram ?? '',
+    disque: eq.disque ?? '',
+    date_acquisition: jour(eq.date_acquisition),
+    date_mise_service: jour(eq.date_mise_service),
     prix_acquisition: eq.prix_acquisition ?? '',
-    garantie_debut: eq.garantie_debut ?? '',
-    garantie_fin: eq.garantie_fin ?? '',
+    garantie_debut: jour(eq.garantie_debut),
+    garantie_fin: jour(eq.garantie_fin),
     statut: eq.statut ?? 'en_stock',
     id_modele: eq.id_modele ?? '',
+    id_categorie: eq.id_categorie ?? '',
+    id_marque: eq.id_marque ?? '',
     id_direction: eq.id_direction ?? '',
     id_service: eq.id_service ?? '',
     id_localisation: eq.id_localisation ?? '',
@@ -88,6 +109,36 @@ export default function Equipements() {
         setModal({ mode: 'edit', equipement: eq });
     };
 
+    /* Le service dépend de la direction et le modèle pilote la catégorie et la
+       marque : on garde ces champs cohérents quand l'utilisateur les change. */
+    const servicesDisponibles = (referentiel?.services ?? []).filter(
+        (s) => ! form.id_direction || String(s.id_direction) === String(form.id_direction),
+    );
+
+    const choisirDirection = (valeur) => {
+        const service = (referentiel?.services ?? []).find((s) => String(s.id_service) === String(form.id_service));
+        setForm({
+            ...form,
+            id_direction: valeur,
+            id_service: service && String(service.id_direction) === String(valeur) ? form.id_service : '',
+        });
+    };
+
+    const choisirService = (valeur) => {
+        const service = (referentiel?.services ?? []).find((s) => String(s.id_service) === String(valeur));
+        setForm({ ...form, id_service: valeur, id_direction: service ? service.id_direction : form.id_direction });
+    };
+
+    const choisirModele = (valeur) => {
+        const modele = (referentiel?.modeles ?? []).find((m) => String(m.id_modele) === String(valeur));
+        setForm({
+            ...form,
+            id_modele: valeur,
+            id_categorie: modele?.id_categorie ?? form.id_categorie,
+            id_marque: modele?.id_marque ?? form.id_marque,
+        });
+    };
+
     const confirmerSuppression = async () => {
         if (! aSupprimer) return;
         setBusySuppression(true);
@@ -138,6 +189,15 @@ export default function Equipements() {
                 <Field label={t('Désignation')} required>
                     <input required value={form.designation} onChange={(e) => setForm({ ...form, designation: e.target.value })} className={inputClass} />
                 </Field>
+                <Field label={t('Processeur')}>
+                    <input value={form.processeur} onChange={(e) => setForm({ ...form, processeur: e.target.value })} className={inputClass} placeholder="Intel i5-10300H" />
+                </Field>
+                <Field label={t('Mémoire (RAM)')}>
+                    <input value={form.ram} onChange={(e) => setForm({ ...form, ram: e.target.value })} className={inputClass} placeholder="16 Go DDR4" />
+                </Field>
+                <Field label={t('Disque dur')}>
+                    <input value={form.disque} onChange={(e) => setForm({ ...form, disque: e.target.value })} className={inputClass} placeholder="512 Go SSD" />
+                </Field>
                 <Field label={t('Statut')} required>
                     <select value={form.statut} onChange={(e) => setForm({ ...form, statut: e.target.value })} className={inputClass}>
                         {Object.entries(STATUTS_EQUIPEMENT).map(([k, m]) => (
@@ -146,18 +206,26 @@ export default function Equipements() {
                     </select>
                 </Field>
                 <Field label={t('Modèle')}>
-                    <select value={form.id_modele} onChange={(e) => setForm({ ...form, id_modele: e.target.value })} className={inputClass}>
+                    <select value={form.id_modele} onChange={(e) => choisirModele(e.target.value)} className={inputClass}>
                         <option value="">—</option>
                         {referentiel?.modeles?.map((m) => (
-                            <option key={m.id_modele} value={m.id_modele}>{m.marque?.nom_marque} {m.nom_modele}</option>
+                            <option key={m.id_modele} value={m.id_modele}>{libelleModele(m, m.marque)}</option>
                         ))}
                     </select>
                 </Field>
                 <Field label={t('Direction')}>
-                    <select value={form.id_direction} onChange={(e) => setForm({ ...form, id_direction: e.target.value })} className={inputClass}>
+                    <select value={form.id_direction} onChange={(e) => choisirDirection(e.target.value)} className={inputClass}>
                         <option value="">—</option>
                         {referentiel?.directions?.map((d) => (
                             <option key={d.id_direction} value={d.id_direction}>{d.nom_direction}</option>
+                        ))}
+                    </select>
+                </Field>
+                <Field label={t('Service')}>
+                    <select value={form.id_service} onChange={(e) => choisirService(e.target.value)} className={inputClass}>
+                        <option value="">—</option>
+                        {servicesDisponibles.map((s) => (
+                            <option key={s.id_service} value={s.id_service}>{s.nom_service}</option>
                         ))}
                     </select>
                 </Field>
@@ -177,12 +245,34 @@ export default function Equipements() {
                         ))}
                     </select>
                 </Field>
+                <Field label={t('Fournisseur')}>
+                    <select value={form.id_fournisseur} onChange={(e) => setForm({ ...form, id_fournisseur: e.target.value })} className={inputClass}>
+                        <option value="">—</option>
+                        {referentiel?.fournisseurs?.map((f) => (
+                            <option key={f.id_fournisseur} value={f.id_fournisseur}>{f.raison_sociale}</option>
+                        ))}
+                    </select>
+                </Field>
                 <Field label={t("Date d'acquisition")}>
                     <input type="date" value={form.date_acquisition} onChange={(e) => setForm({ ...form, date_acquisition: e.target.value })} className={inputClass} />
                 </Field>
                 <Field label={t("Prix d'acquisition (Ar)")}>
                     <input type="number" min="0" value={form.prix_acquisition} onChange={(e) => setForm({ ...form, prix_acquisition: e.target.value })} className={inputClass} />
                 </Field>
+                <Field label={t('Date de mise en service')}>
+                    <input type="date" value={form.date_mise_service} onChange={(e) => setForm({ ...form, date_mise_service: e.target.value })} className={inputClass} />
+                </Field>
+                <Field label={t('Garantie — début')}>
+                    <input type="date" value={form.garantie_debut} onChange={(e) => setForm({ ...form, garantie_debut: e.target.value })} className={inputClass} />
+                </Field>
+                <Field label={t('Garantie — fin')}>
+                    <input type="date" value={form.garantie_fin} onChange={(e) => setForm({ ...form, garantie_fin: e.target.value })} className={inputClass} />
+                </Field>
+                <div className="sm:col-span-2">
+                    <Field label={t('Description / fiche technique')}>
+                        <textarea rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} className={`${inputClass} resize-y`} placeholder={t('Caractéristiques, accessoires, état particulier…')} />
+                    </Field>
+                </div>
             </div>
         </>
     );
@@ -260,7 +350,7 @@ export default function Equipements() {
                                     </td>
                                     <td className="px-4 py-3">
                                         <div className="font-semibold text-slate-800">{eq.designation}</div>
-                                        <div className="text-[11px] text-slate-500">{eq.marque?.nom_marque} {eq.modele?.nom_modele}</div>
+                                        <div className="text-[11px] text-slate-500">{libelleModele(eq.modele, eq.marque)}</div>
                                     </td>
                                     <td className="px-4 py-3 hidden md:table-cell text-slate-600">
                                         {eq.categorie?.nom_categorie ?? '—'}

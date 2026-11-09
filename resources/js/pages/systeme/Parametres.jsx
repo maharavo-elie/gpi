@@ -48,7 +48,7 @@ const COLONNES = {
     services: [
         { key: 'code_service', label: 'Code', width: 'w-20', mono: true },
         { key: 'nom_service', label: 'Nom' },
-        { key: 'direction', label: 'Direction', relation: (s) => s.direction?.code_direction ?? '—' },
+        { key: 'direction', label: 'Direction', relation: (s) => s.direction?.nom_direction ?? '—' },
         { key: 'statut', label: 'Statut', badge: true },
     ],
     categories: [
@@ -105,9 +105,9 @@ const FORMULAIRES = {
         { key: 'statut', label: 'Statut', type: 'select', options: [['actif', 'Actif'], ['inactif', 'Inactif']] },
     ],
     services: [
-        { key: 'code_service', label: 'Code' },
+        { key: 'id_direction', label: "Direction d'attachement", type: 'ref', source: 'directions', get: (d) => d.nom_direction, required: true },
         { key: 'nom_service', label: 'Nom du service', required: true },
-        { key: 'id_direction', label: 'Direction', type: 'ref', source: 'directions', get: (d) => d.nom_direction, required: true },
+        { key: 'code_service', label: 'Code (généré si vide)' },
         { key: 'statut', label: 'Statut', type: 'select', options: [['actif', 'Actif'], ['inactif', 'Inactif']] },
     ],
     categories: [

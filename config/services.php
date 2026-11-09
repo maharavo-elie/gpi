@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    // Assistant d'aide intégré. API OpenAI-compatible ; Mistral par défaut.
+    'assistant' => [
+        'key' => env('MISTRAL_API_KEY'),
+        'base_url' => env('MISTRAL_BASE_URL', 'https://api.mistral.ai/v1'),
+        'model' => env('MISTRAL_MODEL', 'mistral-small-latest'),
+    ],
+
 ];

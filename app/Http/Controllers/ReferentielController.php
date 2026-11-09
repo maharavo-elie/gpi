@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Agent;
 use App\Models\Batiment;
 use App\Models\Categorie;
 use App\Models\Direction;
+use App\Models\Equipement;
 use App\Models\EtatEquipement;
 use App\Models\Fournisseur;
 use App\Models\Localisation;
@@ -14,6 +16,7 @@ use App\Models\Service;
 use App\Models\Site;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
 
@@ -216,6 +219,73 @@ class ReferentielController extends Controller
         return response()->json($query->get());
     }
 
+    /**
+     * Colonnes « code » obligatoires en base mais facultatives dans le formulaire :
+     * type => [colonne, champ servant de base au code, préfixe].
+     * Quand l'utilisateur laisse le code vide, un code unique est généré.
+     */
+    private function codesAutomatiques(): array
+    {
+        return [
+            'directions' => ['code_direction', 'nom_direction', 'DIR'],
+            'services' => ['code_service', 'nom_service', 'SRV'],
+            'sites' => ['code_site', 'nom_site', 'SITE'],
+            'batiments' => ['code_batiment', 'nom_batiment', 'BAT'],
+            'localisations' => ['code_localisation', 'nom_localisation', 'LOC'],
+        ];
+    }
+
+    /** Code lisible dérivé du libellé (initiales des mots) et garanti unique. */
+    private function genererCode(string $modele, string $colonne, string $libelle, string $prefixe): string
+    {
+        $mots = preg_split('/[^A-Za-z0-9]+/', Str::ascii($libelle), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        $initiales = '';
+        foreach ($mots as $mot) {
+            if (strlen($initiales) >= 4) {
+                break;
+            }
+            $initiales .= strtoupper($mot[0]);
+        }
+
+        $base = mb_substr($prefixe.'-'.($initiales !== '' ? $initiales : 'X'), 0, 16);
+        $code = $base;
+        $suffixe = 1;
+        while ($modele::where($colonne, $code)->exists()) {
+            $suffixe++;
+            $code = mb_substr($base, 0, 16 - strlen((string) $suffixe)).'-'.$suffixe;
+        }
+
+        return $code;
+    }
+
+    /**
+     * Complète le code d'un référentiel : consigne le code existant si le champ est vidé
+     * lors d'une modification, sinon génère un code unique pour toute création/renommage.
+     */
+    private function completerCode(string $type, string $modele, array $data, ?object $existant = null): array
+    {
+        $config = $this->codesAutomatiques()[$type] ?? null;
+        if ($config === null) {
+            return $data;
+        }
+
+        [$colonne, $champLibelle, $prefixe] = $config;
+
+        if (! empty($data[$colonne])) {
+            return $data;
+        }
+
+        if ($existant !== null && ! empty($existant->{$colonne})) {
+            $data[$colonne] = $existant->{$colonne};
+
+            return $data;
+        }
+
+        return array_merge($data, [
+            $colonne => $this->genererCode($modele, $colonne, (string) ($data[$champLibelle] ?? $type), $prefixe),
+        ]);
+    }
+
     /** Injecte l'ignore() sur les règles unique lors d'une mise à jour. */
     private function reglesPourEdition(array $rules, string $clePrimaire, int $id): array
     {
@@ -229,7 +299,7 @@ class ReferentielController extends Controller
     {
         [$model, $label, $rules, , $with] = $this->config($type);
 
-        $data = $request->validate($rules);
+        $data = $this->completerCode($type, $model, $request->validate($rules));
         $item = $model::create($data);
 
         return response()->json($item->load($with), 201);
@@ -240,8 +310,15 @@ class ReferentielController extends Controller
         [$model, $label, $rules, , $with, $meta] = $this->config($type);
 
         $item = $model::findOrFail($id);
-        $data = $request->validate($this->reglesPourEdition($rules, $meta['key'], $id));
+        $data = $this->completerCode($type, $model, $request->validate($this->reglesPourEdition($rules, $meta['key'], $id)), $item);
         $item->update($data);
+
+        // Un service change de direction : les agents et les équipements qui y sont
+        // rattachés suivent, pour que toute l'application reste cohérente.
+        if ($type === 'services' && $item->wasChanged('id_direction')) {
+            Agent::where('id_service', $item->getKey())->update(['id_direction' => $item->id_direction]);
+            Equipement::where('id_service', $item->getKey())->update(['id_direction' => $item->id_direction]);
+        }
 
         return response()->json($item->load($with));
     }

@@ -128,6 +128,65 @@ function Camembert({ stats }) {
     );
 }
 
+/* Histogramme d'évolution (entrées / sorties sur 12 mois) en CSS pur :
+   2 barres par mois, ascenseur au survol avec détail dans le title. */
+function FluxMensuel({ data }) {
+    const { t } = useT();
+    const max = Math.max(1, ...data.flatMap((d) => [d.entrees, d.sorties]));
+    return (
+        <div>
+            <div className="flex items-end gap-1.5 h-40">
+                {data.map((d) => (
+                    <div
+                        key={d.mois}
+                        className="flex-1 flex flex-col items-center gap-1 min-w-0"
+                        title={`${d.mois} — ${d.entrees} ${t('entrée(s)')}, ${d.sorties} ${t('sortie(s)')}`}
+                    >
+                        <div className="w-full flex items-end justify-center gap-0.5 h-32">
+                            <div
+                                className="w-1/3 max-w-5 rounded-t bg-blue-500 hover:bg-blue-600 transition-all duration-700"
+                                style={{ height: `${(d.entrees / max) * 100}%` }}
+                            />
+                            <div
+                                className="w-1/3 max-w-5 rounded-t bg-vert-500 hover:bg-vert-600 transition-all duration-700"
+                                style={{ height: `${(d.sorties / max) * 100}%` }}
+                            />
+                        </div>
+                        <span className="text-[8px] font-semibold text-slate-400 truncate w-full text-center">{d.mois.split(' ')[0]}</span>
+                    </div>
+                ))}
+            </div>
+            <div className="flex items-center justify-center gap-4 mt-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-blue-500" /> {t('Entrées')}</span>
+                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-vert-500" /> {t('Sorties')}</span>
+            </div>
+        </div>
+    );
+}
+
+/* Barres proportionnelles horizontales : lecture immédiate des écarts. */
+function BarresProportion({ entrees, couleur = 'bg-blue-500', traduire = true }) {
+    const { t } = useT();
+    const liste = Object.entries(entrees);
+    const max = Math.max(1, ...liste.map(([, v]) => v));
+    return (
+        <div className="space-y-2">
+            {liste.length === 0 && <p className="text-xs text-slate-400">{t('Aucune donnée.')}</p>}
+            {liste.map(([lbl, v]) => (
+                <div key={lbl}>
+                    <div className="flex items-center justify-between text-xs mb-0.5">
+                        <span className="font-semibold text-slate-700 truncate">{traduire ? t(lbl.replace('_', ' ')) : lbl}</span>
+                        <span className="text-slate-500 tabular-nums shrink-0">{v}</span>
+                    </div>
+                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div className={`h-full rounded-full transition-all duration-700 ${couleur}`} style={{ width: `${(v / max) * 100}%` }} />
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
 /* Carte KPI avec compteur animé */
 function CarteKPI({ label, value, icon: Icon, accent, iconText, to }) {
     const compte = useCompteur(value);
@@ -195,30 +254,47 @@ export default function Dashboard() {
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                 {/* Répartition par statut — en camembert */}
                 <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
                     <h3 className="text-sm font-bold text-slate-800 mb-4">{t('Répartition par statut')}</h3>
                     <Camembert stats={stats} />
                 </div>
 
-                {/* Par catégorie */}
+                {/* Évolution entrées / sorties sur 12 mois */}
+                <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
+                    <h3 className="text-sm font-bold text-slate-800 mb-4">{t('Flux de matériel — 12 derniers mois')}</h3>
+                    <FluxMensuel data={stats.flux_mensuels ?? []} />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                {/* Par catégorie — barres proportionnelles */}
                 <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
                     <h3 className="text-sm font-bold text-slate-800 mb-4">{t('Par catégorie')}</h3>
-                    <div className="space-y-2">
-                        {stats.par_categorie.map((c) => (
-                            <div key={c.nom_categorie} className="flex items-center justify-between text-sm py-1.5 border-b border-slate-100 last:border-0">
-                                <span className="text-slate-700 font-medium">{c.nom_categorie}</span>
-                                <span className="font-bold text-slate-800">{c.total}</span>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                        <span className="text-slate-500 flex items-center gap-1.5">
-                            <CircleDollarSign size={14} /> {t('Valeur totale du parc')}
-                        </span>
-                        <span className="font-bold text-slate-800">{formatAr(stats.valeur_parc)}</span>
-                    </div>
+                    <BarresProportion
+                        entrees={Object.fromEntries(stats.par_categorie.map((c) => [c.nom_categorie, c.total]))}
+                        couleur="bg-vert-500"
+                        traduire={false}
+                    />
+                </div>
+
+                {/* Par direction */}
+                <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
+                    <h3 className="text-sm font-bold text-slate-800 mb-4">{t('Par direction')}</h3>
+                    <BarresProportion
+                        entrees={Object.fromEntries(stats.par_direction.map((d) => [d.code_direction, d.total]))}
+                        couleur="bg-blue-500"
+                        traduire={false}
+                    />
+                </div>
+
+                {/* Tickets et maintenances */}
+                <div className="bg-card rounded-2xl border border-slate-200 shadow-sm p-5">
+                    <h3 className="text-sm font-bold text-slate-800 mb-3">{t('Tickets — par statut')}</h3>
+                    <BarresProportion entrees={stats.tickets_par_statut ?? {}} couleur="bg-rose-400" />
+                    <h3 className="text-sm font-bold text-slate-800 mb-3 mt-5">{t('Maintenances — par statut')}</h3>
+                    <BarresProportion entrees={stats.maintenances_par_statut ?? {}} couleur="bg-orange-400" />
                 </div>
             </div>
 

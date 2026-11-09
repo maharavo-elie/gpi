@@ -210,7 +210,7 @@ function OngletSynthese({ dates }) {
     useEffect(() => {
         setData(null);
         api.get('/rapports/synthese', { params: dates }).then(({ data }) => setData(data));
-    }, [dates.debut, dates.fin]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [dates.date_debut, dates.date_fin]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const exporterPDF = async () => {
         setPdfBusy(true);
@@ -722,7 +722,10 @@ export default function Rapports() {
     const { t } = useT();
     const [onglet, setOnglet] = useState('synthese');
     const [preset, setPreset] = useState('annee');
-    const dates = useMemo(() => presetVersDates(preset), [preset]);
+    // Deux dates personnalisées (filtre libre) : dès qu'on les remplit, elles
+    // écrasent le preset en cours ; un clic sur un preset les annule.
+    const [perso, setPerso] = useState(null);
+    const dates = useMemo(() => perso ?? presetVersDates(preset), [perso, preset]);
 
     return (
         <div>
@@ -750,18 +753,39 @@ export default function Rapports() {
                 </div>
 
                 {onglet === 'synthese' && (
-                    <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 self-start">
-                        {PRESETS.map((p) => (
-                            <button
-                                key={p.key}
-                                onClick={() => { setPreset(p.key); sons.clic(); }}
-                                className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all ${
-                                    preset === p.key ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/30' : 'text-slate-600 hover:text-slate-800'
-                                }`}
-                            >
-                                {t(p.label)}
-                            </button>
-                        ))}
+                    <div className="flex items-center gap-2 self-start flex-wrap">
+                        <div className="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200">
+                            {PRESETS.map((p) => (
+                                <button
+                                    key={p.key}
+                                    onClick={() => { setPerso(null); setPreset(p.key); sons.clic(); }}
+                                    className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all ${
+                                        !perso && preset === p.key ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/30' : 'text-slate-600 hover:text-slate-800'
+                                    }`}
+                                >
+                                    {t(p.label)}
+                                </button>
+                            ))}
+                        </div>
+                        {/* Filtre libre : du … au … (deux dates) */}
+                        <div className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border bg-card ${perso ? 'border-blue-300 bg-blue-50' : 'border-slate-200'}`}>
+                            <span className="text-[11px] font-bold text-slate-500">{t('Du')}</span>
+                            <input
+                                type="date"
+                                value={(perso ?? presetVersDates(preset)).date_debut}
+                                max={(perso ?? presetVersDates(preset)).date_fin}
+                                onChange={(e) => setPerso({ date_debut: e.target.value, date_fin: (perso ?? presetVersDates(preset)).date_fin })}
+                                className="h-7 px-2 bg-card-high rounded-lg text-slate-700 text-xs focus:outline-none border border-slate-200"
+                            />
+                            <span className="text-[11px] font-bold text-slate-500">{t('au')}</span>
+                            <input
+                                type="date"
+                                value={(perso ?? presetVersDates(preset)).date_fin}
+                                min={(perso ?? presetVersDates(preset)).date_debut}
+                                onChange={(e) => setPerso({ date_debut: (perso ?? presetVersDates(preset)).date_debut, date_fin: e.target.value })}
+                                className="h-7 px-2 bg-card-high rounded-lg text-slate-700 text-xs focus:outline-none border border-slate-200"
+                            />
+                        </div>
                     </div>
                 )}
             </div>
