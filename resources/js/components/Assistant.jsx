@@ -63,10 +63,10 @@ function Bulle({ role, children }) {
                 </div>
             )}
             <div
-                className={`max-w-[85%] whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-[13px] leading-relaxed ${
+                className={`max-w-[86%] whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2.5 text-[13px] leading-[1.65] shadow-sm ${
                     utilisateur
                         ? 'rounded-br-md bg-blue-600 text-white'
-                        : 'rounded-bl-md border border-slate-200 bg-white text-slate-700'
+                        : 'rounded-bl-md border border-slate-300 bg-card font-medium text-slate-800'
                 }`}
             >
                 {children}
@@ -158,7 +158,7 @@ export default function Assistant() {
                     id="assistant-gpi-panel"
                     role="dialog"
                     aria-label={txt.titre}
-                    className="anim-pop fixed bottom-24 right-4 z-[70] flex h-[540px] max-h-[calc(100vh-8rem)] w-[calc(100vw-2rem)] max-w-[390px] flex-col overflow-hidden rounded-2xl border border-slate-200/60 bg-card shadow-2xl sm:right-6"
+                    className="anim-pop fixed bottom-24 right-4 z-[70] flex h-[580px] max-h-[calc(100vh-8rem)] w-[calc(100vw-2rem)] max-w-[420px] flex-col overflow-hidden rounded-2xl border border-slate-300/60 bg-card shadow-2xl sm:right-6"
                 >
                     <header className="flex items-center gap-3 bg-slate-900 px-4 py-3 text-white">
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white">
@@ -198,7 +198,7 @@ export default function Assistant() {
                                         key={suggestion}
                                         type="button"
                                         onClick={() => envoyer(suggestion)}
-                                        className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-left text-[12px] font-medium text-slate-600 transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
+                                        className="w-full rounded-lg border border-slate-300 bg-card px-3 py-2 text-left text-[12px] font-semibold text-slate-700 transition hover:border-blue-400 hover:bg-blue-50 hover:text-blue-300"
                                     >
                                         {suggestion}
                                     </button>
@@ -224,7 +224,7 @@ export default function Assistant() {
                                 <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-rose-100 text-rose-500">
                                     <AlertCircle size={13} />
                                 </div>
-                                <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-rose-200 bg-rose-50 px-3 py-2 text-[12px] leading-relaxed text-rose-600">
+                                <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-rose-200 bg-rose-50 px-3.5 py-2.5 text-[12px] leading-relaxed text-rose-500">
                                     {erreur}
                                 </div>
                             </div>
@@ -250,7 +250,7 @@ export default function Assistant() {
                                 placeholder={txt.placeholder}
                                 aria-label={txt.placeholder}
                                 autoComplete="off"
-                                className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-[13px] text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-600/40"
+                                className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-card-high px-3 py-2 text-[13px] text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-600/40"
                             />
                             <button
                                 type="submit"
@@ -262,7 +262,7 @@ export default function Assistant() {
                                 {chargement ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
                             </button>
                         </div>
-                        <p className="mt-1.5 text-[9px] leading-snug text-slate-400">{note}</p>
+                        <p className="mt-1.5 text-[10px] leading-snug text-slate-500">{note}</p>
                     </form>
                 </section>
             )}

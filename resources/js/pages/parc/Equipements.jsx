@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Plus, Monitor, Pencil, FileDown, Trash2 } from 'lucide-react';
+import { Search, Plus, Monitor, Pencil, FileDown, Trash2, Archive } from 'lucide-react';
 import { api } from '../../api';
 import { Spinner, PageHeader, EmptyState, Badge, Field, inputClass, ErrorText, EditModal, ConfirmModal } from '../../components/ui';
 import { STATUTS_EQUIPEMENT, formatDate, formatAr } from '../../lib/constants';
@@ -60,7 +60,7 @@ export default function Equipements() {
     const { t } = useT();
     const peutEcrire = aRole(user, ROLES_ECRITURE);
     const [data, setData] = useState(null);
-    const [filters, setFilters] = useState({ q: '', statut: '', id_categorie: '' });
+    const [filters, setFilters] = useState({ q: '', statut: '', id_categorie: '', id_direction: '', id_service: '' });
     const [referentiel, setReferentiel] = useState(null);
     const [modal, setModal] = useState(null); // null | { mode: 'create' } | { mode: 'edit', equipement }
     const [form, setForm] = useState(VIDE_FORM);
@@ -92,10 +92,18 @@ export default function Equipements() {
     }, []);
 
     const setF = (k) => (e) => {
-        const next = { ...filters, [k]: e.target.value };
+        const valeur = e.target.value;
+        // Le service dépend de la direction : on le réinitialise si la
+        // direction change pour éviter une combinaison incohérente.
+        const next = { ...filters, [k]: valeur, ...(k === 'id_direction' ? { id_service: '' } : {}) };
         setFilters(next);
         if (k !== 'q') load(next);
     };
+
+    /* Services proposés dans la barre de tri, restreints à la direction choisie. */
+    const servicesPourFiltre = (referentiel?.services ?? []).filter(
+        (s) => ! filters.id_direction || String(s.id_direction) === String(filters.id_direction),
+    );
 
     const ouvrirCreation = () => {
         setForm(VIDE_FORM);
@@ -326,6 +334,20 @@ export default function Equipements() {
                         <option key={c.id_categorie} value={c.id_categorie}>{c.nom_categorie}</option>
                     ))}
                 </select>
+                <select value={filters.id_direction} onChange={setF('id_direction')} className={`${inputClass} sm:w-52`} title={t('Trier par direction')}>
+                    <option value="">{t('Toutes les directions')}</option>
+                    {referentiel?.directions?.map((d) => (
+                        <option key={d.id_direction} value={d.id_direction}>
+                            {d.code_direction ? `${d.code_direction} — ` : ''}{d.nom_direction}
+                        </option>
+                    ))}
+                </select>
+                <select value={filters.id_service} onChange={setF('id_service')} className={`${inputClass} sm:w-52`} title={t('Trier par service')}>
+                    <option value="">{t('Tous les services')}</option>
+                    {servicesPourFiltre.map((s) => (
+                        <option key={s.id_service} value={s.id_service}>{s.nom_service}</option>
+                    ))}
+                </select>
             </div>
 
             {/* Tableau */}
@@ -337,6 +359,8 @@ export default function Equipements() {
                                 <th className="px-4 py-3 font-bold">{t('Code')}</th>
                                 <th className="px-4 py-3 font-bold">{t('Désignation')}</th>
                                 <th className="px-4 py-3 font-bold hidden md:table-cell">{t('Catégorie')}</th>
+                                <th className="px-4 py-3 font-bold hidden md:table-cell">{t('Direction')}</th>
+                                <th className="px-4 py-3 font-bold hidden md:table-cell">{t('Service')}</th>
                                 <th className="px-4 py-3 font-bold hidden lg:table-cell">{t('Localisation')}</th>
                                 <th className="px-4 py-3 font-bold">{t('Statut')}</th>
                                 <th className="px-4 py-3 text-right font-bold">{t('Actions')}</th>
@@ -354,6 +378,12 @@ export default function Equipements() {
                                     </td>
                                     <td className="px-4 py-3 hidden md:table-cell text-slate-600">
                                         {eq.categorie?.nom_categorie ?? '—'}
+                                    </td>
+                                    <td className="px-4 py-3 hidden md:table-cell text-slate-600">
+                                        {eq.affectation_active?.agent?.direction?.nom_direction ?? eq.direction?.nom_direction ?? '—'}
+                                    </td>
+                                    <td className="px-4 py-3 hidden md:table-cell text-slate-600">
+                                        {eq.affectation_active?.agent?.service?.nom_service ?? eq.service?.nom_service ?? '—'}
                                     </td>
                                     <td className="px-4 py-3 hidden lg:table-cell text-slate-600">
                                         {eq.localisation ? `${eq.localisation.batiment?.site?.nom_site ?? ''} · ${eq.localisation.nom_localisation}` : t('Stock')}
@@ -441,9 +471,14 @@ export default function Equipements() {
             {/* Confirmation de suppression */}
             <ConfirmModal
                 open={!! aSupprimer}
+                title={t('Mettre cet équipement à la corbeille ?')}
                 message={aSupprimer
-                    ? <>{t("Voulez-vous vraiment supprimer l'équipement ")}<strong className="text-slate-700">« {aSupprimer.code_inventaire} — {aSupprimer.designation} »</strong>{t(' ? Cette action est définitive.')}</>
+                    ? <>{t("L'équipement ")}<strong className="text-slate-700">« {aSupprimer.code_inventaire} — {aSupprimer.designation} »</strong>{t(" sera placé dans la corbeille. Vous pourrez le restaurer depuis Système > Corbeille tant qu'elle n'est pas vidée.")}</>
                     : ''}
+                confirmLabel={t('Mettre à la corbeille')}
+                busyLabel={t('Mise à la corbeille…')}
+                danger={false}
+                icone={<Archive size={15} />}
                 busy={busySuppression}
                 onConfirm={confirmerSuppression}
                 onClose={() => setASupprimer(null)}

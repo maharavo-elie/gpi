@@ -21,14 +21,15 @@
                                     Présenté le : ...............................
 Par : Monsieur RAKOTOMAMINIRIANA Fanomezaniavo Fenohery Sarobidy
 
-                                             Membre du jury :
+                                            Membres du jury :
                                                Rapporteurs :
 
-                                   - ...................................................
-
-                                   - ...................................................
+                       - ......................................... (Encadreur pédagogique)
+                       - ......................................... (Encadreur professionnel)
 
                                Année universitaire 2025 - 2026
+
+                                 Tampon et signature du responsable
 CURRICULUM VITAE
 
    RAKOTOMAMINIRIANA FANOMEZANIAVO FENOHERY SAROBIDY
@@ -64,6 +65,8 @@ LANGUES
    · Malgache : langue maternelle.
    · Français : parler, lire, écrire.
    · Anglais : parler, lire, écrire.
+
+                                                                        Page I
 COMPÉTENCES
    · Technologies web et design : React, Tailwind CSS, ExpressJS, NodeJS, Laravel, Figma.
    · Langages de programmation : C/C++, JavaScript, PHP, Python.
@@ -79,80 +82,131 @@ CENTRES D'INTÉRÊT
    · Films
    · Musique
    · Jeux d'échecs
+
+                                                                        Page II
 SOMMAIRE
 
-        Le présent rapport est organisé en trois parties, elles-mêmes subdivisées en chapitres.
+        Le sommaire présente les parties, les chapitres et les titres de premier niveau du rapport.
 
-Curriculum vitae
-Sommaire
-Remerciements
-Liste des figures
-Liste des tableaux
-Liste des abréviations
-Introduction générale
-PARTIE I. PRÉSENTATIONS
+La table des matières, placée en fin de document, en donne le détail complet.
 
-    Chapitre 1. Présentation de l'ENI
-    Chapitre 2. Présentation de la DGSR
-    Chapitre 3. Description du projet
-PARTIE II. ANALYSE ET CONCEPTION
-    Chapitre 4. Analyse préalable
-    Chapitre 5. Analyse conceptuelle
-PARTIE III. RÉALISATION
-    Chapitre 6. Mise en place de l'environnement de développement
-    Chapitre 7. Développement de l'application
-Conclusion générale
-Bibliographie
-Webographie
-Glossaire
-Table des matières
-Résumé
-Abstract
+    CURRICULUM VITAE ............................................................................................................................. I
+    REMERCIEMENTS................................................................................................................................. V
+    LISTE DES FIGURES ...........................................................................................................................VII
+    LISTE DES TABLEAUX..................................................................................................................... VIII
+    LISTE DES ABRÉVIATIONS................................................................................................................. X
+    INTRODUCTION GÉNÉRALE ............................................................................................................... 1
+
+PARTIE I. PRÉSENTATIONS.............................................................................................................3
+    Chapitre 1. Présentation de l'ENI .............................................................................................................. 4
+
+        1.1. Informations d'ordre général .................................................................................................................4
+        1.2. Missions et historique ............................................................................................................................4
+        1.3. Organigramme institutionnel .................................................................................................................6
+        1.4. Domaines de spécialisation....................................................................................................................6
+        1.5. Architecture des formations pédagogiques ............................................................................................7
+        1.6. Relations de l'ENI avec les organismes externes...................................................................................8
+        1.7. Débouchés professionnels......................................................................................................................8
+        1.8. Ressources humaines .............................................................................................................................9
+    Chapitre 2. Présentation de la DGSR....................................................................................................... 10
+        2.1. Statut et missions .................................................................................................................................10
+        2.2. Organisation administrative .................................................................................................................10
+        2.3. Organigramme fonctionnel ..................................................................................................................11
+        2.4. Valeurs et engagements .......................................................................................................................11
+        2.5. Le Service Informatique ......................................................................................................................12
+    Chapitre 3. Description du projet ............................................................................................................. 13
+        3.1. Formulation..........................................................................................................................................13
+        3.2. Objectif et besoins des utilisateurs.......................................................................................................13
+        3.3. Moyens nécessaires à la réalisation du projet ......................................................................................14
+        3.4. Résultats attendus ................................................................................................................................15
+        3.5. Chronogramme de travail ....................................................................................................................15
+
+PARTIE II. ANALYSE ET CONCEPTION .....................................................................................17
+    Chapitre 4. Analyse préalable .................................................................................................................. 18
+
+        4.1. Analyse de l'existant............................................................................................................................18
+        4.2. Critique de l'existant............................................................................................................................19
+        4.3. Conception avant-projet.......................................................................................................................19
+    Chapitre 5. Analyse conceptuelle............................................................................................................. 24
+        5.1. Présentation de la méthode MERISE...................................................................................................24
+        5.2. Dictionnaire des données .....................................................................................................................25
+        5.3. Règles de gestion .................................................................................................................................28
+        5.4. Diagramme de flux ..............................................................................................................................28
+        5.5. Modélisation des données ....................................................................................................................30
+
+PARTIE III. RÉALISATION .............................................................................................................39
+    Chapitre 6. Mise en place de l'environnement de développement .......................................................... 40
+
+        6.1. Installation et configuration des outils .................................................................................................40
+        6.2. Architecture de l'application................................................................................................................43
+        6.3. Structure du projet ...............................................................................................................................44
+        6.4. Déploiement en mode intranet .............................................................................................................45
+    Chapitre 7. Développement de l'application............................................................................................ 47
+        7.1. Création de la base de données ............................................................................................................47
+
+                                                                       Page III
+    7.2. Codage de l'application .......................................................................................................................48
+    7.3. Présentation de l'application................................................................................................................53
+    7.4. Perspectives d'évolution ......................................................................................................................64
+CONCLUSION GÉNÉRALE.................................................................................................................. 66
+BIBLIOGRAPHIE................................................................................................................................... 68
+WEBOGRAPHIE .................................................................................................................................... 69
+GLOSSAIRE ........................................................................................................................................... 70
+ANNEXES............................................................................................................................................... 71
+    Annexe A. Extrait du fichier de routes de l'API .........................................................................................71
+    Annexe B. Extrait du script de migration de la table equipements .............................................................72
+RÉSUMÉ ................................................................................................................................................. 76
+ABSTRACT............................................................................................................................................. 77
+
+                                                                  Page IV
 REMERCIEMENTS
 
         Avant de commencer, je remercie Dieu tout-puissant, sans qui rien de tout cela n'aurait
-été possible. Je souhaite également exprimer ma profonde gratitude :
+été possible. Mes remerciements s'adressent également à celles et ceux qui ont rendu ce stage
+possible.
 
-   · À Monsieur HAJALALAINA Aimé Richard, Professeur et Président de l'Université
-       de Fianarantsoa, pour son engagement en faveur de l'excellence académique et son
-       soutien aux étudiants.
+- À Monsieur HAJALALAINA Aimé Richard, Professeur, Président de l'Université de
+    Fianarantsoa, pour son engagement en faveur de l'excellence académique et son soutien aux
+    étudiants.
 
-   · À Monsieur ANDRIAMANANTENA Razafiharison, Président de l'Université de
-       Toliara, pour avoir accordé l'intégration de l'ENI au sein de l'université de Toliara.
+- À Monsieur ANDRIAMANANTENA Razafiharison, Président de l'Université de Toliara,
+    pour avoir accordé l'intégration du centre d'étude de l'ENI au sein de l'Université de
+    Toliara.
 
-   · Au Docteur MAHATODY Thomas, Directeur de l'École Nationale d'Informatique de
-       Fianarantsoa, pour la qualité de la formation dispensée et son attention aux conditions de
-       stage des étudiants.
+- Au Docteur MAHATODY Thomas, Directeur de l'École Nationale d'Informatique de
+    Fianarantsoa, pour la qualité de la formation dispensée et son attention aux conditions de
+    stage des étudiants.
 
-   · À Monsieur RABETAFIKA Louis Haja, Maître de Conférences et responsable de la
-       mention Informatique, pour ses conseils méthodologiques.
+- À Monsieur le Directeur Général de la Direction Générale de la Sécurité Routière, pour
+    avoir accepté ma candidature et m'avoir accueilli au sein de son établissement durant toute
+    la période du stage.
 
-   · À Monsieur GILANTE Gesazafy, responsable du parcours Informatique Générale, pour
-       son accompagnement tout au long de l'année.
+- À Monsieur RABETAFIKA Louis Haja, Maître de Conférences, responsable de la mention
+    Informatique, pour ses conseils méthodologiques et son suivi de la formation.
 
-   · À Monsieur RAZAFINDRAMONJA Herinantenaina Clément Aubert, Assistant
-       d'Enseignement Supérieur et de Recherche à l'ENI, pour sa générosité et la qualité de
-       son encadrement pédagogique.
+- À Monsieur GILANTE Gesazafy, responsable du parcours Informatique Générale, pour son
+    accompagnement tout au long de l'année universitaire.
 
-   · À mon encadreur pédagogique, pour ses orientations et ses relectures tout au long de la
-       rédaction de ce rapport.
+- À Monsieur RAZAFINDRAMONJA Herinantenaina Clément Aubert, Assistant
+    d'Enseignement Supérieur et de Recherche à l'ENI, mon encadreur pédagogique et
+    rapporteur, pour ses orientations, sa rigueur méthodologique et ses relectures attentives de
+    ce rapport.
 
-   · À Monsieur RANDRIAMIFIDY Hugues Emmanuel, Directeur Général de l'École
-       Nationale d'Enseignement de l'Aéronautique et de la Météorologie, pour m'avoir
-       accueilli dans son établissement.
+- À Monsieur RABENJARISOA Tantelinirina, responsable du Service Informatique de la
+    DGSR et mon encadreur professionnel, pour m'avoir guidé dans la réalisation du projet,
+    pour sa disponibilité et pour la confiance qu'il m'a accordée.
 
-   · À Monsieur RABENJARISOA Tantelinirina, responsable informatique et mon
-       encadreur professionnel, pour m'avoir guidé dans la réalisation du projet, pour sa
-       disponibilité et pour la confiance qu'il m'a accordée.
+- À l'ensemble du Service Informatique de la DGSR, pour son accueil, ses explications sur
+    l'organisation du parc et sa participation aux tests de l'application.
 
-   · À l'ensemble du Service Informatique de la DGSR, pour son accueil, ses explications
-       sur l'organisation du parc et sa participation aux tests de l'application.
+- À tous les corps enseignants de l'ENI, pour leur patience et leur engagement malgré leurs
+    charges académiques.
 
-   · À tous les corps enseignants de l'ENI, pour leur patience et leur engagement malgré
-       leurs charges académiques.
+                                                                       Page V
+- À mes parents et à tous mes proches, pour leur soutien, financier comme moral, et pour leurs
+    prières.
 
-   · À mes parents et à tous mes proches, pour leur soutien, financier comme moral, et pour
-       leurs prières.
+                                                                       Page VI
 LISTE DES FIGURES
 
 Figure 1. Modèle Conceptuel des Données (MCD) du système GPI....................................... 31
@@ -161,17 +215,19 @@ Figure 3. Modèle Conceptuel des Traitements (MCT) -- tickets, affectations et in
 Figure 4. Modèle Conceptuel des Traitements (MCT) -- restitution et réforme .................... 37
 Figure 5. Modèle Organisationnel des Traitements (MOT) du système GPI .......................... 38
 Figure 6. Architecture trois tiers de l'application GPI ............................................................. 43
-Figure 7. Page d'authentification de l'application GPI............................................................ 53
-Figure 8. Tableau de bord : indicateurs et répartition du parc ................................................. 54
-Figure 9. Liste des équipements avec recherche et filtres ........................................................ 55
-Figure 10. Fiche détaillée d'un équipement et historique ........................................................ 56
-Figure 11. Gestion des affectations en cours............................................................................ 57
-Figure 12. Suivi des interventions de maintenance.................................................................. 58
-Figure 13. Campagnes d'inventaire du parc............................................................................. 59
-Figure 14. Gestion des achats et des fournisseurs .................................................................... 60
-Figure 15. Catalogue logiciel et suivi des licences .................................................................. 61
-Figure 16. Répertoire des agents de l'établissement ................................................................ 62
-Figure 17. Rapports et historiques du parc............................................................................... 63
+Figure 7. Page d'authentification de l'application GPI............................................................ 54
+Figure 8. Tableau de bord : indicateurs et répartition du parc ................................................. 55
+Figure 9. Liste des équipements avec recherche et filtres ........................................................ 56
+Figure 10. Fiche détaillée d'un équipement et historique ........................................................ 57
+Figure 11. Gestion des affectations en cours............................................................................ 58
+Figure 12. Suivi des interventions de maintenance.................................................................. 59
+Figure 13. Campagnes d'inventaire du parc............................................................................. 60
+Figure 14. Gestion des achats et des fournisseurs .................................................................... 61
+Figure 15. Catalogue logiciel et suivi des licences .................................................................. 62
+Figure 16. Répertoire des agents de l'établissement ................................................................ 63
+Figure 17. Rapports et historiques du parc............................................................................... 64
+
+                                                                      Page VII
 LISTE DES TABLEAUX
 
 Tableau 1. Organes de gouvernance de l'ENI............................................................................ 6
@@ -197,22 +253,27 @@ Tableau 20. Dictionnaire des données -- entité ÉQUIPEMENT ......................
 Tableau 21. Dictionnaire des données -- entité AFFECTATION .......................................... 26
 Tableau 22. Dictionnaire des données -- entité TICKET ....................................................... 26
 Tableau 23. Dictionnaire des données -- entité MAINTENANCE ........................................ 27
-Tableau 24. Dictionnaire des données -- entités ACHAT et LOGICIEL ............................... 27
-Tableau 25. Règles de gestion du système ............................................................................... 28
-Tableau 26. Acteurs du système............................................................................................... 29
-Tableau 27. Traitements, acteurs et ressources du système ..................................................... 38
-Tableau 28. Principales tables de la base GPI.......................................................................... 46
-Tableau 29. Principaux points d'accès de l'API ...................................................................... 48
-Tableau 30. Rôles et permissions de l'application ................................................................... 49
-Tableau 31. Cas de tests et résultats ......................................................................................... 51
-Tableau 32. Difficultés rencontrées et solutions ...................................................................... 52
-LISTE DES ABRÉVIATIONS
+Tableau 24. Dictionnaire des données -- entité ACHAT ........................................................ 27
+Tableau 25. Dictionnaire des données -- entité LOGICIEL ................................................... 27
+Tableau 26. Règles de gestion du système ............................................................................... 28
+Tableau 27. Acteurs du système............................................................................................... 29
+Tableau 28. Traitements, acteurs et ressources du système ..................................................... 38
+Tableau 29. Principales tables de la base GPI.......................................................................... 47
+Tableau 30. Principaux points d'accès de l'API ...................................................................... 49
+Tableau 31. Rôles et permissions de l'application ................................................................... 50
+Tableau 32. Cas de tests et résultats ......................................................................................... 52
+
+                                                                      Page VIII
+Tableau 33. Difficultés rencontrées et solutions ...................................................................... 53
+
+                                                                       Page IX
+LISTE DES ABRÉVIATIONS
 
 Sigle    Signification
 API      Application Programming Interface (interface de programmation applicative)
-CRT      Centre de Réception Technique
 CENSERO  Centre National de Sécurité Routière
 CLI      Command Line Interface (interface en ligne de commande)
+CRT      Centre de Réception Technique
 CRUD     Create, Read, Update, Delete
 DAF      Direction Administrative et Financière
 DG       Direction Générale
@@ -226,10 +287,14 @@ IDE      Integrated Development Environment
 JSON     JavaScript Object Notation
 LMD      Licence - Master - Doctorat
 MCD      Modèle Conceptuel des Données
+MCF      Modèle Conceptuel des Flux
 MCT      Modèle Conceptuel des Traitements
 MERISE   Méthode d'Étude et de Réalisation Informatique pour les Systèmes d'Entreprise
 MLD      Modèle Logique des Données
+MLT      Modèle Logique des Traitements
+MOD      Modèle Organisationnel des Données
 MOT      Modèle Organisationnel des Traitements
+MPD      Modèle Physique des Données
 MVC      Modèle - Vue - Contrôleur
 ORM      Object-Relational Mapping (mapping objet-relationnel)
 PDF      Portable Document Format
@@ -243,7 +308,8 @@ SQL      Structured Query Language
 TIC      Technologies de l'Information et de la Communication
 UI       User Interface (interface utilisateur)
 UX       User Experience (expérience utilisateur)
-RGPD     Règlement Général sur la Protection des Données
+
+                        Page X
 Rapport de stage -- Licence Professionnelle Informatique          GPI -- DGSR
 
 INTRODUCTION GÉNÉRALE
@@ -326,7 +392,7 @@ licenciés et des ingénieurs dans le domaine de l'informatique.
         L'École Nationale d'Informatique est un établissement d'enseignement supérieur
 rattaché académiquement et administrativement à l'Université de Fianarantsoa. Elle siège à
 Tanambao - Antaninarenina, à Fianarantsoa. Les coordonnées pour une prise de contact avec
-l'école sont les suivantes :
+l'école sont :
 
    · Antaninarenina Tanambao, BP 1487 Fianarantsoa (301) ;
    · Téléphone : +261 34 05 733 36 ou +261 33 42 302 02 ;
@@ -397,7 +463,7 @@ plateforme Moodle, et des regroupements en présentiel ou en ligne sont organisés
 périodiquement.
 
                                                           Page 5
-Rapport de stage -- Licence Professionnelle Informatique                             GPI -- DGSR
+Rapport de stage -- Licence Professionnelle Informatique                                     GPI -- DGSR
 
 1.3. Organigramme institutionnel
 
@@ -432,8 +498,7 @@ Services administratifs            marché du travail.
 
 1.4. Domaines de spécialisation
 
-        Les activités de formation et de recherche organisées à l'ENI portent sur les domaines
-suivants :
+        Les activités de formation et de recherche organisées à l'ENI portent notamment sur :
 
    · Génie Logiciel et Bases de Données (GB) ;
    · Administration des Systèmes et Réseaux (ASR) ;
@@ -442,18 +507,18 @@ suivants :
    · Intelligence Artificielle (IA).
 
         Le système de formation pédagogique de l'école articule étroitement la théorie et la
-pratique, comme le montre le tableau suivant.
+pratique, comme le montre le tableau intitulé « Organisation du système de formation ».
 
 Formation théorique             Tableau 2. Organisation du système de formation
 Enseignement théorique                                           Formation pratique
-                                                                 Études de cas
+Travaux dirigés                                                  Études de cas
+Travaux pratiques                                                Travaux de réalisation
+                                                                 Projets et projets tutorés
 
                                                           Page 6
 Rapport de stage -- Licence Professionnelle Informatique                                        GPI -- DGSR
 
 Formation théorique                                       Formation pratique
-Travaux dirigés                                           Travaux de réalisation
-Travaux pratiques                                         Projets et projets tutorés
 Conférences                                               Voyages d'études
 --                                                        Stage en entreprise
 
@@ -462,7 +527,8 @@ Conférences                                               Voyages d'études
         Le recrutement des étudiants à l'ENI se fait uniquement par voie de concours
 d'envergure nationale en première année. Les offres de formation organisées par l'école ont été
 validées par la Commission Nationale d'Habilitation (CNH). Au sein de l'ENI, il existe
-plusieurs mentions et plusieurs parcours, récapitulés dans le tableau ci-dessous.
+plusieurs mentions et plusieurs parcours, récapitulés dans le tableau intitulé « Mentions et
+parcours au sein de l'ENI ».
 
 Mention                    Tableau 3. Mentions et parcours au sein de l'ENI
 Informatique                         Parcours
@@ -530,7 +596,7 @@ opérationnels sur le marché du travail, avec la connaissance d'un métier complet
 l'informatique et aux TIC. L'école apporte à ses étudiants un savoir-faire et un savoir-être qui
 les accompagnent tout au long de leur vie professionnelle. Les diplômés de licence et de master
 issus de l'ENI peuvent faire carrière dans différents secteurs, comme le résume le tableau
-suivant.
+intitulé « Débouchés éventuels des jeunes diplômés ».
 
 Mention            Tableau 5. Débouchés éventuels des jeunes diplômés
 Informatique (GB)
@@ -566,7 +632,7 @@ Expertise Digitale (ASI)         Développeur IA, data scientist, consultant IA, 
 
 1.8. Ressources humaines
 
-        Les ressources humaines de l'école sont organisées selon les responsabilités suivantes :
+        Les ressources humaines de l'école sont organisées ainsi :
 
    · Directeur de l'école : Monsieur MAHATODY Thomas, Docteur HDR ;
    · Responsable de la mention « Informatique » : Monsieur RABETAFIKA Louis Haja,
@@ -636,8 +702,8 @@ des outils de travail.
         La DGSR est structurée en directions et en services, eux-mêmes relayés par les
 structures territoriales. Le siège coordonne l'ensemble des activités, tandis que les CRT
 assurent la réception technique des véhicules dans les régions et que le CENSERO intervient
-sur les actions de sécurité routière. Le tableau suivant présente l'organisation telle qu'elle est
-enregistrée dans l'application GPI.
+sur les actions de sécurité routière. Le tableau intitulé « Directions et services de la DGSR »
+présente l'organisation telle qu'elle est enregistrée dans l'application GPI.
 
                                                           Page 10
 Rapport de stage -- Licence Professionnelle Informatique                                                GPI -- DGSR
@@ -770,7 +836,7 @@ informations et un déploiement sans dépendance à Internet.
    · distinguer les droits d'accès selon le rôle de chaque utilisateur.
 
                                                           Page 13
-Rapport de stage -- Licence Professionnelle Informatique                                                GPI -- DGSR
+Rapport de stage -- Licence Professionnelle Informatique                                           GPI -- DGSR
 
 3.3. Moyens nécessaires à la réalisation du projet
 
@@ -788,7 +854,8 @@ relecture du rapport.
 
 Core i5, de 16 Go de mémoire vive et d'un disque SSD de 512 Go. Le serveur de test est un
 poste du réseau local de l'établissement, utilisé pour valider le fonctionnement en mode
-intranet. Les caractéristiques du poste de développement sont résumées ci-dessous.
+intranet. Les caractéristiques du poste de développement sont résumées dans le tableau intitulé
+« Caractéristiques du poste de développement ».
 
 Élément                 Tableau 8. Caractéristiques du poste de développement
 Processeur                            Caractéristique
@@ -802,8 +869,8 @@ Serveur de test                       Connexion Ethernet et Wi-Fi au réseau loca
 3.3.3. Moyens logiciels
         Les logiciels utilisés pour réaliser les différentes tâches du projet sont récapitulés dans
 
-le tableau suivant. Les versions indiquées sont celles qui ont servi au développement et aux
-tests.
+le tableau intitulé « Logiciels utilisés et versions ». Les versions indiquées sont celles qui ont
+servi au développement et aux tests.
 
                         Tableau 9. Logiciels utilisés et versions
 
@@ -814,19 +881,18 @@ Laravel
 Composer                8.4.15                            Langage serveur
 MySQL
 phpMyAdmin              13.32                             Framework PHP (API REST, ORM, sécurité)
-Node.js
+
                         2.10.3                            Gestionnaire de dépendances PHP
 
                         8.4.7                             Système de gestion de base de données
 
                         5.2.3                             Administration de la base de données
 
-                        26.12.0                           Environnement JavaScript pour la compilation
-
                                                           Page 14
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
 Logiciel                 Version                          Usage
+Node.js                  26.12.0                          Environnement JavaScript pour la compilation
 npm                      11.20.0                          Gestionnaire de paquets JavaScript
 React                    19.3                             Bibliothèque de l'interface utilisateur
 Vite                     8.0                              Serveur de développement et compilation des assets
@@ -872,13 +938,14 @@ des mouvements de matériel.
 
 3.5. Chronogramme de travail
 
-        Le diagramme de Gantt ci-dessous représente le chronogramme de travail durant lequel
-la plateforme a été conçue et développée. Le stage s'est déroulé sur treize semaines, avec des
-phases qui se chevauchent partiellement afin de tester les modules au fur et à mesure de leur
-réalisation.
+        Le tableau intitulé « Diagramme de Gantt du travail pendant treize semaines » représente
+le chronogramme de travail durant lequel la plateforme a été conçue et développée. Le stage
 
                                                           Page 15
 Rapport de stage -- Licence Professionnelle Informatique                      GPI -- DGSR
+
+s'est déroulé sur treize semaines, avec des phases qui se chevauchent partiellement afin de tester
+les modules au fur et à mesure de leur réalisation.
 
            Tableau 11. Diagramme de Gantt du travail pendant treize semaines
 
@@ -1251,14 +1318,14 @@ stabiliser le vocabulaire ; le niveau organisationnel a précisé qui fait quoi, o
 ressources ; le niveau logique a abouti au modèle relationnel implémenté dans MySQL.
 
                                                           Page 24
-Rapport de stage -- Licence Professionnelle Informatique                                          GPI -- DGSR
+Rapport de stage -- Licence Professionnelle Informatique                                            GPI -- DGSR
 
 5.2. Dictionnaire des données
 
         Le dictionnaire des données répertorie toutes les données nécessaires à la construction
 du modèle conceptuel. Chaque rubrique est décrite par son type, sa taille, la possibilité qu'elle
-soit vide, son rôle (clé primaire ou étrangère) et une description métier. Les tableaux suivants
-présentent les principales entités du système.
+soit vide, son rôle (clé primaire ou étrangère) et une description métier. Plusieurs tableaux
+présentent, pour chaque entité, les rubriques classées par ordre alphabétique.
 
         Le type PRI désigne une clé primaire, FK une clé étrangère et UK une contrainte
 d'unicité. La colonne « Null » indique si la donnée peut être vide.
@@ -1266,33 +1333,33 @@ d'unicité. La colonne « Null » indique si la donnée peut être vide.
 a) Entité AGENT    Tableau 19. Dictionnaire des données -- entité AGENT
 
  Rubrique          Type    Taille Null Clé                         Description
- id_agent
-                   BIGINT  20   Non PRI                            Identifiant technique de l'agent (auto-
- matricule                                                         incrémenté).
-
- nom_naiss         VARCHAR 30   Non UK                             Matricule unique de l'agent (identifiant
- prenom                                                            métier).
- sexe
- fonction          VARCHAR 100  Non --                             Nom de naissance de l'agent.
-
- telephone         VARCHAR 100  Non --                             Prénom de l'agent.
- email
- date_embauche     ENUM    M/F Non --                              Sexe de l'agent.
- statut
- id_direction      VARCHAR 100  Oui --                             Poste occupé (technicien, chef de service,
- id_service                                                        etc.).
-
-                   VARCHAR 30   Oui --                             Numéro de contact professionnel.
-
+ date_embauche
+ email             DATE    --   Oui --                             Date d'entrée dans l'établissement.
+ fonction
                    VARCHAR 150  Oui --                             Adresse électronique professionnelle.
+ id_agent
+                   VARCHAR 100  Oui --                             Poste occupé (technicien, chef de service,
+ id_direction                                                      etc.).
+ id_service
+ matricule         BIGINT  20   Non PRI                            Identifiant technique de l'agent (auto-
+                                                                   incrémenté).
+ nom_naiss
+ prenom            BIGINT  20   Non FK                             Direction de rattachement.
+ sexe
+ statut            BIGINT  20   Oui FK                             Service de rattachement.
+ telephone
+                   VARCHAR 30   Non UK                             Matricule unique de l'agent (identifiant
+                                                                   métier).
 
-                   DATE    --   Oui --                             Date d'entrée dans l'établissement.
+                   VARCHAR 100  Non --                             Nom de naissance de l'agent.
+
+                   VARCHAR 100  Non --                             Prénom de l'agent.
+
+                   ENUM    M/F Non --                              Sexe de l'agent.
 
                    ENUM    --   Non --                             actif, inactif, congé ou mutation.
 
-                   BIGINT  20   Non FK                             Direction de rattachement.
-
-                   BIGINT  20   Oui FK                             Service de rattachement.
+                   VARCHAR 30   Oui --                             Numéro de contact professionnel.
 
 b) Entité ÉQUIPEMENT
 
@@ -1300,48 +1367,49 @@ b) Entité ÉQUIPEMENT
 
 Rubrique           Type    Taille Null Clé                         Description
 
-id_equipement      BIGINT  20   Non PRI                            Identifiant technique de l'équipement.
-
 code_inventaire    VARCHAR 50   Non UK                             Code d'inventaire (ex. GPI-00001).
-
-numero_serie       VARCHAR 100  Oui UK                             Numéro de série constructeur.
-
-designation        VARCHAR 200  Non --                             Désignation du matériel.
-
-description        TEXT    --   Oui --                             Description complémentaire.
 
 date_acquisition   DATE    --   Oui --                             Date d'achat ou d'entrée au parc.
 
 date_mise_service  DATE    --   Oui --                             Date de mise en service.
 
-prix_acquisition   DECIMAL 14,2 Oui --                             Prix d'achat en ariary.
+description        TEXT    --   Oui --                             Description complémentaire.
+
+designation        VARCHAR 200  Non --                             Désignation du matériel.
 
 garantie_debut     DATE    --   Oui --                             Début de la garantie.
+
+garantie_fin       DATE    --   Oui --                             Fin de la garantie (alertes à 60 jours).
+
+id_categorie       BIGINT  20   Oui FK                             Catégorie (ordinateur, serveur,
+                                                                   imprimante...).
 
                                                           Page 25
 Rapport de stage -- Licence Professionnelle Informatique                                          GPI -- DGSR
 
 Rubrique           Type    Taille Null Clé                         Description
-garantie_fin       DATE                                            Fin de la garantie (alertes à 60 jours).
-statut             ENUM    --   Oui --                             en_service, en_stock, en_maintenance,
-                                                                   reforme, perdu, reserve.
-id_modele          BIGINT  --   Non --                             Modèle du matériel.
-id_categorie       BIGINT                                          Catégorie (ordinateur, serveur,
-                           20   Oui FK                             imprimante...).
-id_marque          BIGINT                                          Marque du matériel.
-id_direction       BIGINT  20   Oui FK                             Direction d'affectation.
-id_service         BIGINT                                          Service d'affectation.
-id_fournisseur     BIGINT  20   Oui FK                             Fournisseur du matériel.
-id_localisation    BIGINT                                          Localisation physique (site, bâtiment,
-                           20   Oui FK                             bureau).
+id_direction       BIGINT                                          Direction d'affectation.
+id_equipement      BIGINT  20    Oui FK                            Identifiant technique de l'équipement.
 id_etat            BIGINT                                          État physique constaté.
-                           20   Oui FK
+id_fournisseur     BIGINT  20    Non PRI                           Fournisseur du matériel.
+id_localisation    BIGINT                                          Localisation physique (site, bâtiment,
+                           20    Oui FK                            bureau).
+id_marque                                                          Marque du matériel.
+id_modele                  20    Oui FK                            Modèle du matériel.
+id_service                                                         Service d'affectation.
+numero_serie               20    Oui FK                            Numéro de série constructeur.
+prix_acquisition                                                   Prix d'achat en ariary.
+statut             BIGINT  20    Oui FK                            en_service, en_stock, en_maintenance,
+                                 Oui FK                            reforme, perdu, reserve.
+                   BIGINT  20    Oui FK
+                                 Oui UK
+                   BIGINT  20    Oui --
+                                 Non --
+                   VARCHAR 100
 
-                           20   Oui FK
+                   DECIMAL 14,2
 
-                           20   Oui FK
-
-                           20   Oui FK
+                   ENUM    --
 
 c) Entité AFFECTATION
 
@@ -1349,43 +1417,43 @@ c) Entité AFFECTATION
 
 Rubrique           Type    Taille Null Clé                         Description
 
-id_affectation     BIGINT  20   Non PRI                            Identifiant de l'affectation.
+commentaire        TEXT    --    Oui --                            Observations complémentaires.
 
-date_affectation   DATE    --   Non --                             Date de remise du matériel.
+date_affectation   DATE    --    Non --                            Date de remise du matériel.
 
-date_fin           DATE    --   Oui --                             Date de restitution (nulle si en cours).
+date_fin           DATE    --    Oui --                            Date de restitution (nulle si en cours).
 
-motif              TEXT    --   Oui --                             Motif de l'affectation.
+id_affectation     BIGINT  20    Non PRI                           Identifiant de l'affectation.
 
-commentaire        TEXT    --   Oui --                             Observations complémentaires.
+id_agent           BIGINT  20    Non FK                            Agent bénéficiaire.
 
-id_equipement      BIGINT  20   Non FK                             Équipement concerné.
+id_equipement      BIGINT  20    Non FK                            Équipement concerné.
 
-id_agent           BIGINT  20   Non FK                             Agent bénéficiaire.
+motif              TEXT    --    Oui --                            Motif de l'affectation.
 
 d) Entité TICKET   Tableau 22. Dictionnaire des données -- entité TICKET
 
  Rubrique          Type    Taille Null Clé                         Description
- id_ticket
- reference_ticket  BIGINT  20   Non PRI                            Identifiant du ticket.
- titre
- description       VARCHAR 30   Non UK                             Référence générée (TCK-année-numéro).
- priorite
- date_creation     VARCHAR 200  Non --                             Objet de la demande.
  date_cloture
- statut            TEXT    --   Oui --                             Description détaillée du problème.
+ date_creation     DATE    --    Oui --                            Date de clôture ou de résolution.
+ description
+ id_agent          DATE    --    Oui --                            Date d'ouverture du ticket.
  id_equipement
- id_agent          ENUM    --   Non --                             basse, moyenne, haute ou critique.
+ id_ticket         TEXT    --    Oui --                            Description détaillée du problème.
+ priorite
+ reference_ticket  BIGINT  20    Oui FK                            Agent demandeur.
+ statut
+ titre             BIGINT  20    Oui FK                            Équipement concerné.
 
-                   DATE    --   Oui --                             Date d'ouverture du ticket.
+                   BIGINT  20    Non PRI                           Identifiant du ticket.
 
-                   DATE    --   Oui --                             Date de clôture ou de résolution.
+                   ENUM    --    Non --                            basse, moyenne, haute ou critique.
 
-                   ENUM    --   Non --                             ouvert, en_cours, resolu, ferme.
+                   VARCHAR 30    Non UK                            Référence générée (TCK-année-numéro).
 
-                   BIGINT  20   Oui FK                             Équipement concerné.
+                   ENUM    --    Non --                            ouvert, en_cours, resolu, ferme.
 
-                   BIGINT  20   Oui FK                             Agent demandeur.
+                   VARCHAR 200   Non --                            Objet de la demande.
 
                                                           Page 26
 Rapport de stage -- Licence Professionnelle Informatique                                             GPI -- DGSR
@@ -1394,79 +1462,82 @@ e) Entité MAINTENANCE
 
                    Tableau 23. Dictionnaire des données -- entité MAINTENANCE
 
-Rubrique           Type       Taille Null Clé                      Description
+Rubrique            Type    Taille Null Clé                        Description
 
-id_maintenance     BIGINT     20  Non PRI                          Identifiant de l'intervention.
+date_debut          DATE    --   Oui --                            Date de début de l'intervention.
 
-date_demande       DATE       --  Oui --                           Date de la demande d'intervention.
+date_demande        DATE    --   Oui --                            Date de la demande d'intervention.
 
-date_debut         DATE       --  Oui --                           Date de début de l'intervention.
+date_fin            DATE    --   Oui --                            Date de fin de l'intervention.
 
-date_fin           DATE       --  Oui --                           Date de fin de l'intervention.
+description_probleme TEXT   --   Oui --                            Panne ou symptômes constatés.
 
-description_probleme TEXT     --  Oui --                           Panne ou symptômes constatés.
+diagnostic          TEXT    --   Oui --                            Diagnostic et actions réalisées.
 
-diagnostic         TEXT       --  Oui --                           Diagnostic et actions réalisées.
+id_agent            BIGINT  20   Oui FK                            Agent à l'origine de la demande.
 
-technicien         VARCHAR 150    Oui --                           Technicien en charge du dossier.
+id_equipement       BIGINT  20   Non FK                            Équipement en maintenance.
 
-statut             ENUM       --  Non --                           demandee, planifiee, en_cours, terminee,
-                                                                   annulee.
+id_maintenance      BIGINT  20   Non PRI                           Identifiant de l'intervention.
 
-id_equipement      BIGINT     20  Non FK                           Équipement en maintenance.
-
-id_type_maintenance BIGINT    20  Non FK                           Type d'intervention (préventive,
+id_type_maintenance BIGINT  20   Non FK                            Type d'intervention (préventive,
                                                                    curative...).
 
-id_agent           BIGINT     20  Oui FK                           Agent à l'origine de la demande.
+statut              ENUM    --   Non --                            demandee, planifiee, en_cours, terminee,
+                                                                   annulee.
 
-f) Entités ACHAT et LOGICIEL
+technicien          VARCHAR 150  Oui --                            Technicien en charge du dossier.
 
-                   Tableau 24. Dictionnaire des données -- entités ACHAT et LOGICIEL
+f) Entité ACHAT     Tableau 24. Dictionnaire des données -- entité ACHAT
 
-Rubrique           Type       Taille Null Clé                      Description
+ Rubrique           Type    Taille Null Clé                        Description
+ bon_commande
+ date_achat         VARCHAR 50   Oui --                            Référence du bon de commande.
+ id_achat
+ id_fournisseur     DATE    --   Oui --                            Date de la commande ou de l'achat.
+ montant_total
+ numero_facture     BIGINT  20   Non PRI                           Identifiant de l'achat.
+ reference_achat
+                    BIGINT  20   Oui FK                            Fournisseur retenu.
+ statut
+                    DECIMAL 14,2 Oui --                            Montant total de l'achat.
 
-id_achat           BIGINT     20  Non PRI                          Identifiant de l'achat.
+                    VARCHAR 50   Oui --                            Numéro de facture fournisseur.
 
-reference_achat    VARCHAR 50     Oui UK                           Référence interne du marché ou de la
+                    VARCHAR 50   Oui UK                            Référence interne du marché ou de la
                                                                    commande.
 
-date_achat         DATE       --  Oui --                           Date de la commande ou de l'achat.
+                    ENUM    --   Non --                            commande, livre_partiel, livre, annule.
 
-numero_facture     VARCHAR 50     Oui --                           Numéro de facture fournisseur.
+g) Entité LOGICIEL
 
-bon_commande       VARCHAR 50     Oui --                           Référence du bon de commande.
+                    Tableau 25. Dictionnaire des données -- entité LOGICIEL
 
-montant_total      DECIMAL 14,2 Oui --                             Montant total de l'achat.
+Rubrique            Type    Taille Null Clé                        Description
 
-statut             ENUM       --  Non --                           commande, livre_partiel, livre, annule.
+date_expiration     DATE    --   Oui --                            Date d'expiration de la licence.
 
-id_fournisseur     BIGINT     20  Oui FK                           Fournisseur retenu.
+editeur             VARCHAR 150  Oui --                            Éditeur du logiciel.
 
-id_logiciel        BIGINT     20  Non PRI                          Identifiant du logiciel.
+id_logiciel         BIGINT  20   Non PRI                           Identifiant du logiciel.
 
-nom                VARCHAR 150    Non --                           Nom commercial du logiciel.
+nom                 VARCHAR 150  Non --                            Nom commercial du logiciel.
 
-version            VARCHAR 50     Oui --                           Version de référence.
+reference_licence   VARCHAR 50   Non UK                            Référence unique de la licence.
 
-editeur            VARCHAR 150    Oui --                           Éditeur du logiciel.
+version             VARCHAR 50   Oui --                            Version de référence.
 
-reference_licence  VARCHAR 50     Non UK                           Référence unique de la licence.
-
-date_expiration    DATE       --  Oui --                           Date d'expiration de la licence.
+                                                          Page 27
+Rapport de stage -- Licence Professionnelle Informatique                                   GPI -- DGSR
 
 5.3. Règles de gestion
 
         Les règles de gestion (RG) sont les contraintes métier qui régissent le fonctionnement
 du système. Elles garantissent l'intégrité, la cohérence et la conformité aux processus de la
-
-                                                          Page 27
-Rapport de stage -- Licence Professionnelle Informatique                                   GPI -- DGSR
-
 DGSR. Elles ont été traduites dans le code, dans les validations et dans les contraintes de la
 base de données.
 
-                        Tableau 25. Règles de gestion du système
+                        Tableau 26. Règles de gestion du système
 
 Code  Règle de gestion                                               Traduction technique
 RG01
@@ -1519,18 +1590,18 @@ acteurs et des informations qui circulent entre eux.
    · Le domaine : découpage de l'organisation correspondant à une finalité majeure ; ici, la
        gestion du parc informatique.
 
-   · L'acteur : unité active intervenant dans le fonctionnement du système opérant (service,
-       agent, application).
-
                                                           Page 28
 Rapport de stage -- Licence Professionnelle Informatique                            GPI -- DGSR
+
+· L'acteur : unité active intervenant dans le fonctionnement du système opérant (service,
+   agent, application).
 
 · Le flux : échange d'informations entre acteurs, matérialisé par un document, une requête
    ou une notification.
 
 5.4.1. Acteurs du système
 
-                                    Tableau 26. Acteurs du système
+                                    Tableau 27. Acteurs du système
 
 Acteur                   Rôle                                      Responsabilités
 
@@ -1573,12 +1644,11 @@ disponible et un agent, puis enregistre l'affectation avec une date et un motif.
 que l'équipement n'est pas déjà affecté et met à jour son statut. À la restitution, la date de fin
 est renseignée et l'équipement redevient disponible.
 
-        Flux 4 -- Assistance et maintenance. L'agent déclare un ticket (titre, description,
-priorité). Le technicien le prend en charge, change son statut, ajoute des commentaires et, si
-
                                                           Page 29
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
+        Flux 4 -- Assistance et maintenance. L'agent déclare un ticket (titre, description,
+priorité). Le technicien le prend en charge, change son statut, ajoute des commentaires et, si
 nécessaire, crée une maintenance liée. Chaque changement de statut déclenche une notification
 pour le demandeur et pour les intervenants.
 
@@ -1605,7 +1675,7 @@ de diagrammes codifiés :
         La construction du MCD suit quatre étapes : obtenir les règles de gestion du besoin à
 informatiser, recenser les données dans un dictionnaire, comprendre les relations et les
 dépendances entre les données, puis construire le modèle. Le MCD du projet GPI est présenté
-ci-dessous. Il regroupe les entités du parc, de l'organisation, des achats, de la maintenance, de
+à la figure 1. Il regroupe les entités du parc, de l'organisation, des achats, de la maintenance, de
 l'inventaire et de la traçabilité.
 
                                                           Page 30
@@ -1663,9 +1733,9 @@ au MLD applique six règles :
 
    · Règle 6 : pour une relation binaire (0,1) - (1,1), la clé primaire de la table côté (0,1)
        devient une clé étrangère dans la table côté (1,1).
-        Le MLD obtenu comporte les relations principales suivantes (les clés primaires sont
+        Le MLD obtenu comporte les relations principales (les clés primaires sont soulignées
 
-soulignées dans le modèle graphique et les clés étrangères sont précédées du symbole #) :
+dans le modèle graphique et les clés étrangères sont précédées du symbole #) :
 
                                                           Page 32
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
@@ -1774,7 +1844,7 @@ ensuite le traitement, son déroulement, l'acteur, le lieu et les ressources du p
 
 Figure 5. Modèle Organisationnel des Traitements (MOT) du système GPI
 
-                       Tableau 27. Traitements, acteurs et ressources du système
+                       Tableau 28. Traitements, acteurs et ressources du système
 
 Traitement             Acteur          Lieu                        Ressources                Durée
 Enregistrer un                                                                               5 min
@@ -1825,7 +1895,7 @@ a) Visual Studio Code
 
 Microsoft. Il prend en charge de nombreux langages et dispose d'un terminal intégré, ce qui
 évite de multiplier les fenêtres pendant le développement. L'installation se fait à partir du site
-officiel, puis les extensions suivantes ont été ajoutées :
+officiel, puis les extensions complémentaires ont été ajoutées :
 
    · PHP Intelephense : complétion, navigation et détection d'erreurs en PHP ;
    · Laravel Blade Snippets et Laravel Extra Intellisense : assistance sur les vues et les
@@ -1947,7 +2017,7 @@ f) Git
     git config --global user.email "etudiant@eni.mg"
     git init
 
-        Les commandes utilisées durant le développement sont les suivantes :
+        Les commandes utilisées durant le développement sont :
 
     git status
     git add .
@@ -2023,34 +2093,33 @@ sans interpréter des chaînes de caractères.
 6.3. Structure du projet
 
         Le projet suit la structure standard de Laravel, complétée par une organisation claire des
-pages React. La structure simplifiée est la suivante :
-
-gpi/             # 16 contrôleurs métier
- app/            # EnsureUserHasRole
-  Http/          # 33 modèles Eloquent
-   Controllers/  # notifications métier
-   Middleware/
-  Models/        # 17 migrations
-  Support/       # jeu de données de démonstration
- database/       # MCD, MLD, MCT, MOT
-  migrations/    # point d'entrée et assets compilés
-  seeders/
- docs/merise/
- public/
- resources/
+pages React. La structure simplifiée est :
 
                                                           Page 44
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
-  css/app.css          # routes et layout
-  js/                  # client Axios
-   app.jsx             # contexte d'authentification
-   api.js              # composants réutilisables
-   auth.jsx            # pages métier
-   components/
-   pages/              # API REST
-  views/app.blade.php  # SPA (toutes les routes non-API)
- routes/               # logs, cache, fichiers générés
+gpi/                   # 16 contrôleurs métier
+ app/                  # EnsureUserHasRole
+  Http/                # 33 modèles Eloquent
+   Controllers/        # notifications métier
+   Middleware/
+  Models/              # 17 migrations
+  Support/             # jeu de données de démonstration
+ database/             # MCD, MLD, MCT, MOT
+  migrations/          # point d'entrée et assets compilés
+  seeders/
+ docs/merise/          # routes et layout
+ public/               # client Axios
+ resources/            # contexte d'authentification
+  css/app.css          # composants réutilisables
+  js/                  # pages métier
+   app.jsx
+   api.js              # API REST
+   auth.jsx            # SPA (toutes les routes non-API)
+   components/         # logs, cache, fichiers générés
+   pages/
+  views/app.blade.php
+ routes/
   api.php
   web.php
  storage/
@@ -2062,39 +2131,41 @@ gpi/             # 16 contrôleurs métier
 
         L'application est destinée à être utilisée sur le réseau local de la DGSR. Le serveur de
 l'établissement héberge Apache, PHP et MySQL ; les postes clients n'ont besoin que d'un
-navigateur. Le déploiement suit les étapes suivantes :
+navigateur. Le déploiement suit plusieurs étapes :
 
    · récupération du code et installation des dépendances avec Composer ;
-
    · configuration du fichier .env avec les paramètres du serveur (base, URL, environnement
+
        de production) ;
-
    · génération de la clé d'application, exécution des migrations et des seeders ;
-
    · compilation des assets avec npm run build ;
-
    · configuration du virtual host Apache sur le dossier public, afin que les fichiers sensibles
+
        ne soient pas accessibles ;
-
    · mise en place des droits d'écriture sur storage et bootstrap/cache ;
-
    · sauvegarde de la base et mise en place d'une procédure de restauration.
+
+                                                          Page 45
+Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
     <VirtualHost *:80>
            ServerName gpi.dgsr.local
            DocumentRoot "C:/wamp64/www/gpi/public"
+
            <Directory "C:/wamp64/www/gpi/public">
                   AllowOverride All
                   Require all granted
-           </Directory>
 
+           </Directory>
     </VirtualHost>
 
         Une fois déployée, l'application est accessible depuis les postes du réseau à l'adresse
+
 http://gpi.dgsr.local ou, à défaut, à l'adresse IP du serveur. Aucune installation n'est requise sur
+
 les postes clients.
 
-                                                          Page 45
+                                                          Page 46
 Rapport de stage -- Licence Professionnelle Informatique                                      GPI -- DGSR
 
 Chapitre 7. Développement de l'application
@@ -2114,9 +2185,10 @@ transactions et s'intègre parfaitement à l'ORM Eloquent.
 reproductibilité de l'installation et le suivi des évolutions du schéma. Le script gpi.sql permet
 également de restaurer la base complète, données de démonstration comprises.
 
-       Les principales tables métier sont décrites dans le tableau suivant.
+        Les principales tables métier sont décrites dans le tableau intitulé « Principales tables de
+la base GPI ».
 
-                                   Tableau 28. Principales tables de la base GPI
+                                   Tableau 29. Principales tables de la base GPI
 
 Table                                  Rôle
 
@@ -2154,7 +2226,7 @@ notifications / journal_activites      Alertes utilisateurs et journal des opéra
 code d'inventaire, du numéro de série, du matricule et de la référence de ticket ; clés étrangères
 avec restrictions ou mises à zéro selon le cas ; suppression logique des équipements et des
 
-                                                          Page 46
+                                                          Page 47
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
 agents pour préserver l'historique ; contrôle applicatif des doublons d'affectation. Ces règles
@@ -2163,9 +2235,9 @@ garantissent la cohérence et la fiabilité du système.
 7.2. Codage de l'application
 
         Le codage transforme les modèles conceptuels en une application fonctionnelle. Le
-développement a été réalisé avec Laravel pour le back-end et React pour l'interface, en suivant
+développement a été réalisé avec Laravel pour le back-end et React pour l'interface, selon une
 
-une organisation par module et en appliquant les bonnes pratiques du framework.
+organisation par module et en appliquant les bonnes pratiques du framework.
 
 7.2.1. Les modèles Eloquent
         Chaque table possède un modèle Eloquent qui décrit ses champs, ses conversions de
@@ -2217,7 +2289,7 @@ d'éviter les requêtes manuelles et de charger les données liées en une seule opé
 
 de base, CrudController, mutualise la logique commune (liste, création, mise à jour,
 
-                                                          Page 47
+                                                          Page 48
 Rapport de stage -- Licence Professionnelle Informatique                                            GPI -- DGSR
 
 suppression, journalisation) ; les contrôleurs métier héritent de cette classe et redéfinissent les
@@ -2225,9 +2297,9 @@ règles et les relations à charger. Ce choix réduit la duplication et homogénéise
 l'API.
 
         Les routes sont regroupées par domaine et protégées par le middleware de rôles. Le
-tableau suivant présente les principaux points d'accès.
+tableau intitulé « Principaux points d'accès de l'API » présente les principaux points d'accès.
 
-Méthode  Point d'accès      Tableau 29. Principaux points d'accès de l'API                          Rôle requis
+Méthode  Point d'accès      Tableau 30. Principaux points d'accès de l'API                          Rôle requis
 POST     /api/login                                                                                 Public
                                                                Description
 GET      /api/me                                               Authentification et génération du    Authentifié
@@ -2264,7 +2336,7 @@ PUT      /api/corbeille/{section}/{id}/restaurer                   Restauration 
 
 l'identifiant et le mot de passe, puis génère un jeton personnel stocké côté client. Ce jeton est
 
-                                                          Page 48
+                                                          Page 49
 Rapport de stage -- Licence Professionnelle Informatique                                        GPI -- DGSR
 
 transmis dans l'en-tête Authorization de chaque requête. La route de connexion est limitée à
@@ -2272,7 +2344,7 @@ six tentatives par minute pour freiner les attaques par force brute.
 
 Quatre rôles ont été définis, avec des permissions croissantes :
 
-Rôle                 Tableau 30. Rôles et permissions de l'application
+Rôle                 Tableau 31. Rôles et permissions de l'application
 admin
                    Permissions principales
 gestionnaire_parc  Accès complet : comptes, rôles, référentiels, parc, rapports, corbeille, journal
@@ -2321,7 +2393,7 @@ actions sensibles.
 
 génération de la référence d'un ticket illustre cette approche : plutôt qu'un comptage susceptible
 
-                                                          Page 49
+                                                          Page 50
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
 de produire des doublons en cas de créations simultanées, la référence est dérivée de
@@ -2368,8 +2440,8 @@ corbeille et paramètres. Les tableaux intègrent la recherche, les filtres, la pa
 actions contextuelles. Les formulaires affichent les erreurs de validation renvoyées par l'API,
 champ par champ.
 
-                                                          Page 50
-Rapport de stage -- Licence Professionnelle Informatique                                                   GPI -- DGSR
+                                                          Page 51
+Rapport de stage -- Licence Professionnelle Informatique                                               GPI -- DGSR
 
         L'application propose également un mode clair et un mode sombre, ainsi qu'un
 basculement français/anglais pour les libellés de l'interface. Ces fonctionnalités améliorent le
@@ -2380,57 +2452,58 @@ confort d'utilisation sans alourdir le code métier.
 
 vérifications automatisées sur les points critiques. Ils ont porté sur le bon fonctionnement des
 fonctionnalités, le respect des règles de gestion et la cohérence entre la base de données, l'API
-et l'interface. Le tableau suivant présente les principaux cas testés.
+et l'interface. Le tableau intitulé « Cas de tests et résultats » présente les principaux cas testés.
 
-                              Tableau 31. Cas de tests et résultats
+                                Tableau 32. Cas de tests et résultats
 
-Cas de test         Scénario                                       Résultat attendu                        État
+Cas de test         Scénario                                       Résultat attendu                    État
+Authentification                                                                                       Conforme
+valide              Connexion avec admin@dgsr.mg et                Jeton généré, redirection vers le   Conforme
+Authentification    le mot de passe correct                        tableau de bord                     Conforme
+invalide                                                                                               Conforme
+Accès non autorisé  Mot de passe erroné répété                     Message d'erreur, limitation après  Conforme
+                                                                   six tentatives                      Conforme
+Création                                                                                               Conforme
+d'équipement        Technicien tentant de supprimer un             Réponse 403 et message explicite    Conforme
+Doublon de code     équipement                                                                         Conforme
+                                                                                                       Conforme
+Affectation         Saisie complète avec code unique               Équipement créé, visible dans la    Conforme
+                                                                   liste                               Conforme
+Double affectation
+                    Création avec un code d'inventaire             Erreur 422, aucun doublon en base
+Restitution         existant
 
-Authentification    Connexion avec admin@dgsr.mg et le Jeton généré, redirection vers le                   Confor
-valide                                                                                                     me
-                    mot de passe correct                           tableau de bord
-                                                                                                           Confor
-Authentification    Mot de passe erroné répété                     Message d'erreur, limitation après six  me
-invalide                                                           tentatives
-                                                                                                           Confor
-Accès non autorisé  Technicien tentant de supprimer un             Réponse 403 et message explicite        me
-                    équipement
-                                                                                                           Confor
-Création d'équipement Saisie complète avec code unique             Équipement créé, visible dans la liste  me
+Ticket              Attribution d'un matériel disponible Affectation enregistrée, statut mis à
 
-Doublon de code     Création avec un code d'inventaire             Erreur 422, aucun doublon en base       Confor
-Affectation         existant                                                                               me
-Double affectation  Attribution d'un matériel disponible à         Affectation enregistrée, statut mis à
-Restitution         un agent                                       jour                                    Confor
-Ticket              Nouvelle affectation d'un matériel déjà        Refus et message d'erreur               me
-Export PDF          affecté
-Corbeille           Retour d'un matériel affecté                   Date de fin renseignée, matériel        Confor
-Inventaire                                                         disponible                              me
-                    Déclaration puis changement de statut          Référence TCK générée, date de
-                                                                   clôture renseignée                      Confor
-                    Génération de la synthèse du parc              PDF téléchargé avec en-tête et          me
+Export PDF          à un agent                                     jour
+
+Corbeille           Nouvelle affectation d'un matériel             Refus et message d'erreur
+                    déjà affecté
+Inventaire
+                    Retour d'un matériel affecté                   Date de fin renseignée, matériel
+                                                                   disponible
+
+                    Déclaration puis changement de                 Référence TCK générée, date de
+                    statut                                         clôture renseignée
+
+                    Génération de la synthèse du parc              PDF téléchargé avec en-tête et
                                                                    pagination
-                    Suppression puis restauration d'un             Élément masqué puis restauré avec ses   Confor
-                    agent                                          liens                                   me
+
+                    Suppression puis restauration d'un             Élément masqué puis restauré avec
+                    agent                                          ses liens
+
                     Constat de présence et écart                   Ligne enregistrée, statut de la
-                                                                   campagne mis à jour                     Confor
-                                                                                                           me
-
-                                                                                                           Confor
-                                                                                                           me
-
-                                                                                                           Confor
-                                                                                                           me
+                                                                   campagne mis à jour
 
 7.2.8. Difficultés rencontrées et solutions
         Le développement n'a pas été linéaire. Plusieurs difficultés ont dû être résolues, parfois
 
 au prix d'une refonte partielle de certaines parties du code.
 
-                                                          Page 51
+                                                          Page 52
 Rapport de stage -- Licence Professionnelle Informatique                                                 GPI -- DGSR
 
-                                Tableau 32. Difficultés rencontrées et solutions
+                                Tableau 33. Difficultés rencontrées et solutions
 
 Difficulté                      Cause                                     Solution apportée
 
@@ -2471,7 +2544,7 @@ d'authentification. Cette interface permet de se connecter de manière sécurisée 
 identifiant et un mot de passe. Elle rappelle le cadre institutionnel, la devise de l'établissement
 et le caractère réservé de l'accès.
 
-                                                          Page 52
+                                                          Page 53
 Rapport de stage -- Licence Professionnelle Informatique  GPI -- DGSR
 
                                    Figure 7. Page d'authentification de l'application GPI
@@ -2487,7 +2560,7 @@ maintenances en cours et affectations actives. Des graphiques complètent cette s
 répartition par statut, par catégorie et par direction, valeur totale du parc et garanties proches de
 l'échéance.
 
-                                                                       Page 53
+                                                                       Page 54
 Rapport de stage -- Licence Professionnelle Informatique  GPI -- DGSR
 
                                Figure 8. Tableau de bord : indicateurs et répartition du parc
@@ -2503,7 +2576,7 @@ désignation, la catégorie, la localisation et le statut. La recherche porte sur 
 de série ou la désignation ; des filtres permettent de restreindre la liste par statut et par catégorie.
 Chaque ligne propose les actions de consultation, de modification et de suppression.
 
-                                                                       Page 54
+                                                                       Page 55
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
                                   Figure 9. Liste des équipements avec recherche et filtres
@@ -2515,7 +2588,7 @@ direction et service, fournisseur, localisation, date d'acquisition, prix, garan
 maintenances et tickets liés, logiciels installés, mouvements et documents. Cette vue unique
 évite de naviguer entre plusieurs modules pour reconstituer l'histoire d'un matériel.
 
-                                                          Page 55
+                                                          Page 56
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
                                   Figure 10. Fiche détaillée d'un équipement et historique
@@ -2527,7 +2600,7 @@ Elle indique l'agent, la fonction, le code d'inventaire, la désignation et la da
 bouton « Restituer » clôt l'affectation en renseignant la date de fin et en rendant le matériel
 disponible.
 
-                                                          Page 56
+                                                          Page 57
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
                                          Figure 11. Gestion des affectations en cours
@@ -2540,7 +2613,7 @@ Chaque intervention est rattachée à un équipement, à un type de maintenance et, 
 terminée ou annulée. Les tickets d'assistance complètent ce dispositif : ils sont déclarés par les
 agents, qualifiés par priorité, puis traités par les techniciens avec un historique de commentaires.
 
-                                                          Page 57
+                                                          Page 58
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
                                       Figure 12. Suivi des interventions de maintenance
@@ -2552,7 +2625,7 @@ agents, qualifiés par priorité, puis traités par les techniciens avec un histori
 une date de fin prévisionnelle et un statut. Chaque ligne de constat indique si le matériel est
 présent, la date de vérification et une observation en cas d'écart.
 
-                                                          Page 58
+                                                          Page 59
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
                                           Figure 13. Campagnes d'inventaire du parc
@@ -2564,7 +2637,7 @@ de facture, bon de commande, montant et fournisseur. Les lignes de détail précis
 le prix unitaire et la date de livraison, et peuvent être rattachées à un équipement. Le répertoire
 des fournisseurs centralise les coordonnées et les références commerciales.
 
-                                                          Page 59
+                                                          Page 60
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
                                       Figure 14. Gestion des achats et des fournisseurs
@@ -2576,7 +2649,7 @@ licences permettent de suivre les dates d'acquisition et d'expiration, le nombre
 autorisés et les références. Les installations relient un logiciel à un équipement, avec la date, la
 version installée et le statut. Une alerte est émise lorsqu'une licence approche de son échéance.
 
-                                                          Page 60
+                                                          Page 61
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
                                       Figure 15. Catalogue logiciel et suivi des licences
@@ -2588,7 +2661,7 @@ matricule, service, direction, téléphone et statut. La recherche s'effectue par 
 fonction. Les agents peuvent être rattachés à un service et à une direction, ce qui permet ensuite
 de filtrer le parc par entité.
 
-                                                          Page 61
+                                                          Page 62
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
                                      Figure 16. Répertoire des agents de l'établissement
@@ -2601,7 +2674,7 @@ derniers mois, quatre-vingt-dix jours ou trente jours) et d'exporter le résultat
 graphiques présentent les flux d'entrées et de sorties, les transactions par type et la répartition
 du parc par direction et par catégorie.
 
-                                                          Page 62
+                                                          Page 63
 Rapport de stage -- Licence Professionnelle Informatique  GPI -- DGSR
 
                                           Figure 17. Rapports et historiques du parc
@@ -2631,7 +2704,7 @@ Plusieurs évolutions sont envisagées pour les prochaines versions :
    · Annuaire LDAP / Active Directory : synchroniser les comptes avec l'annuaire de
        l'établissement pour simplifier la gestion des accès.
 
-                                                                       Page 63
+                                                                       Page 64
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
 · Signature électronique : intégrer un visa numérique sur les bons d'affectation et les
@@ -2643,7 +2716,7 @@ Plusieurs évolutions sont envisagées pour les prochaines versions :
 · Journalisation avancée : conserver l'historique détaillé des consultations et des exports,
    dans une logique d'audit.
 
-                                                          Page 64
+                                                          Page 65
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
 CONCLUSION GÉNÉRALE
@@ -2684,7 +2757,7 @@ outil de travail quotidien, plus fiable et plus rapide que les fichiers qu'il re
 méthodologique. Il m'a permis de renforcer mes compétences en conception de systèmes
 d'information, en développement d'API, en modélisation de bases de données et en intégration
 
-                                                          Page 65
+                                                          Page 66
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
 d'interfaces. Il m'a également confronté aux contraintes réelles d'un projet : comprendre un
@@ -2696,45 +2769,50 @@ mobile, les notifications par courriel, la synchronisation avec l'annuaire de l'
 l'automatisation des sauvegardes. Ces évolutions permettront d'étendre la portée de l'outil et
 d'en faire un véritable système de pilotage du parc informatique.
 
-                                                          Page 66
+                                                          Page 67
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
 BIBLIOGRAPHIE
 
 [1] TARDIEU H., ROCHFELD A., COLLETTI R., La méthode Merise : principes et outils,
-Éditions d'Organisation, Paris, 1983, 348 pages.
+1983, Éditions d'Organisation, Paris, 348 pages.
 
-[2] DATE C. J., Introduction aux systèmes de bases de données, Addison-Wesley, Paris,
-2000, 247 pages.
+[2] DATE C. J., Introduction aux systèmes de bases de données, 2000, Addison-Wesley,
+Paris, 247 pages.
 
 [3] GAMMA E., HELM R., JOHNSON R., VLISSIDES J., Design Patterns : Elements of
-Reusable Object-Oriented Software, Addison-Wesley, 1994, 395 pages.
+Reusable Object-Oriented Software, 1994, Addison-Wesley, Reading, 395 pages.
 
-[4] FREEMAN A., ROBSON E., Head First JavaScript Programming, O'Reilly Media,
-2014, 704 pages.
+[4] FREEMAN A., ROBSON E., Head First JavaScript Programming, 2014, O'Reilly
+Media, Sebastopol, 704 pages.
 
 [5] NANOU B., Architecture logicielle : concevoir des applications robustes et évolutives,
-Dunod, 2022, 256 pages.
+2022, Dunod, Paris, 256 pages.
 
-                                                          Page 67
+                                                          Page 68
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
 WEBOGRAPHIE
 
-[1] https://laravel.com/docs -- Documentation officielle de Laravel, consultée en 2026.
-[2] https://fr.react.dev -- Documentation officielle de React, consultée en 2026.
-[3] https://dev.mysql.com/doc/ -- Manuel de référence MySQL 8.4, consulté en 2026.
-[4] https://tailwindcss.com/docs -- Documentation de Tailwind CSS, consultée en 2026.
-[5] https://vite.dev/guide/ -- Guide officiel de Vite, consulté en 2026.
-[6] https://getcomposer.org/doc/ -- Documentation de Composer, consultée en 2026.
-[7] https://git-scm.com/book/fr/v2 -- Pro Git, livre de référence en français, consulté en 2026.
-[8] https://developer.mozilla.org/fr/ -- Ressources pour les développeurs web, consultées en
+[6] https://laravel.com/docs, Documentation officielle de Laravel, consultée le 10 novembre
 2026.
-[9] https://www.php.net/manual/fr/ -- Manuel PHP, consulté en 2026.
-[10] https://web.maths.unsw.edu.au/~lafaye/CCM/merise/concintro.htm -- Cours de
-MERISE, consulté en 2026.
+[7] https://fr.react.dev, Documentation officielle de React, consultée le 10 novembre 2026.
+[8] https://dev.mysql.com/doc/, Manuel de référence MySQL 8.4, consulté le 9 novembre
+2026.
+[9] https://tailwindcss.com/docs, Documentation de Tailwind CSS, consultée le 6 novembre
+2026.
+[10] https://vite.dev/guide/, Guide officiel de Vite, consulté le 6 novembre 2026.
+[11] https://getcomposer.org/doc/, Documentation de Composer, consultée le 4 novembre
+2026.
+[12] https://git-scm.com/book/fr/v2, Pro Git, livre de référence en français, consulté le 3
+novembre 2026.
+[13] https://developer.mozilla.org/fr/, Ressources pour les développeurs web, consultées le 12
+novembre 2026.
+[14] https://www.php.net/manual/fr/, Manuel PHP, consulté le 8 novembre 2026.
+[15] https://web.maths.unsw.edu.au/~lafaye/CCM/merise/concintro.htm, Cours de MERISE,
+consulté le 5 novembre 2026.
 
-                                                          Page 68
+                                                          Page 69
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
 GLOSSAIRE
@@ -2809,166 +2887,237 @@ Vite             Modèle Logique des Données : traduction du MCD en relations (ta
 
                  Outil de compilation et de serveur de développement pour les applications JavaScript.
 
-                                                          Page 69
-Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
-
-TABLE DES MATIÈRES
-
-CURRICULUM VITAE ........................................................................................................................2
-
-        PERSONNALITÉS ......................................................................................................................................2
-        DIPLÔMES ET FORMATIONS..................................................................................................................2
-        EXPÉRIENCES PROFESSIONNELLES ....................................................................................................2
-        LANGUES .................................................................................................................................................... 2
-        COMPÉTENCES .........................................................................................................................................3
-        CENTRES D'INTÉRÊT...............................................................................................................................3
-
-SOMMAIRE ...........................................................................................................................................4
-
-REMERCIEMENTS ..............................................................................................................................5
-
-LISTE DES FIGURES...........................................................................................................................6
-
-LISTE DES TABLEAUX ......................................................................................................................7
-
-LISTE DES ABRÉVIATIONS..............................................................................................................9
-
-INTRODUCTION GÉNÉRALE...........................................................................................................1
-
-PARTIE I. PRÉSENTATIONS.............................................................................................................3
-
-Chapitre 1. Présentation de l'ENI.........................................................................................................4
-    1.1. Informations d'ordre général .............................................................................................................. 4
-    1.2. Missions et historique ......................................................................................................................... 4
-    1.3. Organigramme institutionnel .............................................................................................................. 6
-    1.4. Domaines de spécialisation................................................................................................................. 6
-    1.5. Architecture des formations pédagogiques ......................................................................................... 7
-    1.6. Relations de l'ENI avec les organismes externes ............................................................................... 8
-    1.7. Débouchés professionnels................................................................................................................... 8
-    1.8. Ressources humaines .......................................................................................................................... 9
-
-Chapitre 2. Présentation de la DGSR .................................................................................................10
-    2.1. Statut et missions .............................................................................................................................. 10
-    2.2. Organisation administrative .............................................................................................................. 10
-    2.3. Organigramme fonctionnel ............................................................................................................... 11
-    2.4. Valeurs et engagements .................................................................................................................... 11
-    2.5. Le Service Informatique ................................................................................................................... 12
-
-Chapitre 3. Description du projet .......................................................................................................13
-    3.1. Formulation....................................................................................................................................... 13
-    3.2. Objectif et besoins des utilisateurs .................................................................................................... 13
-    3.3. Moyens nécessaires à la réalisation du projet ................................................................................... 14
-
-        3.3.1. Moyens humains ...............................................................................................................................14
-        3.3.2. Moyens matériels ..............................................................................................................................14
-        3.3.3. Moyens logiciels ...............................................................................................................................14
-    3.4. Résultats attendus.............................................................................................................................. 15
-    3.5. Chronogramme de travail ................................................................................................................. 15
-
-PARTIE II. ANALYSE ET CONCEPTION .....................................................................................17
-
-Chapitre 4. Analyse préalable .............................................................................................................18
-    4.1. Analyse de l'existant......................................................................................................................... 18
-
-        4.1.1. Organisation actuelle ........................................................................................................................18
-        4.1.2. Inventaire des moyens matériels et logiciels.....................................................................................18
-    4.2. Critique de l'existant......................................................................................................................... 19
-    4.3. Conception avant-projet.................................................................................................................... 19
-        4.3.1. Proposition de solutions....................................................................................................................19
-
                                                           Page 70
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
-        4.3.2. Méthodes de conception et outils......................................................................................................20
-        4.3.3. Choix du système de gestion de base de données .............................................................................20
-        4.3.4. Choix du framework back-end..........................................................................................................21
-        4.3.5. Choix de la technologie front-end.....................................................................................................22
-        4.3.6. Environnement de développement et outils ......................................................................................22
+ANNEXES
 
-Chapitre 5. Analyse conceptuelle ........................................................................................................24
-    5.1. Présentation de la méthode MERISE................................................................................................ 24
-    5.2. Dictionnaire des données .................................................................................................................. 25
+        Les annexes rassemblent les documents techniques qui complètent le corps du rapport
 
-        a) Entité AGENT ........................................................................................................................................25
-        b) Entité ÉQUIPEMENT ............................................................................................................................25
-        c) Entité AFFECTATION ..........................................................................................................................26
-        d) Entité TICKET .......................................................................................................................................26
-        e) Entité MAINTENANCE ........................................................................................................................27
-        f) Entités ACHAT et LOGICIEL................................................................................................................27
-    5.3. Règles de gestion .............................................................................................................................. 27
-    5.4. Diagramme de flux ........................................................................................................................... 28
-        5.4.1. Acteurs du système ...........................................................................................................................29
-        5.4.2. Détail des flux d'informations ..........................................................................................................29
-    5.5. Modélisation des données ................................................................................................................. 30
-        5.5.1. Modèle Conceptuel des Données (MCD) .........................................................................................30
-        5.5.2. Modèle Logique des Données (MLD) ..............................................................................................32
-        5.5.3. Modèle Conceptuel des Traitements (MCT).....................................................................................35
-        5.5.4. Modèle Organisationnel des Traitements (MOT) .............................................................................37
+sans alourdir la présentation. Elles permettent de vérifier la traduction des modèles en code et
 
-PARTIE III. RÉALISATION .............................................................................................................39
+l'organisation des points d'accès de l'application.
 
-Chapitre 6. Mise en place de l'environnement de développement...................................................40
-    6.1. Installation et configuration des outils .............................................................................................. 40
+Annexe A. Extrait du fichier de routes de l'API
 
-        a) Visual Studio Code .................................................................................................................................40
-        b) WampServer, Apache et PHP.................................................................................................................40
-        c) Composer et Laravel...............................................................................................................................41
-        d) Node.js, npm, Vite et Tailwind CSS.......................................................................................................41
-        e) MySQL et phpMyAdmin........................................................................................................................42
-        f) Git ...........................................................................................................................................................42
-    6.2. Architecture de l'application............................................................................................................. 43
-        6.2.1. Couche présentation..........................................................................................................................43
-        6.2.2. Couche métier ...................................................................................................................................43
-        6.2.3. Couche données ................................................................................................................................44
-        6.2.4. Communication entre les couches.....................................................................................................44
-    6.3. Structure du projet............................................................................................................................. 44
-    6.4. Déploiement en mode intranet .......................................................................................................... 45
+        Ce fichier déclare les points d'accès exposés par l'application et associe à chacun le
 
-Chapitre 7. Développement de l'application......................................................................................46
-    7.1. Création de la base de données ......................................................................................................... 46
-    7.2. Codage de l'application .................................................................................................................... 47
+contrôleur compétent, le middleware d'authentification et, lorsque l'opération modifie les
 
-        7.2.1. Les modèles Eloquent .......................................................................................................................47
-        7.2.2. Les contrôleurs et l'API REST .........................................................................................................47
-        7.2.3. Authentification, rôles et sécurité .....................................................................................................48
-        7.2.4. Application des règles de gestion......................................................................................................49
-        7.2.5. Exports PDF et documents officiels..................................................................................................50
-        7.2.6. L'interface React...............................................................................................................................50
-        7.2.7. Tests et validation .............................................................................................................................51
-        7.2.8. Difficultés rencontrées et solutions...................................................................................................51
-    7.3. Présentation de l'application ............................................................................................................. 52
-        7.3.1. Page d'authentification .....................................................................................................................52
-        7.3.2. Tableau de bord ................................................................................................................................53
+données, le contrôle de rôle.
+
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1');
+
+    Route::middleware('auth:sanctum')->group(function () {
+           Route::get('/me', [AuthController::class, 'me']);
+           Route::get('/dashboard', [DashboardController::class, 'stats']);
+
+           // Ecriture reservee a l'administrateur et au gestionnaire de parc.
+           $ecriture = 'role:admin,gestionnaire_parc';
+
+           Route::apiResource('equipements', EquipementController::class)
+                  ->only(['index', 'show']);
+
+           Route::apiResource('equipements', EquipementController::class)
+                  ->except(['index', 'show'])->middleware($ecriture);
+
+           Route::apiResource('agents', AgentController::class)
+                  ->only(['index', 'show']);
+
+           Route::apiResource('agents', AgentController::class)
+                  ->except(['index', 'show'])->middleware($ecriture);
+
+           // Tout agent authentifie peut declarer une demande d'assistance.
+           Route::apiResource('tickets', TicketController::class)
+
+                  ->only(['index', 'show', 'store']);
+    });
 
                                                           Page 71
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
-        7.3.3. Gestion des équipements...................................................................................................................54
-        7.3.4. Fiche détaillée d'un équipement .......................................................................................................55
-        7.3.5. Affectations et restitutions ................................................................................................................56
-        7.3.6. Maintenance et assistance .................................................................................................................57
-        7.3.7. Inventaires.........................................................................................................................................58
-        7.3.8. Achats et fournisseurs .......................................................................................................................59
-        7.3.9. Logiciels et licences..........................................................................................................................60
-        7.3.10. Répertoire des agents ......................................................................................................................61
-        7.3.11. Rapports et historiques....................................................................................................................62
-    7.4. Perspectives d'évolution ................................................................................................................... 63
+Annexe B. Extrait du script de migration de la table equipements
 
-CONCLUSION GÉNÉRALE .............................................................................................................65
+        Les tables sont créées par les migrations de Laravel. L'extrait ci-après montre la
 
-BIBLIOGRAPHIE ...............................................................................................................................67
+définition de la table centrale du parc, avec ses contraintes d'unicité, ses clés étrangères et son
 
-WEBOGRAPHIE .................................................................................................................................68
+index sur le statut.
 
-GLOSSAIRE.........................................................................................................................................69
+    Schema::create('equipements', function (Blueprint $table) {
+           $table->id('id_equipement');
+           $table->string('code_inventaire', 50)->unique();
+           $table->string('numero_serie', 100)->nullable()->unique();
+           $table->string('designation', 200);
+           $table->date('date_acquisition')->nullable();
+           $table->decimal('prix_acquisition', 14, 2)->nullable();
+           $table->date('garantie_debut')->nullable();
+           $table->date('garantie_fin')->nullable();
+           $table->enum('statut', [
+                  'en_service', 'en_stock', 'en_maintenance',
+                  'reforme', 'perdu', 'reserve',
+           ])->default('en_stock');
 
-TABLE DES MATIÈRES ...................................................................................................................70
+           $table->foreignId('id_modele')->nullable()
+                  ->constrained('modeles', 'id_modele')->nullOnDelete();
 
-RÉSUMÉ ...............................................................................................................................................73
+           $table->foreignId('id_direction')->nullable()
+                  ->constrained('directions', 'id_direction')->nullOnDelete();
 
-ABSTRACT ..........................................................................................................................................74
+           $table->foreignId('id_localisation')->nullable()
+                  ->constrained('localisations', 'id_localisation')->nullOnDelete();
+
+           $table->timestamps();
+           $table->index('statut');
+    });
 
                                                           Page 72
+Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
+
+TABLE DES MATIÈRES
+
+    CURRICULUM VITAE ............................................................................................................................. I
+            PERSONNALITÉS................................................................................................................................. I
+            DIPLÔMES ET FORMATIONS ............................................................................................................ I
+            EXPÉRIENCES PROFESSIONNELLES............................................................................................... I
+            LANGUES .............................................................................................................................................. I
+            COMPÉTENCES ................................................................................................................................... II
+            CENTRES D'INTÉRÊT ........................................................................................................................ II
+
+    REMERCIEMENTS................................................................................................................................. V
+    LISTE DES FIGURES ...........................................................................................................................VII
+    LISTE DES TABLEAUX..................................................................................................................... VIII
+    LISTE DES ABRÉVIATIONS................................................................................................................. X
+    INTRODUCTION GÉNÉRALE ............................................................................................................... 1
+
+PARTIE I. PRÉSENTATIONS.............................................................................................................3
+    Chapitre 1. Présentation de l'ENI .............................................................................................................. 4
+
+        1.1. Informations d'ordre général .................................................................................................................4
+        1.2. Missions et historique ............................................................................................................................4
+        1.3. Organigramme institutionnel .................................................................................................................6
+        1.4. Domaines de spécialisation....................................................................................................................6
+        1.5. Architecture des formations pédagogiques ............................................................................................7
+        1.6. Relations de l'ENI avec les organismes externes...................................................................................8
+        1.7. Débouchés professionnels......................................................................................................................8
+        1.8. Ressources humaines .............................................................................................................................9
+    Chapitre 2. Présentation de la DGSR....................................................................................................... 10
+        2.1. Statut et missions .................................................................................................................................10
+        2.2. Organisation administrative .................................................................................................................10
+        2.3. Organigramme fonctionnel ..................................................................................................................11
+        2.4. Valeurs et engagements .......................................................................................................................11
+        2.5. Le Service Informatique ......................................................................................................................12
+    Chapitre 3. Description du projet ............................................................................................................. 13
+        3.1. Formulation..........................................................................................................................................13
+        3.2. Objectif et besoins des utilisateurs.......................................................................................................13
+        3.3. Moyens nécessaires à la réalisation du projet ......................................................................................14
+
+            3.3.1. Moyens humains .........................................................................................................................14
+            3.3.2. Moyens matériels ........................................................................................................................14
+            3.3.3. Moyens logiciels .........................................................................................................................14
+        3.4. Résultats attendus ................................................................................................................................15
+        3.5. Chronogramme de travail ....................................................................................................................15
+
+PARTIE II. ANALYSE ET CONCEPTION .....................................................................................17
+    Chapitre 4. Analyse préalable .................................................................................................................. 18
+
+        4.1. Analyse de l'existant............................................................................................................................18
+            4.1.1. Organisation actuelle...................................................................................................................18
+            4.1.2. Inventaire des moyens matériels et logiciels ...............................................................................18
+
+        4.2. Critique de l'existant............................................................................................................................19
+        4.3. Conception avant-projet.......................................................................................................................19
+
+            4.3.1. Proposition de solutions ..............................................................................................................19
+            4.3.2. Méthodes de conception et outils ................................................................................................20
+            4.3.3. Choix du système de gestion de base de données .......................................................................20
+            4.3.4. Choix du framework back-end ....................................................................................................21
+            4.3.5. Choix de la technologie front-end ...............................................................................................22
+            4.3.6. Environnement de développement et outils ................................................................................22
+    Chapitre 5. Analyse conceptuelle............................................................................................................. 24
+        5.1. Présentation de la méthode MERISE...................................................................................................24
+
+                                                          Page 73
+Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
+
+        5.2. Dictionnaire des données .....................................................................................................................25
+            a) Entité AGENT...................................................................................................................................25
+            b) Entité ÉQUIPEMENT ......................................................................................................................25
+            c) Entité AFFECTATION .....................................................................................................................26
+            d) Entité TICKET..................................................................................................................................26
+            e) Entité MAINTENANCE ...................................................................................................................27
+            f) Entité ACHAT...................................................................................................................................27
+            g) Entité LOGICIEL .............................................................................................................................27
+
+        5.3. Règles de gestion .................................................................................................................................28
+        5.4. Diagramme de flux ..............................................................................................................................28
+
+            5.4.1. Acteurs du système......................................................................................................................29
+            5.4.2. Détail des flux d'informations.....................................................................................................29
+        5.5. Modélisation des données ....................................................................................................................30
+            5.5.1. Modèle Conceptuel des Données (MCD)....................................................................................30
+            5.5.2. Modèle Logique des Données (MLD).........................................................................................32
+            5.5.3. Modèle Conceptuel des Traitements (MCT) ...............................................................................35
+            5.5.4. Modèle Organisationnel des Traitements (MOT) .......................................................................37
+
+PARTIE III. RÉALISATION .............................................................................................................39
+
+    Chapitre 6. Mise en place de l'environnement de développement .......................................................... 40
+        6.1. Installation et configuration des outils .................................................................................................40
+            a) Visual Studio Code ...........................................................................................................................40
+            b) WampServer, Apache et PHP ...........................................................................................................40
+            c) Composer et Laravel .........................................................................................................................41
+            d) Node.js, npm, Vite et Tailwind CSS .................................................................................................41
+            e) MySQL et phpMyAdmin ..................................................................................................................42
+            f) Git......................................................................................................................................................42
+        6.2. Architecture de l'application................................................................................................................43
+            6.2.1. Couche présentation ....................................................................................................................43
+            6.2.2. Couche métier .............................................................................................................................43
+            6.2.3. Couche données ..........................................................................................................................44
+            6.2.4. Communication entre les couches ...............................................................................................44
+        6.3. Structure du projet ...............................................................................................................................44
+        6.4. Déploiement en mode intranet .............................................................................................................45
+
+    Chapitre 7. Développement de l'application............................................................................................ 47
+        7.1. Création de la base de données ............................................................................................................47
+        7.2. Codage de l'application .......................................................................................................................48
+            7.2.1. Les modèles Eloquent .................................................................................................................48
+            7.2.2. Les contrôleurs et l'API REST....................................................................................................48
+            7.2.3. Authentification, rôles et sécurité................................................................................................49
+            7.2.4. Application des règles de gestion ................................................................................................50
+            7.2.5. Exports PDF et documents officiels ............................................................................................51
+            7.2.6. L'interface React .........................................................................................................................51
+            7.2.7. Tests et validation........................................................................................................................52
+            7.2.8. Difficultés rencontrées et solutions .............................................................................................52
+        7.3. Présentation de l'application................................................................................................................53
+            7.3.1. Page d'authentification................................................................................................................53
+            7.3.2. Tableau de bord...........................................................................................................................54
+            7.3.3. Gestion des équipements .............................................................................................................55
+            7.3.4. Fiche détaillée d'un équipement..................................................................................................56
+            7.3.5. Affectations et restitutions...........................................................................................................57
+            7.3.6. Maintenance et assistance ...........................................................................................................58
+            7.3.7. Inventaires ...................................................................................................................................59
+            7.3.8. Achats et fournisseurs .................................................................................................................60
+            7.3.9. Logiciels et licences ....................................................................................................................61
+            7.3.10. Répertoire des agents ................................................................................................................62
+            7.3.11. Rapports et historiques ..............................................................................................................63
+        7.4. Perspectives d'évolution ......................................................................................................................64
+
+                                                          Page 74
+Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
+
+CONCLUSION GÉNÉRALE.................................................................................................................. 66
+BIBLIOGRAPHIE................................................................................................................................... 68
+WEBOGRAPHIE .................................................................................................................................... 69
+GLOSSAIRE ........................................................................................................................................... 70
+ANNEXES............................................................................................................................................... 71
+
+    Annexe A. Extrait du fichier de routes de l'API .........................................................................................71
+    Annexe B. Extrait du script de migration de la table equipements .............................................................72
+RÉSUMÉ ................................................................................................................................................. 76
+ABSTRACT............................................................................................................................................. 77
+
+                                                          Page 75
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
 RÉSUMÉ
@@ -2996,10 +3145,10 @@ les responsables disposent d'indicateurs à jour. Ce travail a permis de mettre e
 connaissances acquises durant la formation et de développer des compétences en conception,
 développement, sécurisation et déploiement d'applications.
 
-        Mots-clés : gestion du parc informatique, MERISE, Laravel, React, MySQL, API
-REST, application intranet, inventaire, affectation, maintenance.
+        Mots-clés : affectation, application intranet, gestion du parc informatique, inventaire,
+Laravel, maintenance, MERISE, MySQL.
 
-                                                          Page 73
+                                                          Page 76
 Rapport de stage -- Licence Professionnelle Informatique           GPI -- DGSR
 
 ABSTRACT
@@ -3023,8 +3172,8 @@ pieces of equipment and fourteen agents are centralized, assignments are tracked
 have up-to-date indicators. This work made it possible to put theoretical knowledge into
 practice and to develop skills in design, development, security and deployment.
 
-        Keywords: IT asset management, MERISE, Laravel, React, MySQL, REST API,
-intranet application, inventory, assignment, maintenance.
+        Keywords: assignment, intranet application, inventory, IT asset management, Laravel,
+maintenance, MERISE, MySQL.
 
-                                                          Page 74
+                                                          Page 77
 

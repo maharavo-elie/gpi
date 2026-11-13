@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, Users, Plus, Pencil, FileDown, Trash2, Eye, X } from 'lucide-react';
+import { Search, Users, Plus, Pencil, FileDown, Trash2, Eye, X, Archive } from 'lucide-react';
 import { api } from '../../api';
 import { Spinner, PageHeader, EmptyState, Badge, Field, inputClass, ErrorText, EditModal, ConfirmModal } from '../../components/ui';
 import { formatDate } from '../../lib/constants';
@@ -21,6 +21,7 @@ export default function Agents() {
     const [agents, setAgents] = useState(null);
     const [referentiel, setReferentiel] = useState(null);
     const [q, setQ] = useState('');
+    const [filtres, setFiltres] = useState({ id_direction: '', id_service: '' });
     const [modal, setModal] = useState(null); // null | { mode, agent? }
     const [form, setForm] = useState(VIDE);
     const [errors, setErrors] = useState(null);
@@ -39,15 +40,19 @@ export default function Agents() {
         }
     };
 
-    const loadAgents = (query = '') => {
-        const params = query ? { q: query } : {};
+    const loadAgents = useCallback(() => {
+        const params = Object.fromEntries(Object.entries({
+            q,
+            id_direction: filtres.id_direction,
+            id_service: filtres.id_service,
+        }).filter(([, v]) => v !== ''));
         return api.get('/agents', { params }).then(({ data }) => setAgents(data));
-    };
+    }, [q, filtres]);
 
     useEffect(() => {
-        const t = setTimeout(() => { loadAgents(q); }, 250);
-        return () => clearTimeout(t);
-    }, [q]);
+        const timer = setTimeout(() => { loadAgents(); }, 250);
+        return () => clearTimeout(timer);
+    }, [loadAgents]);
 
     useEffect(() => {
         api.get('/referentiel').then(({ data }) => setReferentiel(data));
@@ -57,13 +62,22 @@ export default function Agents() {
         ? referentiel.services.filter((s) => String(s.id_direction) === String(form.id_direction))
         : referentiel?.services ?? [];
 
+    /* Services proposés dans la barre de tri, restreints à la direction choisie. */
+    const servicesPourFiltre = (referentiel?.services ?? []).filter(
+        (s) => ! filtres.id_direction || String(s.id_direction) === String(filtres.id_direction),
+    );
+
+    const setFiltre = (cle, valeur) => {
+        setFiltres((f) => ({ ...f, [cle]: valeur, ...(cle === 'id_direction' ? { id_service: '' } : {}) }));
+    };
+
     const confirmerSuppression = async () => {
         if (! aSupprimer) return;
         setBusySuppression(true);
         try {
             await api.delete(`/agents/${aSupprimer.id_agent}`);
             setASupprimer(null);
-            await loadAgents(q);
+            await loadAgents();
         } catch (err) {
             setASupprimer(null);
             alert(err.response?.data?.message ?? t('Suppression impossible (élément utilisé ailleurs).'));
@@ -130,7 +144,7 @@ export default function Agents() {
                 await api.post('/agents', payload);
             }
             setModal(null);
-            await loadAgents(q);
+            await loadAgents();
         } catch (err) {
             setErrors(err.response?.data?.errors ?? { erreur: [t('Enregistrement impossible.')] });
         } finally {
@@ -163,11 +177,35 @@ export default function Agents() {
                 }
             />
 
-            <div className="bg-card rounded-2xl border border-slate-200/50 shadow-sm p-3 mb-4">
-                <div className="relative">
+            <div className="bg-card rounded-2xl border border-slate-200/50 shadow-sm p-3 mb-4 flex flex-col sm:flex-row gap-2">
+                <div className="relative flex-1">
                     <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('Rechercher par matricule, nom, fonction…')} className={`${inputClass} pl-9`} />
                 </div>
+                <select
+                    value={filtres.id_direction}
+                    onChange={(e) => setFiltre('id_direction', e.target.value)}
+                    className={`${inputClass} sm:w-52`}
+                    title={t('Trier par direction')}
+                >
+                    <option value="">{t('Toutes les directions')}</option>
+                    {(referentiel?.directions ?? []).map((d) => (
+                        <option key={d.id_direction} value={d.id_direction}>
+                            {d.code_direction ? `${d.code_direction} — ` : ''}{d.nom_direction}
+                        </option>
+                    ))}
+                </select>
+                <select
+                    value={filtres.id_service}
+                    onChange={(e) => setFiltre('id_service', e.target.value)}
+                    className={`${inputClass} sm:w-52`}
+                    title={t('Trier par service')}
+                >
+                    <option value="">{t('Tous les services')}</option>
+                    {servicesPourFiltre.map((s) => (
+                        <option key={s.id_service} value={s.id_service}>{s.nom_service}</option>
+                    ))}
+                </select>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
@@ -351,9 +389,14 @@ export default function Agents() {
             {/* Confirmation de suppression */}
             <ConfirmModal
                 open={!! aSupprimer}
+                title={t('Mettre cet agent à la corbeille ?')}
                 message={aSupprimer
-                    ? <>{t("Voulez-vous vraiment supprimer l'agent ")}<strong className="text-slate-700">« {aSupprimer.prenom} {aSupprimer.nom_naiss} ({aSupprimer.matricule}) »</strong>{t(' ? Cette action est définitive.')}</>
+                    ? <>{t("L'agent ")}<strong className="text-slate-700">« {aSupprimer.prenom} {aSupprimer.nom_naiss} ({aSupprimer.matricule}) »</strong>{t(" sera placé dans la corbeille. Vous pourrez le restaurer depuis Système > Corbeille tant qu'elle n'est pas vidée.")}</>
                     : ''}
+                confirmLabel={t('Mettre à la corbeille')}
+                busyLabel={t('Mise à la corbeille…')}
+                danger={false}
+                icone={<Archive size={15} />}
                 busy={busySuppression}
                 onConfirm={confirmerSuppression}
                 onClose={() => setASupprimer(null)}

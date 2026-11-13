@@ -32,6 +32,8 @@ class AchatController extends CrudController
             'numero_facture' => ['nullable', 'string', 'max:50'],
             'bon_commande' => ['nullable', 'string', 'max:50'],
             'montant_total' => ['nullable', 'numeric', 'min:0'],
+            'appreciation' => ['nullable', 'integer', 'between:1,5'],
+            'appreciation_commentaire' => ['nullable', 'string', 'max:2000'],
             'description' => ['nullable', 'string'],
             'statut' => ['required', Rule::in(['commande', 'livre_partiel', 'livre', 'annule'])],
             'id_fournisseur' => ['nullable', 'exists:fournisseurs,id_fournisseur'],

@@ -61,7 +61,12 @@ class EquipementController extends CrudController
 
     public function index(Request $request): JsonResponse
     {
-        $query = Equipement::query()->with($this->withRelations());
+        // L'affectation active donne la direction et le service réellement
+        // occupés par le matériel (l'agent prime sur la fiche).
+        $query = Equipement::query()->with(array_merge($this->withRelations(), [
+            'affectationActive.agent.direction',
+            'affectationActive.agent.service',
+        ]));
 
         if ($request->filled('q')) {
             $q = $request->string('q');
@@ -71,10 +76,25 @@ class EquipementController extends CrudController
                 ->orWhere('designation', 'like', "%{$q}%"));
         }
 
-        foreach (['statut', 'id_categorie', 'id_marque', 'id_direction', 'id_service', 'id_localisation'] as $filter) {
+        foreach (['statut', 'id_categorie', 'id_marque', 'id_localisation'] as $filter) {
             if ($request->filled($filter)) {
                 $query->where($filter, $request->input($filter));
             }
+        }
+
+        // Direction et service effectifs : l'agent qui occupe le matériel prime
+        // sur les champs de la fiche, exactement comme dans le tableau.
+        if ($request->filled('id_direction')) {
+            $id = $request->input('id_direction');
+            $query->where(fn ($sub) => $sub
+                ->where('id_direction', $id)
+                ->orWhereHas('affectationActive.agent', fn ($agent) => $agent->where('id_direction', $id)));
+        }
+        if ($request->filled('id_service')) {
+            $id = $request->input('id_service');
+            $query->where(fn ($sub) => $sub
+                ->where('id_service', $id)
+                ->orWhereHas('affectationActive.agent', fn ($agent) => $agent->where('id_service', $id)));
         }
 
         $perPage = min((int) $request->input('per_page', 15), 100);

@@ -26,18 +26,23 @@ return function (WordDoc $d): void {
     $d->p('Présenté le : ...............................', 'CouvertureTexte');
     $d->p('Par : Monsieur RAKOTOMAMINIRIANA Fanomezaniavo Fenohery Sarobidy', 'CouvertureNom');
     $d->p('', 'CouvertureTexte');
-    $d->p('Membre du jury :', 'CouvertureTexte');
+    $d->p('Membres du jury :', 'CouvertureTexte');
     $d->p('Rapporteurs :', 'CouvertureTexte');
-    $d->p('- ...................................................', 'CouvertureTexte');
-    $d->p('- ...................................................', 'CouvertureTexte', ['spacing' => 360]);
+    $d->p('- ......................................... (Encadreur pédagogique)', 'CouvertureTexte');
+    $d->p('- ......................................... (Encadreur professionnel)', 'CouvertureTexte', ['spacing' => 160]);
     $d->p('Année universitaire 2025 - 2026', 'CouvertureNom');
+    $d->p('', 'CouvertureTexte', ['spacing' => 120]);
+    $d->p('Tampon et signature du responsable', 'CouvertureTexte');
+
+    // La page de garde forme sa propre section : elle n’est ni en-têtée
+    // ni numérotée, et la numérotation romaine commence au curriculum vitae.
+    $d->sectionBreak([]);
 
     /* ---------------------------------------------------------------- */
     /* CURRICULUM VITAE                                                  */
     /* ---------------------------------------------------------------- */
 
-    $d->pageBreak();
-    $d->p('CURRICULUM VITAE', 'Titre1', ['pageBreakBefore' => false]);
+    $d->p('CURRICULUM VITAE', 'Heading2', ['pageBreakBefore' => false]);
     $d->p('RAKOTOMAMINIRIANA FANOMEZANIAVO FENOHERY SAROBIDY', 'CouvertureNom');
     $d->p('', 'CouvertureTexte');
 
@@ -93,37 +98,14 @@ return function (WordDoc $d): void {
     /* SOMMAIRE                                                          */
     /* ---------------------------------------------------------------- */
 
-    $d->h1('SOMMAIRE');
-    $d->p('Le présent rapport est organisé en trois parties, elles-mêmes subdivisées en chapitres.', 'Corps');
+    // Le titre du sommaire ne porte pas de niveau hiérarchique : il ne doit pas
+    // se citer lui-même dans la liste des entrées.
+    $d->p('SOMMAIRE', 'TitreLiminaire', ['pageBreakBefore' => true]);
+    $d->p('Le sommaire présente les parties, les chapitres et les titres de premier niveau du rapport. La table des matières, placée en fin de document, en donne le détail complet.', 'Corps');
 
-    $d->p('**Curriculum vitae**', 'Sommaire');
-    $d->p('**Sommaire**', 'Sommaire');
-    $d->p('**Remerciements**', 'Sommaire');
-    $d->p('**Liste des figures**', 'Sommaire');
-    $d->p('**Liste des tableaux**', 'Sommaire');
-    $d->p('**Liste des abréviations**', 'Sommaire');
-    $d->p('**Introduction générale**', 'Sommaire');
-
-    $d->p('**PARTIE I. PRÉSENTATIONS**', 'Sommaire');
-    $d->p('Chapitre 1. Présentation de l’ENI', 'Sommaire2');
-    $d->p('Chapitre 2. Présentation de la DGSR', 'Sommaire2');
-    $d->p('Chapitre 3. Description du projet', 'Sommaire2');
-
-    $d->p('**PARTIE II. ANALYSE ET CONCEPTION**', 'Sommaire');
-    $d->p('Chapitre 4. Analyse préalable', 'Sommaire2');
-    $d->p('Chapitre 5. Analyse conceptuelle', 'Sommaire2');
-
-    $d->p('**PARTIE III. RÉALISATION**', 'Sommaire');
-    $d->p('Chapitre 6. Mise en place de l’environnement de développement', 'Sommaire2');
-    $d->p('Chapitre 7. Développement de l’application', 'Sommaire2');
-
-    $d->p('**Conclusion générale**', 'Sommaire');
-    $d->p('**Bibliographie**', 'Sommaire');
-    $d->p('**Webographie**', 'Sommaire');
-    $d->p('**Glossaire**', 'Sommaire');
-    $d->p('**Table des matières**', 'Sommaire');
-    $d->p('**Résumé**', 'Sommaire');
-    $d->p('**Abstract**', 'Sommaire');
+    // Le sommaire s’arrête aux titres de premier niveau (x.y) ; la table des
+    // matières reprend ensuite tous les niveaux du plan.
+    $d->toc('TOC \\o "1-3" \\h \\z', 'Le sommaire se met à jour automatiquement à l’ouverture du document.');
 
     /* ---------------------------------------------------------------- */
     /* REMERCIEMENTS                                                     */
@@ -131,21 +113,19 @@ return function (WordDoc $d): void {
 
     $d->h1('REMERCIEMENTS');
 
-    $d->p('Avant de commencer, je remercie Dieu tout-puissant, sans qui rien de tout cela n’aurait été possible. Je souhaite également exprimer ma profonde gratitude :');
-    $d->bullets([
-        'À **Monsieur HAJALALAINA Aimé Richard**, Professeur et Président de l’Université de Fianarantsoa, pour son engagement en faveur de l’excellence académique et son soutien aux étudiants.',
-        'À **Monsieur ANDRIAMANANTENA Razafiharison**, Président de l’Université de Toliara, pour avoir accordé l’intégration de l’ENI au sein de l’université de Toliara.',
-        'Au **Docteur MAHATODY Thomas**, Directeur de l’École Nationale d’Informatique de Fianarantsoa, pour la qualité de la formation dispensée et son attention aux conditions de stage des étudiants.',
-        'À **Monsieur RABETAFIKA Louis Haja**, Maître de Conférences et responsable de la mention Informatique, pour ses conseils méthodologiques.',
-        'À **Monsieur GILANTE Gesazafy**, responsable du parcours Informatique Générale, pour son accompagnement tout au long de l’année.',
-        'À **Monsieur RAZAFINDRAMONJA Herinantenaina Clément Aubert**, Assistant d’Enseignement Supérieur et de Recherche à l’ENI, pour sa générosité et la qualité de son encadrement pédagogique.',
-        'À mon **encadreur pédagogique**, pour ses orientations et ses relectures tout au long de la rédaction de ce rapport.',
-        'À **Monsieur RANDRIAMIFIDY Hugues Emmanuel**, Directeur Général de l’École Nationale d’Enseignement de l’Aéronautique et de la Météorologie, pour m’avoir accueilli dans son établissement.',
-        'À **Monsieur RABENJARISOA Tantelinirina**, responsable informatique et mon encadreur professionnel, pour m’avoir guidé dans la réalisation du projet, pour sa disponibilité et pour la confiance qu’il m’a accordée.',
-        'À l’ensemble du **Service Informatique de la DGSR**, pour son accueil, ses explications sur l’organisation du parc et sa participation aux tests de l’application.',
-        'À tous les **corps enseignants** de l’ENI, pour leur patience et leur engagement malgré leurs charges académiques.',
-        'À mes **parents** et à tous mes **proches**, pour leur soutien, financier comme moral, et pour leurs prières.',
-    ], false, ['after' => 0]);
+    $d->p('Avant de commencer, je remercie Dieu tout-puissant, sans qui rien de tout cela n’aurait été possible. Mes remerciements s’adressent également à celles et ceux qui ont rendu ce stage possible.');
+
+    $d->p('– À **Monsieur HAJALALAINA Aimé Richard**, Professeur, Président de l’Université de Fianarantsoa, pour son engagement en faveur de l’excellence académique et son soutien aux étudiants.', 'Remerciement');
+    $d->p('– À **Monsieur ANDRIAMANANTENA Razafiharison**, Président de l’Université de Toliara, pour avoir accordé l’intégration du centre d’étude de l’ENI au sein de l’Université de Toliara.', 'Remerciement');
+    $d->p('– Au **Docteur MAHATODY Thomas**, Directeur de l’École Nationale d’Informatique de Fianarantsoa, pour la qualité de la formation dispensée et son attention aux conditions de stage des étudiants.', 'Remerciement');
+    $d->p('– À **Monsieur le Directeur Général de la Direction Générale de la Sécurité Routière**, pour avoir accepté ma candidature et m’avoir accueilli au sein de son établissement durant toute la période du stage.', 'Remerciement');
+    $d->p('– À **Monsieur RABETAFIKA Louis Haja**, Maître de Conférences, responsable de la mention Informatique, pour ses conseils méthodologiques et son suivi de la formation.', 'Remerciement');
+    $d->p('– À **Monsieur GILANTE Gesazafy**, responsable du parcours Informatique Générale, pour son accompagnement tout au long de l’année universitaire.', 'Remerciement');
+    $d->p('– À **Monsieur RAZAFINDRAMONJA Herinantenaina Clément Aubert**, Assistant d’Enseignement Supérieur et de Recherche à l’ENI, mon encadreur pédagogique et rapporteur, pour ses orientations, sa rigueur méthodologique et ses relectures attentives de ce rapport.', 'Remerciement');
+    $d->p('– À **Monsieur RABENJARISOA Tantelinirina**, responsable du Service Informatique de la DGSR et mon encadreur professionnel, pour m’avoir guidé dans la réalisation du projet, pour sa disponibilité et pour la confiance qu’il m’a accordée.', 'Remerciement');
+    $d->p('– À l’ensemble du **Service Informatique de la DGSR**, pour son accueil, ses explications sur l’organisation du parc et sa participation aux tests de l’application.', 'Remerciement');
+    $d->p('– À tous les **corps enseignants** de l’ENI, pour leur patience et leur engagement malgré leurs charges académiques.', 'Remerciement');
+    $d->p('– À mes **parents** et à tous mes **proches**, pour leur soutien, financier comme moral, et pour leurs prières.', 'Remerciement');
 
     /* ---------------------------------------------------------------- */
     /* LISTES                                                            */
@@ -165,9 +145,9 @@ return function (WordDoc $d): void {
 
     $abbr = [
         'API' => 'Application Programming Interface (interface de programmation applicative)',
-        'CRT' => 'Centre de Réception Technique',
         'CENSERO' => 'Centre National de Sécurité Routière',
         'CLI' => 'Command Line Interface (interface en ligne de commande)',
+        'CRT' => 'Centre de Réception Technique',
         'CRUD' => 'Create, Read, Update, Delete',
         'DAF' => 'Direction Administrative et Financière',
         'DG' => 'Direction Générale',
@@ -181,10 +161,14 @@ return function (WordDoc $d): void {
         'JSON' => 'JavaScript Object Notation',
         'LMD' => 'Licence – Master – Doctorat',
         'MCD' => 'Modèle Conceptuel des Données',
+        'MCF' => 'Modèle Conceptuel des Flux',
         'MCT' => 'Modèle Conceptuel des Traitements',
         'MERISE' => 'Méthode d’Étude et de Réalisation Informatique pour les Systèmes d’Entreprise',
         'MLD' => 'Modèle Logique des Données',
+        'MLT' => 'Modèle Logique des Traitements',
+        'MOD' => 'Modèle Organisationnel des Données',
         'MOT' => 'Modèle Organisationnel des Traitements',
+        'MPD' => 'Modèle Physique des Données',
         'MVC' => 'Modèle – Vue – Contrôleur',
         'ORM' => 'Object-Relational Mapping (mapping objet-relationnel)',
         'PDF' => 'Portable Document Format',
@@ -198,23 +182,23 @@ return function (WordDoc $d): void {
         'TIC' => 'Technologies de l’Information et de la Communication',
         'UI' => 'User Interface (interface utilisateur)',
         'UX' => 'User Experience (expérience utilisateur)',
-        'RGPD' => 'Règlement Général sur la Protection des Données',
     ];
 
     $rows = [];
-    foreach ($abbr as $sigle => $definition) {
+    foreach (WordDoc::alphaSort($abbr) as $sigle => $definition) {
         $rows[] = [$sigle, $definition];
     }
-    $d->table(['Sigle', 'Signification'], $rows, [3.2, 12.8]);
+    // Corps 9 pt : la nomenclature tient ainsi sur une seule page.
+    $d->table(['Sigle', 'Signification'], $rows, [3.2, 12.8], null, '9');
 
     // Fin des pages liminaires : la numérotation redémarre à 1 dans la partie rédigée.
-    $d->sectionBreak(['footer' => 'footer2.xml', 'numFmt' => 'lowerRoman', 'start' => 1, 'titlePg' => true]);
+    $d->sectionBreak(['footer' => 'footer2.xml', 'numFmt' => 'upperRoman', 'start' => 1]);
 
     /* ---------------------------------------------------------------- */
     /* INTRODUCTION GÉNÉRALE                                             */
     /* ---------------------------------------------------------------- */
 
-    $d->h1('INTRODUCTION GÉNÉRALE');
+    $d->p('INTRODUCTION GÉNÉRALE', 'Heading2', ['pageBreakBefore' => false]);
 
     $d->p('Dans toute organisation, le parc informatique représente à la fois un investissement financier important et un outil de travail quotidien. Ordinateurs, serveurs, imprimantes, équipements réseau et logiciels conditionnent le fonctionnement des services : dès qu’un matériel est mal inventorié, mal affecté ou mal suivi, ce sont les activités de l’établissement tout entier qui ralentissent. La gestion du parc informatique est donc devenue un enjeu de gouvernance, de sécurité et de maîtrise des coûts.');
     $d->p('La Direction Générale de la Sécurité Routière (DGSR) n’échappe pas à cette réalité. Son parc informatique est réparti entre le siège et les structures déconcentrées (centres de réception technique, CENSERO), entre plusieurs directions et services, et entre des agents qui changent de poste, de bureau ou d’affectation. Le suivi de ce parc repose encore largement sur des fichiers tableurs, des registres papier et des échanges de courriels : les informations sont dispersées, parfois contradictoires, et il est difficile de savoir avec certitude quel matériel est en service, en stock, en maintenance ou réformé, ni à quel agent il est affecté.');

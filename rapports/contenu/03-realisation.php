@@ -18,7 +18,7 @@ return function (WordDoc $d): void {
     $d->h2('6.1. Installation et configuration des outils');
 
     $d->h3('a) Visual Studio Code');
-    $d->p('Visual Studio Code est un éditeur de code gratuit et open source développé par Microsoft. Il prend en charge de nombreux langages et dispose d’un terminal intégré, ce qui évite de multiplier les fenêtres pendant le développement. L’installation se fait à partir du site officiel, puis les extensions suivantes ont été ajoutées :');
+    $d->p('Visual Studio Code est un éditeur de code gratuit et open source développé par Microsoft. Il prend en charge de nombreux langages et dispose d’un terminal intégré, ce qui évite de multiplier les fenêtres pendant le développement. L’installation se fait à partir du site officiel, puis les extensions complémentaires ont été ajoutées :');
     $d->bullets([
         '**PHP Intelephense** : complétion, navigation et détection d’erreurs en PHP ;',
         '**Laravel Blade Snippets** et **Laravel Extra Intellisense** : assistance sur les vues et les routes ;',
@@ -95,7 +95,7 @@ git version 2.56.0.windows.2
 git config --global user.name "etudiant"
 git config --global user.email "etudiant@eni.mg"
 git init');
-    $d->p('Les commandes utilisées durant le développement sont les suivantes :');
+    $d->p('Les commandes utilisées durant le développement sont :');
     $d->code('git status
 git add .
 git commit -m "Ajout du module des affectations"
@@ -131,7 +131,7 @@ git log --oneline');
     $d->p('Le client et le serveur échangent en JSON par HTTP. Les requêtes d’écriture sont protégées par le jeton Sanctum et par la vérification du rôle. Les réponses d’erreur respectent les codes HTTP usuels : 200 pour un succès, 201 pour une création, 401 pour une absence d’authentification, 403 pour un accès refusé, 404 pour une ressource introuvable et 422 pour une erreur de validation. Ce fonctionnement permet à l’interface d’afficher des messages précis sans interpréter des chaînes de caractères.');
 
     $d->h2('6.3. Structure du projet');
-    $d->p('Le projet suit la structure standard de Laravel, complétée par une organisation claire des pages React. La structure simplifiée est la suivante :');
+    $d->p('Le projet suit la structure standard de Laravel, complétée par une organisation claire des pages React. La structure simplifiée est :');
     $d->code('gpi/
 ├── app/
 │   ├── Http/
@@ -162,7 +162,7 @@ git log --oneline');
 └── package.json');
 
     $d->h2('6.4. Déploiement en mode intranet');
-    $d->p('L’application est destinée à être utilisée sur le réseau local de la DGSR. Le serveur de l’établissement héberge Apache, PHP et MySQL ; les postes clients n’ont besoin que d’un navigateur. Le déploiement suit les étapes suivantes :');
+    $d->p('L’application est destinée à être utilisée sur le réseau local de la DGSR. Le serveur de l’établissement héberge Apache, PHP et MySQL ; les postes clients n’ont besoin que d’un navigateur. Le déploiement suit plusieurs étapes :');
     $d->bullets([
         'récupération du code et installation des dépendances avec Composer ;',
         'configuration du fichier .env avec les paramètres du serveur (base, URL, environnement de production) ;',
@@ -193,7 +193,7 @@ git log --oneline');
     $d->p('La création de la base de données constitue une étape essentielle : elle permet de stocker et d’organiser de manière structurée l’ensemble des informations du parc. Le modèle relationnel issu du MLD a été traduit en tables MySQL, puis enrichi de contraintes et d’index.');
     $d->p('**Choix du SGBD.** MySQL a été retenu pour sa simplicité d’administration, sa compatibilité native avec PHP, ses performances sur les applications web de taille moyenne et sa présence dans l’infrastructure existante. Il respecte les contraintes d’intégrité, gère les transactions et s’intègre parfaitement à l’ORM Eloquent.');
     $d->p('**Mise en place.** Les tables sont créées par les migrations de Laravel, ce qui garantit la reproductibilité de l’installation et le suivi des évolutions du schéma. Le script gpi.sql permet également de restaurer la base complète, données de démonstration comprises.');
-    $d->p('Les principales tables métier sont décrites dans le tableau suivant.');
+    $d->p('Les principales tables métier sont décrites dans le tableau intitulé « Principales tables de la base GPI ».');
     $d->table(
         ['Table', 'Rôle'],
         [
@@ -218,7 +218,7 @@ git log --oneline');
     $d->p('**Respect des règles d’intégrité.** Plusieurs contraintes ont été mises en place : unicité du code d’inventaire, du numéro de série, du matricule et de la référence de ticket ; clés étrangères avec restrictions ou mises à zéro selon le cas ; suppression logique des équipements et des agents pour préserver l’historique ; contrôle applicatif des doublons d’affectation. Ces règles garantissent la cohérence et la fiabilité du système.');
 
     $d->h2('7.2. Codage de l’application');
-    $d->p('Le codage transforme les modèles conceptuels en une application fonctionnelle. Le développement a été réalisé avec Laravel pour le back-end et React pour l’interface, en suivant une organisation par module et en appliquant les bonnes pratiques du framework.');
+    $d->p('Le codage transforme les modèles conceptuels en une application fonctionnelle. Le développement a été réalisé avec Laravel pour le back-end et React pour l’interface, selon une organisation par module et en appliquant les bonnes pratiques du framework.');
 
     $d->h3('7.2.1. Les modèles Eloquent');
     $d->p('Chaque table possède un modèle Eloquent qui décrit ses champs, ses conversions de types et ses relations. Les clés primaires personnalisées sont déclarées explicitement, car Laravel utilise par défaut la colonne id. Les dates sont converties automatiquement en objets Carbon, ce qui simplifie les calculs et le formatage.');
@@ -251,7 +251,7 @@ git log --oneline');
 
     $d->h3('7.2.2. Les contrôleurs et l’API REST');
     $d->p('Les contrôleurs exposent les opérations CRUD et appliquent la validation. Une classe de base, CrudController, mutualise la logique commune (liste, création, mise à jour, suppression, journalisation) ; les contrôleurs métier héritent de cette classe et redéfinissent les règles et les relations à charger. Ce choix réduit la duplication et homogénéise les réponses de l’API.');
-    $d->p('Les routes sont regroupées par domaine et protégées par le middleware de rôles. Le tableau suivant présente les principaux points d’accès.');
+    $d->p('Les routes sont regroupées par domaine et protégées par le middleware de rôles. Le tableau intitulé « Principaux points d’accès de l’API » présente les principaux points d’accès.');
     $d->table(
         ['Méthode', 'Point d’accès', 'Description', 'Rôle requis'],
         [
@@ -340,7 +340,7 @@ git log --oneline');
     $d->p('L’application propose également un mode clair et un mode sombre, ainsi qu’un basculement français/anglais pour les libellés de l’interface. Ces fonctionnalités améliorent le confort d’utilisation sans alourdir le code métier.');
 
     $d->h3('7.2.7. Tests et validation');
-    $d->p('Des tests manuels ont été effectués à chaque étape du développement, complétés par des vérifications automatisées sur les points critiques. Ils ont porté sur le bon fonctionnement des fonctionnalités, le respect des règles de gestion et la cohérence entre la base de données, l’API et l’interface. Le tableau suivant présente les principaux cas testés.');
+    $d->p('Des tests manuels ont été effectués à chaque étape du développement, complétés par des vérifications automatisées sur les points critiques. Ils ont porté sur le bon fonctionnement des fonctionnalités, le respect des règles de gestion et la cohérence entre la base de données, l’API et l’interface. Le tableau intitulé « Cas de tests et résultats » présente les principaux cas testés.');
     $d->table(
         ['Cas de test', 'Scénario', 'Résultat attendu', 'État'],
         [

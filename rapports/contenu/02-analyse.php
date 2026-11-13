@@ -179,7 +179,7 @@ return function (WordDoc $d): void {
     $d->p('Dans le cadre de ce projet, le niveau conceptuel a servi à comprendre le métier et à stabiliser le vocabulaire ; le niveau organisationnel a précisé qui fait quoi, où et avec quelles ressources ; le niveau logique a abouti au modèle relationnel implémenté dans MySQL.');
 
     $d->h2('5.2. Dictionnaire des données');
-    $d->p('Le dictionnaire des données répertorie toutes les données nécessaires à la construction du modèle conceptuel. Chaque rubrique est décrite par son type, sa taille, la possibilité qu’elle soit vide, son rôle (clé primaire ou étrangère) et une description métier. Les tableaux suivants présentent les principales entités du système.');
+    $d->p('Le dictionnaire des données répertorie toutes les données nécessaires à la construction du modèle conceptuel. Chaque rubrique est décrite par son type, sa taille, la possibilité qu’elle soit vide, son rôle (clé primaire ou étrangère) et une description métier. Plusieurs tableaux présentent, pour chaque entité, les rubriques classées par ordre alphabétique.');
     $d->p('Le type **PRI** désigne une clé primaire, **FK** une clé étrangère et **UK** une contrainte d’unicité. La colonne « Null » indique si la donnée peut être vide.');
 
     $entetes = ['Rubrique', 'Type', 'Taille', 'Null', 'Clé', 'Description'];
@@ -199,7 +199,7 @@ return function (WordDoc $d): void {
         ['statut', 'ENUM', '—', 'Non', '—', 'actif, inactif, congé ou mutation.'],
         ['id_direction', 'BIGINT', '20', 'Non', 'FK', 'Direction de rattachement.'],
         ['id_service', 'BIGINT', '20', 'Oui', 'FK', 'Service de rattachement.'],
-    ], $largeurs, 'Dictionnaire des données — entité AGENT');
+    ], $largeurs, 'Dictionnaire des données — entité AGENT', '9.5', true);
 
     $d->h3('b) Entité ÉQUIPEMENT');
     $d->table($entetes, [
@@ -222,7 +222,7 @@ return function (WordDoc $d): void {
         ['id_fournisseur', 'BIGINT', '20', 'Oui', 'FK', 'Fournisseur du matériel.'],
         ['id_localisation', 'BIGINT', '20', 'Oui', 'FK', 'Localisation physique (site, bâtiment, bureau).'],
         ['id_etat', 'BIGINT', '20', 'Oui', 'FK', 'État physique constaté.'],
-    ], $largeurs, 'Dictionnaire des données — entité ÉQUIPEMENT');
+    ], $largeurs, 'Dictionnaire des données — entité ÉQUIPEMENT', '9.5', true);
 
     $d->h3('c) Entité AFFECTATION');
     $d->table($entetes, [
@@ -233,7 +233,7 @@ return function (WordDoc $d): void {
         ['commentaire', 'TEXT', '—', 'Oui', '—', 'Observations complémentaires.'],
         ['id_equipement', 'BIGINT', '20', 'Non', 'FK', 'Équipement concerné.'],
         ['id_agent', 'BIGINT', '20', 'Non', 'FK', 'Agent bénéficiaire.'],
-    ], $largeurs, 'Dictionnaire des données — entité AFFECTATION');
+    ], $largeurs, 'Dictionnaire des données — entité AFFECTATION', '9.5', true);
 
     $d->h3('d) Entité TICKET');
     $d->table($entetes, [
@@ -247,7 +247,7 @@ return function (WordDoc $d): void {
         ['statut', 'ENUM', '—', 'Non', '—', 'ouvert, en_cours, resolu, ferme.'],
         ['id_equipement', 'BIGINT', '20', 'Oui', 'FK', 'Équipement concerné.'],
         ['id_agent', 'BIGINT', '20', 'Oui', 'FK', 'Agent demandeur.'],
-    ], $largeurs, 'Dictionnaire des données — entité TICKET');
+    ], $largeurs, 'Dictionnaire des données — entité TICKET', '9.5', true);
 
     $d->h3('e) Entité MAINTENANCE');
     $d->table($entetes, [
@@ -262,9 +262,9 @@ return function (WordDoc $d): void {
         ['id_equipement', 'BIGINT', '20', 'Non', 'FK', 'Équipement en maintenance.'],
         ['id_type_maintenance', 'BIGINT', '20', 'Non', 'FK', 'Type d’intervention (préventive, curative…).'],
         ['id_agent', 'BIGINT', '20', 'Oui', 'FK', 'Agent à l’origine de la demande.'],
-    ], $largeurs, 'Dictionnaire des données — entité MAINTENANCE');
+    ], $largeurs, 'Dictionnaire des données — entité MAINTENANCE', '9.5', true);
 
-    $d->h3('f) Entités ACHAT et LOGICIEL');
+    $d->h3('f) Entité ACHAT');
     $d->table($entetes, [
         ['id_achat', 'BIGINT', '20', 'Non', 'PRI', 'Identifiant de l’achat.'],
         ['reference_achat', 'VARCHAR', '50', 'Oui', 'UK', 'Référence interne du marché ou de la commande.'],
@@ -274,13 +274,17 @@ return function (WordDoc $d): void {
         ['montant_total', 'DECIMAL', '14,2', 'Oui', '—', 'Montant total de l’achat.'],
         ['statut', 'ENUM', '—', 'Non', '—', 'commande, livre_partiel, livre, annule.'],
         ['id_fournisseur', 'BIGINT', '20', 'Oui', 'FK', 'Fournisseur retenu.'],
+    ], $largeurs, 'Dictionnaire des données — entité ACHAT', '9.5', true);
+
+    $d->h3('g) Entité LOGICIEL');
+    $d->table($entetes, [
         ['id_logiciel', 'BIGINT', '20', 'Non', 'PRI', 'Identifiant du logiciel.'],
         ['nom', 'VARCHAR', '150', 'Non', '—', 'Nom commercial du logiciel.'],
         ['version', 'VARCHAR', '50', 'Oui', '—', 'Version de référence.'],
         ['editeur', 'VARCHAR', '150', 'Oui', '—', 'Éditeur du logiciel.'],
         ['reference_licence', 'VARCHAR', '50', 'Non', 'UK', 'Référence unique de la licence.'],
         ['date_expiration', 'DATE', '—', 'Oui', '—', 'Date d’expiration de la licence.'],
-    ], $largeurs, 'Dictionnaire des données — entités ACHAT et LOGICIEL');
+    ], $largeurs, 'Dictionnaire des données — entité LOGICIEL', '9.5', true);
 
     $d->h2('5.3. Règles de gestion');
     $d->p('Les règles de gestion (RG) sont les contraintes métier qui régissent le fonctionnement du système. Elles garantissent l’intégrité, la cohérence et la conformité aux processus de la DGSR. Elles ont été traduites dans le code, dans les validations et dans les contraintes de la base de données.');
@@ -346,7 +350,7 @@ return function (WordDoc $d): void {
         'les **relations** qui expliquent comment les entités sont reliées entre elles (losanges) ;',
         'les **cardinalités** (les chiffres portés sur chaque patte de la relation).',
     ]);
-    $d->p('La construction du MCD suit quatre étapes : obtenir les règles de gestion du besoin à informatiser, recenser les données dans un dictionnaire, comprendre les relations et les dépendances entre les données, puis construire le modèle. Le MCD du projet GPI est présenté ci-dessous. Il regroupe les entités du parc, de l’organisation, des achats, de la maintenance, de l’inventaire et de la traçabilité.');
+    $d->p('La construction du MCD suit quatre étapes : obtenir les règles de gestion du besoin à informatiser, recenser les données dans un dictionnaire, comprendre les relations et les dépendances entre les données, puis construire le modèle. Le MCD du projet GPI est présenté à la figure 1. Il regroupe les entités du parc, de l’organisation, des achats, de la maintenance, de l’inventaire et de la traçabilité.');
     $d->figure('docs/merise/png/MCD.png', 'Modèle Conceptuel des Données (MCD) du système GPI', 16.0);
     $d->p('**Interprétation des principales relations :**');
     $d->bullets([
@@ -371,7 +375,7 @@ return function (WordDoc $d): void {
         '**Règle 5** : pour une association réflexive, la clé primaire se dédouble et devient clé étrangère dans la même table, ou une table de liaison est créée selon les cardinalités.',
         '**Règle 6** : pour une relation binaire (0,1) – (1,1), la clé primaire de la table côté (0,1) devient une clé étrangère dans la table côté (1,1).',
     ]);
-    $d->p('Le MLD obtenu comporte les relations principales suivantes (les clés primaires sont soulignées dans le modèle graphique et les clés étrangères sont précédées du symbole #) :');
+    $d->p('Le MLD obtenu comporte les relations principales (les clés primaires sont soulignées dans le modèle graphique et les clés étrangères sont précédées du symbole #) :');
     $d->bullets([
         '**DIRECTION** (id_direction, code_direction, nom_direction, description, telephone, email, statut)',
         '**SERVICE** (id_service, code_service, nom_service, description, statut, #id_direction)',

@@ -22,7 +22,7 @@ class LogicielController extends CrudController
 
     protected function withRelations(): array
     {
-        return ['licences', 'installations.equipement'];
+        return ['licences', 'installations.equipement', 'fournisseur'];
     }
 
     protected function rules(): array
@@ -31,7 +31,13 @@ class LogicielController extends CrudController
             'nom' => ['required', 'string', 'max:150'],
             'version' => ['nullable', 'string', 'max:50'],
             'editeur' => ['nullable', 'string', 'max:150'],
+            'nb_utilisateurs_max' => ['nullable', 'integer', 'min:0'],
+            'date_acquisition' => ['nullable', 'date'],
+            'date_acquisition_licence' => ['nullable', 'date'],
+            'id_fournisseur' => ['nullable', 'exists:fournisseurs,id_fournisseur'],
             'description' => ['nullable', 'string'],
+            'cgu' => ['nullable', 'string'],
+            'cgv' => ['nullable', 'string'],
         ];
     }
 

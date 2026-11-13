@@ -81,7 +81,49 @@ class AssistantService
      */
     public function repondreLocalement(string $question, ?string $page = null, array $roles = []): string
     {
-        $anglais = $this->contient($question, ['how ', 'where ', 'what ', 'can i', 'i want', 'please ', 'need to', 'help me']);
+        $normalise = Str::lower(Str::ascii(trim($question)));
+        $anglais = $this->contient($question, ['how ', 'where ', 'what ', 'can i', 'i want', 'please ', 'need to', 'help me'])
+            || (bool) preg_match('/\b(hello|hi|hey|thanks|thank you|goodbye|bye)\b/u', $normalise);
+
+        // Les échanges simples (« bonjour », « merci », « comment ça va ? »)
+        // font partie de l'assistance : on y répond naturellement avant de
+        // proposer les fonctions de l'application.
+        if (preg_match('/^(bonjour|bonsoir|salut|coucou|hello|hey|yo)([ ,.!-]+(ca va|comment (vas[- ]?tu|allez[- ]?vous)))?[ !,.?…-]*$/u', $normalise)) {
+            return $anglais
+                ? "Hello! I'm the GPI assistant. How can I help you today? I can explain the application's screens, fields, statuses and procedures."
+                : "Bonjour ! Je suis l’assistant GPI. Comment puis-je vous aider aujourd’hui ? Je peux vous expliquer les écrans, les champs, les statuts et les procédures de l’application.";
+        }
+
+        if (preg_match('/^(merci( beaucoup| bien)?|thanks|thank you)[ !.]*$/u', $normalise)) {
+            return $anglais
+                ? "You're welcome! If you have another question about GPI, I'm here to help."
+                : "Avec plaisir ! Si vous avez une autre question sur GPI, je suis là pour vous aider.";
+        }
+
+        if (preg_match('/(comment (vas[- ]?tu|allez[- ]?vous|ca va)|how are you)/u', $normalise)) {
+            return $anglais
+                ? "I'm doing well, thank you! Ready to help you with GPI. What would you like to know?"
+                : "Je vais bien, merci ! Prêt à vous aider sur GPI. Que souhaitez-vous savoir ?";
+        }
+
+        if (preg_match('/(qui es[- ]?tu|qui etes[- ]?vous|who are you|ton nom|your name)/u', $normalise)) {
+            return $anglais
+                ? "I'm the GPI assistant, the built-in help for the DGSR IT fleet management application. I explain the screens, fields, statuses, procedures, purchases and software management. I don't have access to your real data."
+                : "Je suis l’assistant GPI, l’aide intégrée à l’application de gestion du parc informatique de la DGSR. J’explique les écrans, les champs, les statuts, les procédures, les achats et la gestion des logiciels. Je n’ai pas accès à vos données réelles.";
+        }
+
+        if (preg_match('/(que peux[- ]?tu faire|que sais[- ]?tu faire|what can you do|tes fonctions|your features)/u', $normalise)) {
+            return $anglais
+                ? "I can help you with: equipment and their life sheet, assignments, tickets and maintenance, purchases and their rating, software and licences, inventory, PDF reports, the trash, your profile and permissions. Ask me a question or name the screen you are on."
+                : "Je peux vous aider sur : les équipements et leur fiche de vie, les affectations, les tickets et maintenances, les achats et leur appréciation, les logiciels et licences, l’inventaire, les rapports PDF, la corbeille, votre profil et vos droits. Posez-moi une question ou indiquez l’écran sur lequel vous êtes.";
+        }
+
+        if (preg_match('/^(au revoir|a bientot|a plus|bye|goodbye)[ !.]*$/u', $normalise)) {
+            return $anglais
+                ? "Goodbye and have a nice day!"
+                : "Au revoir et bonne journée !";
+        }
+
         $ecriture = in_array('admin', $roles, true) || in_array('gestionnaire_parc', $roles, true);
         $intervention = $ecriture || in_array('technicien', $roles, true);
         $pageLabel = $this->libellePage($page);
@@ -239,6 +281,7 @@ DROITS
 Ne promets jamais une action qui n’est pas autorisée par le rôle de l’utilisateur.
 
 RÈGLES DE RÉPONSE
+0. Les salutations et remerciements (« bonjour », « merci », « au revoir »), les questions sur ton identité et les demandes du type « que peux-tu faire ? » font partie de ton périmètre : réponds brièvement avec courtoisie, puis propose ton aide sur GPI. Ne refuse jamais une salutation.
 1. Réponds dans la langue de la question : français par défaut, anglais si la question est en anglais.
 2. Sois concis, concret et pédagogique. Réponds en texte simple, sans Markdown ni tableau ; utilise des listes courtes avec des tirets si nécessaire.
 3. Pour une procédure, donne les étapes dans l’ordre et indique le menu ou l’écran concerné.

@@ -35,6 +35,30 @@ final class WordDoc
         return htmlspecialchars($text, ENT_QUOTES | ENT_XML1, 'UTF-8');
     }
 
+    /** Lettres accentuées ramenées à leur équivalent simple pour le tri. */
+    private const ACCENTS = [
+        'à' => 'a', 'â' => 'a', 'ä' => 'a', 'á' => 'a',
+        'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e',
+        'î' => 'i', 'ï' => 'i', 'í' => 'i',
+        'ô' => 'o', 'ö' => 'o', 'ó' => 'o',
+        'ù' => 'u', 'û' => 'u', 'ü' => 'u', 'ú' => 'u',
+        'ç' => 'c', 'ñ' => 'n', 'œ' => 'oe', 'æ' => 'ae',
+    ];
+
+    /** Clé de comparaison insensible à la casse et aux accents. */
+    private static function sortKey(string $value): string
+    {
+        return strtr(mb_strtolower($value), self::ACCENTS);
+    }
+
+    /** Trie un tableau associatif par clé, dans l'ordre alphabétique. */
+    public static function alphaSort(array $items): array
+    {
+        uksort($items, static fn ($a, $b): int => strcmp(self::sortKey((string) $a), self::sortKey((string) $b)));
+
+        return $items;
+    }
+
     private function rel(string $target): string
     {
         $existing = array_search($target, $this->rels, true);
@@ -123,26 +147,26 @@ final class WordDoc
 
     public function part(string $text): void
     {
-        $this->body[] = '<w:p><w:pPr><w:pStyle w:val="TitrePartie"/><w:pageBreakBefore/></w:pPr>'
+        $this->body[] = '<w:p><w:pPr><w:pStyle w:val="Heading1"/><w:pageBreakBefore/></w:pPr>'
             .$this->runs($text).'</w:p>';
         $this->body[] = '<w:p><w:pPr><w:pStyle w:val="TraitPartie"/></w:pPr></w:p>';
     }
 
     public function h1(string $text): void
     {
-        $this->body[] = '<w:p><w:pPr><w:pStyle w:val="Titre1"/><w:pageBreakBefore/></w:pPr>'
+        $this->body[] = '<w:p><w:pPr><w:pStyle w:val="Heading2"/><w:pageBreakBefore/></w:pPr>'
             .$this->runs($text).'</w:p>';
     }
 
     public function h2(string $text): void
     {
-        $this->body[] = '<w:p><w:pPr><w:pStyle w:val="Titre2"/><w:keepNext/></w:pPr>'
+        $this->body[] = '<w:p><w:pPr><w:pStyle w:val="Heading3"/><w:keepNext/></w:pPr>'
             .$this->runs($text).'</w:p>';
     }
 
     public function h3(string $text): void
     {
-        $this->body[] = '<w:p><w:pPr><w:pStyle w:val="Titre3"/><w:keepNext/></w:pPr>'
+        $this->body[] = '<w:p><w:pPr><w:pStyle w:val="Heading4"/><w:keepNext/></w:pPr>'
             .$this->runs($text).'</w:p>';
     }
 
@@ -163,8 +187,12 @@ final class WordDoc
     public function code(string $code): void
     {
         $lines = explode("\n", trim($code));
-        foreach ($lines as $line) {
-            $this->body[] = '<w:p><w:pPr><w:pStyle w:val="Code"/></w:pPr>'
+        $last = count($lines) - 1;
+        foreach ($lines as $i => $line) {
+            // keepNext sur toutes les lignes sauf la dernière : le bloc de code
+            // reste d’un seul tenant et n’est pas coupé par un saut de page.
+            $keep = $i < $last ? '<w:keepNext/>' : '';
+            $this->body[] = '<w:p><w:pPr><w:pStyle w:val="Code"/>'.$keep.'</w:pPr>'
                 .'<w:r><w:t xml:space="preserve">'.self::e($line === '' ? ' ' : $line).'</w:t></w:r></w:p>';
         }
         $this->p('', 'Corps', ['spacing' => 0]);
@@ -185,8 +213,15 @@ final class WordDoc
      * @param array<int, string[]> $rows
      * @param float[]|null         $widths largeurs relatives (cm)
      */
-    public function table(array $headers, array $rows, ?array $widths = null, ?string $caption = null, string $fontSize = '9.5'): void
+    public function table(array $headers, array $rows, ?array $widths = null, ?string $caption = null, string $fontSize = '9.5', bool $sortRows = false): void
     {
+        if ($sortRows) {
+            usort($rows, static fn (array $a, array $b): int => strcmp(
+                self::sortKey((string) ($a[0] ?? '')),
+                self::sortKey((string) ($b[0] ?? ''))
+            ));
+        }
+
         $count = count($headers);
         if ($widths === null) {
             $widths = array_fill(0, $count, self::TEXT_WIDTH_CM / $count);
@@ -573,11 +608,18 @@ final class WordDoc
         $s .= '<w:style w:type="paragraph" w:styleId="Corps"><w:name w:val="Corps de texte"/><w:basedOn w:val="Normal"/><w:qFormat/>'
             .'<w:pPr><w:jc w:val="both"/><w:ind w:firstLine="709"/><w:spacing w:after="160" w:line="360" w:lineRule="auto"/></w:pPr></w:style>';
 
-        $s .= $this->stylePara('TitrePartie', 'Titre de partie', 36, true, '1F3864', 'center', 240, 240, false, 0)
+        // Hiérarchie du plan : la partie est le niveau 1, le chapitre le niveau 2,
+        // les titres x.y le niveau 3 et les titres x.y.z le niveau 4. Les styles
+        // portent les identifiants des titres Word afin que les champs de table
+        // des matières puissent s’arrêter au niveau demandé.
+        $s .= $this->stylePara('Heading1', 'Titre 1', 36, true, '1F3864', 'center', 240, 240, false, 0)
             .$this->stylePara('TraitPartie', 'Trait de partie', 12, false, '8EA9C1', 'center', 0, 240, true)
-            .$this->stylePara('Titre1', 'Titre 1', 32, true, '1F3864', 'left', 0, 240, false, 0)
-            .$this->stylePara('Titre2', 'Titre 2', 28, true, '2E5395', 'left', 240, 120, false, 1)
-            .$this->stylePara('Titre3', 'Titre 3', 24, true, '2E5395', 'left', 200, 100, false, 2, true);
+            .$this->stylePara('Heading2', 'Titre 2', 32, true, '1F3864', 'left', 0, 240, false, 1)
+            .$this->stylePara('Heading3', 'Titre 3', 28, true, '2E5395', 'left', 240, 120, false, 2)
+            .$this->stylePara('Heading4', 'Titre 4', 24, true, '2E5395', 'left', 200, 100, false, 3, true)
+            // Titre des pages liminaires : même présentation que le niveau 1, mais
+            // sans niveau hiérarchique afin de ne pas figurer dans le sommaire.
+            .$this->stylePara('TitreLiminaire', 'Titre liminaire', 32, true, '1F3864', 'left', 0, 240, false, null);
 
         // Légendes
         $s .= '<w:style w:type="paragraph" w:styleId="LegendeFigure"><w:name w:val="Légende figure"/><w:basedOn w:val="Normal"/><w:qFormat/>'
@@ -643,6 +685,16 @@ final class WordDoc
             .'<w:pPr><w:tabs><w:tab w:val="right" w:leader="dot" w:pos="9070"/></w:tabs>'
             .'<w:spacing w:after="20" w:line="240" w:lineRule="auto"/><w:ind w:left="567"/></w:pPr>'
             .'<w:rPr><w:sz w:val="20"/></w:rPr></w:style>';
+
+        $s .= '<w:style w:type="paragraph" w:styleId="TOC4"><w:name w:val="toc 4"/><w:basedOn w:val="Normal"/>'
+            .'<w:pPr><w:tabs><w:tab w:val="right" w:leader="dot" w:pos="9070"/></w:tabs>'
+            .'<w:spacing w:after="10" w:line="240" w:lineRule="auto"/><w:ind w:left="850"/></w:pPr>'
+            .'<w:rPr><w:sz w:val="20"/></w:rPr></w:style>';
+
+        // Remerciements : chaque personne est citée après un tiret.
+        $s .= '<w:style w:type="paragraph" w:styleId="Remerciement"><w:name w:val="Remerciement"/><w:basedOn w:val="Normal"/><w:qFormat/>'
+            .'<w:pPr><w:jc w:val="both"/><w:ind w:left="340" w:hanging="340"/>'
+            .'<w:spacing w:after="100" w:line="360" w:lineRule="auto"/></w:pPr></w:style>';
 
         // Sommaire (liste simplifiée, sans numéros de page)
         $s .= '<w:style w:type="paragraph" w:styleId="Sommaire"><w:name w:val="Sommaire"/><w:basedOn w:val="Normal"/><w:qFormat/>'

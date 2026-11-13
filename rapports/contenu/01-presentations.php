@@ -16,7 +16,7 @@ return function (WordDoc $d): void {
     $d->p('L’ENI, connue sous le nom d’École Nationale d’Informatique, est située au cœur de Fianarantsoa. C’est un établissement public où l’on forme des techniciens supérieurs, des licenciés et des ingénieurs dans le domaine de l’informatique.');
 
     $d->h2('1.1. Informations d’ordre général');
-    $d->p('L’École Nationale d’Informatique est un établissement d’enseignement supérieur rattaché académiquement et administrativement à l’Université de Fianarantsoa. Elle siège à Tanambao – Antaninarenina, à Fianarantsoa. Les coordonnées pour une prise de contact avec l’école sont les suivantes :');
+    $d->p('L’École Nationale d’Informatique est un établissement d’enseignement supérieur rattaché académiquement et administrativement à l’Université de Fianarantsoa. Elle siège à Tanambao – Antaninarenina, à Fianarantsoa. Les coordonnées pour une prise de contact avec l’école sont :');
     $d->bullets([
         'Antaninarenina Tanambao, BP 1487 Fianarantsoa (301) ;',
         'Téléphone : +261 34 05 733 36 ou +261 33 42 302 02 ;',
@@ -57,7 +57,7 @@ return function (WordDoc $d): void {
     );
 
     $d->h2('1.4. Domaines de spécialisation');
-    $d->p('Les activités de formation et de recherche organisées à l’ENI portent sur les domaines suivants :');
+    $d->p('Les activités de formation et de recherche organisées à l’ENI portent notamment sur :');
     $d->bullets([
         'Génie Logiciel et Bases de Données (GB) ;',
         'Administration des Systèmes et Réseaux (ASR) ;',
@@ -65,7 +65,7 @@ return function (WordDoc $d): void {
         'Modélisation informatique et mathématique des systèmes complexes ;',
         'Intelligence Artificielle (IA).',
     ]);
-    $d->p('Le système de formation pédagogique de l’école articule étroitement la théorie et la pratique, comme le montre le tableau suivant.');
+    $d->p('Le système de formation pédagogique de l’école articule étroitement la théorie et la pratique, comme le montre le tableau intitulé « Organisation du système de formation ».');
     $d->table(
         ['Formation théorique', 'Formation pratique'],
         [
@@ -80,7 +80,7 @@ return function (WordDoc $d): void {
     );
 
     $d->h2('1.5. Architecture des formations pédagogiques');
-    $d->p('Le recrutement des étudiants à l’ENI se fait uniquement par voie de concours d’envergure nationale en première année. Les offres de formation organisées par l’école ont été validées par la Commission Nationale d’Habilitation (CNH). Au sein de l’ENI, il existe plusieurs mentions et plusieurs parcours, récapitulés dans le tableau ci-dessous.');
+    $d->p('Le recrutement des étudiants à l’ENI se fait uniquement par voie de concours d’envergure nationale en première année. Les offres de formation organisées par l’école ont été validées par la Commission Nationale d’Habilitation (CNH). Au sein de l’ENI, il existe plusieurs mentions et plusieurs parcours, récapitulés dans le tableau intitulé « Mentions et parcours au sein de l’ENI ».');
     $d->table(
         ['Mention', 'Parcours'],
         [
@@ -115,7 +115,7 @@ return function (WordDoc $d): void {
     $d->p('Parmi les partenaires de l’école, on peut citer : ACCENTURE Mauritius, Air Madagascar, Airtel, Agence Universitaire de la Francophonie (AUF), AXIAN, Banque Centrale, BIANCO, BlueLine, CNaPS, Bureau National de Gestion des Risques et des Catastrophes (BNGRC), Data Consulting, COLAS, Direction Générale des Douanes, FID, FTM, GNOSYS, INGENOSIA, INSTAT, JIRAMA, MADADEV, Ministère des Postes et Télécommunications, Orange, QMM Fort-Dauphin, Sénat, SOFTWELL, TELMA, WWF, entre autres.');
 
     $d->h2('1.7. Débouchés professionnels');
-    $d->p('Les formations proposées par l’école permettent aux diplômés d’être immédiatement opérationnels sur le marché du travail, avec la connaissance d’un métier complet lié à l’informatique et aux TIC. L’école apporte à ses étudiants un savoir-faire et un savoir-être qui les accompagnent tout au long de leur vie professionnelle. Les diplômés de licence et de master issus de l’ENI peuvent faire carrière dans différents secteurs, comme le résume le tableau suivant.');
+    $d->p('Les formations proposées par l’école permettent aux diplômés d’être immédiatement opérationnels sur le marché du travail, avec la connaissance d’un métier complet lié à l’informatique et aux TIC. L’école apporte à ses étudiants un savoir-faire et un savoir-être qui les accompagnent tout au long de leur vie professionnelle. Les diplômés de licence et de master issus de l’ENI peuvent faire carrière dans différents secteurs, comme le résume le tableau intitulé « Débouchés éventuels des jeunes diplômés ».');
     $d->table(
         ['Mention', 'Débouchés professionnels'],
         [
@@ -131,7 +131,7 @@ return function (WordDoc $d): void {
     );
 
     $d->h2('1.8. Ressources humaines');
-    $d->p('Les ressources humaines de l’école sont organisées selon les responsabilités suivantes :');
+    $d->p('Les ressources humaines de l’école sont organisées ainsi :');
     $d->bullets([
         '**Directeur de l’école** : Monsieur MAHATODY Thomas, Docteur HDR ;',
         '**Responsable de la mention « Informatique »** : Monsieur RABETAFIKA Louis Haja, Maître de conférences ;',
@@ -163,7 +163,7 @@ return function (WordDoc $d): void {
     $d->p('La devise de l’institution, « Lahitokana ny Aina », rappelle que la sécurité routière est d’abord une affaire de preservation de la vie humaine. Cette exigence se traduit, au quotidien, par la rigueur attendue dans la tenue des dossiers, la traçabilité des opérations et la disponibilité des outils de travail.');
 
     $d->h2('2.2. Organisation administrative');
-    $d->p('La DGSR est structurée en directions et en services, eux-mêmes relayés par les structures territoriales. Le siège coordonne l’ensemble des activités, tandis que les CRT assurent la réception technique des véhicules dans les régions et que le CENSERO intervient sur les actions de sécurité routière. Le tableau suivant présente l’organisation telle qu’elle est enregistrée dans l’application GPI.');
+    $d->p('La DGSR est structurée en directions et en services, eux-mêmes relayés par les structures territoriales. Le siège coordonne l’ensemble des activités, tandis que les CRT assurent la réception technique des véhicules dans les régions et que le CENSERO intervient sur les actions de sécurité routière. Le tableau intitulé « Directions et services de la DGSR » présente l’organisation telle qu’elle est enregistrée dans l’application GPI.');
     $d->table(
         ['Direction', 'Code', 'Services rattachés', 'Attributions'],
         [
@@ -243,7 +243,7 @@ return function (WordDoc $d): void {
     $d->p('Le projet a mobilisé les compétences de plusieurs intervenants au sein de l’établissement : mon encadreur professionnel, responsable du Service Informatique, qui a défini les besoins et validé les choix fonctionnels ; les agents du service, qui ont participé aux tests et apporté des retours sur l’ergonomie ; les responsables administratifs, qui ont précisé les attentes en matière de rapports et de traçabilité. Mon encadreur pédagogique a assuré le suivi méthodologique et la relecture du rapport.');
 
     $d->h3('3.3.2. Moyens matériels');
-    $d->p('Le développement a été réalisé sur un ordinateur portable équipé d’un processeur Intel Core i5, de 16 Go de mémoire vive et d’un disque SSD de 512 Go. Le serveur de test est un poste du réseau local de l’établissement, utilisé pour valider le fonctionnement en mode intranet. Les caractéristiques du poste de développement sont résumées ci-dessous.');
+    $d->p('Le développement a été réalisé sur un ordinateur portable équipé d’un processeur Intel Core i5, de 16 Go de mémoire vive et d’un disque SSD de 512 Go. Le serveur de test est un poste du réseau local de l’établissement, utilisé pour valider le fonctionnement en mode intranet. Les caractéristiques du poste de développement sont résumées dans le tableau intitulé « Caractéristiques du poste de développement ».');
     $d->table(
         ['Élément', 'Caractéristique'],
         [
@@ -259,7 +259,7 @@ return function (WordDoc $d): void {
     );
 
     $d->h3('3.3.3. Moyens logiciels');
-    $d->p('Les logiciels utilisés pour réaliser les différentes tâches du projet sont récapitulés dans le tableau suivant. Les versions indiquées sont celles qui ont servi au développement et aux tests.');
+    $d->p('Les logiciels utilisés pour réaliser les différentes tâches du projet sont récapitulés dans le tableau intitulé « Logiciels utilisés et versions ». Les versions indiquées sont celles qui ont servi au développement et aux tests.');
     $d->table(
         ['Logiciel', 'Version', 'Usage'],
         [
@@ -299,7 +299,7 @@ return function (WordDoc $d): void {
     $d->p('Au-delà de ces résultats fonctionnels, le projet doit permettre de réduire le temps de recherche d’une information, d’éviter les doubles saisies et de disposer d’un historique fiable des mouvements de matériel.');
 
     $d->h2('3.5. Chronogramme de travail');
-    $d->p('Le diagramme de Gantt ci-dessous représente le chronogramme de travail durant lequel la plateforme a été conçue et développée. Le stage s’est déroulé sur treize semaines, avec des phases qui se chevauchent partiellement afin de tester les modules au fur et à mesure de leur réalisation.');
+    $d->p('Le tableau intitulé « Diagramme de Gantt du travail pendant treize semaines » représente le chronogramme de travail durant lequel la plateforme a été conçue et développée. Le stage s’est déroulé sur treize semaines, avec des phases qui se chevauchent partiellement afin de tester les modules au fur et à mesure de leur réalisation.');
     $weeks = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'S9', 'S10', 'S11', 'S12', 'S13'];
     $planning = [
         ['Phase 1. Analyse des besoins et conception du système', [1, 3]],

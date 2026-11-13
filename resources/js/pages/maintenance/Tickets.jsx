@@ -28,13 +28,16 @@ function Info({ label, children }) {
 export default function Tickets() {
     const { user } = useAuth();
     const { t } = useT();
-    const peutEcrire = aRole(user, ROLES_INTERVENTION);
+    const peutGerer = aRole(user, ROLES_INTERVENTION);
+    const peutCreer = Boolean(user);
     const [tickets, setTickets] = useState(null);
     const [equipements, setEquipements] = useState([]);
     const [agents, setAgents] = useState([]);
     const [referentiel, setReferentiel] = useState({ directions: [], services: [], sites: [], etats: [] });
     const [q, setQ] = useState('');
     const [statut, setStatut] = useState('');
+    const [directionFiltre, setDirectionFiltre] = useState('');
+    const [serviceFiltre, setServiceFiltre] = useState('');
     const [modal, setModal] = useState(null); // null | { mode, ticket? }
     const [selected, setSelected] = useState(null);
     const [commentaire, setCommentaire] = useState('');
@@ -71,10 +74,12 @@ export default function Tickets() {
     };
 
     const load = useCallback(async () => {
-        const params = Object.fromEntries(Object.entries({ q, statut }).filter(([, v]) => v !== ''));
+        const params = Object.fromEntries(Object.entries({
+            q, statut, id_direction: directionFiltre, id_service: serviceFiltre,
+        }).filter(([, v]) => v !== ''));
         const { data } = await api.get('/tickets', { params });
         setTickets(data);
-    }, [q, statut]);
+    }, [q, statut, directionFiltre, serviceFiltre]);
 
     useEffect(() => { load(); }, [load]);
     useEffect(() => {
@@ -89,7 +94,7 @@ export default function Tickets() {
     }, []);
 
     const ouvrirCreation = () => {
-        setForm(VIDE);
+        setForm({ ...VIDE, id_agent: peutGerer ? '' : user?.agent?.id_agent ?? '' });
         setErrors(null);
         setModal({ mode: 'create' });
     };
@@ -183,6 +188,11 @@ export default function Tickets() {
         (s) => ! form.id_direction || String(s.id_direction) === String(form.id_direction)
     );
 
+    /* Services proposés dans la barre de tri, restreints à la direction choisie. */
+    const servicesPourFiltre = (referentiel.services ?? []).filter(
+        (s) => ! directionFiltre || String(s.id_direction) === String(directionFiltre)
+    );
+
     return (
         <div>
             <PageHeader
@@ -197,7 +207,7 @@ export default function Tickets() {
                         >
                             <FileDown size={15} /> {pdfEnCours ? t('Génération…') : t('Imprimer PDF')}
                         </button>
-                        {peutEcrire && (
+                        {peutCreer && (
                             <button onClick={ouvrirCreation} className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold shadow-sm shadow-blue-600/25">
                                 <Plus size={15} /> {t('Nouveau ticket')}
                             </button>
@@ -215,6 +225,30 @@ export default function Tickets() {
                     <option value="">{t('Tous les statuts')}</option>
                     {Object.entries(STATUTS_TICKET).map(([k, m]) => (
                         <option key={k} value={k}>{m.label}</option>
+                    ))}
+                </select>
+                <select
+                    value={directionFiltre}
+                    onChange={(e) => { setDirectionFiltre(e.target.value); setServiceFiltre(''); }}
+                    className={`${inputClass} sm:w-52`}
+                    title={t('Trier par direction')}
+                >
+                    <option value="">{t('Toutes les directions')}</option>
+                    {(referentiel.directions ?? []).map((d) => (
+                        <option key={d.id_direction} value={d.id_direction}>
+                            {d.code_direction ? `${d.code_direction} — ` : ''}{d.nom_direction}
+                        </option>
+                    ))}
+                </select>
+                <select
+                    value={serviceFiltre}
+                    onChange={(e) => setServiceFiltre(e.target.value)}
+                    className={`${inputClass} sm:w-52`}
+                    title={t('Trier par service')}
+                >
+                    <option value="">{t('Tous les services')}</option>
+                    {servicesPourFiltre.map((s) => (
+                        <option key={s.id_service} value={s.id_service}>{s.nom_service}</option>
                     ))}
                 </select>
             </div>
@@ -242,7 +276,7 @@ export default function Tickets() {
                                 </div>
                             </div>
                             <div className="flex items-center gap-1.5 shrink-0">
-                                {peutEcrire && (
+                                {peutGerer && (
                                     <button
                                         onClick={() => setASupprimer(tk)}
                                         title={t('Supprimer ce ticket')}
@@ -251,7 +285,7 @@ export default function Tickets() {
                                         <Trash2 size={13} />
                                     </button>
                                 )}
-                                {peutEcrire && (
+                                {peutGerer && (
                                     <button
                                         onClick={() => ouvrirEdition(tk)}
                                         title={t('Modifier ce ticket')}
@@ -260,7 +294,7 @@ export default function Tickets() {
                                         <Pencil size={13} /> {t('Modifier')}
                                     </button>
                                 )}
-                                {peutEcrire ? (
+                                {peutGerer ? (
                                     <select
                                         value={tk.statut}
                                         onChange={(e) => changeStatut(tk.id_ticket, e.target.value)}
@@ -317,12 +351,20 @@ export default function Tickets() {
                             </select>
                         </Field>
                         <Field label={t('Agent demandeur')}>
-                            <select value={form.id_agent} onChange={(e) => setForm({ ...form, id_agent: e.target.value })} className={inputClass}>
-                                <option value="">{t('— (moi par défaut)')}</option>
-                                {agents.map((ag) => (
-                                    <option key={ag.id_agent} value={ag.id_agent}>{ag.prenom} {ag.nom_naiss}</option>
-                                ))}
-                            </select>
+                            {peutGerer ? (
+                                <select value={form.id_agent} onChange={(e) => setForm({ ...form, id_agent: e.target.value })} className={inputClass}>
+                                    <option value="">{t('— (moi par défaut)')}</option>
+                                    {agents.map((ag) => (
+                                        <option key={ag.id_agent} value={ag.id_agent}>{ag.prenom} {ag.nom_naiss}</option>
+                                    ))}
+                                </select>
+                            ) : (
+                                <input
+                                    readOnly
+                                    value={user?.agent ? `${user.agent.prenom} ${user.agent.nom_naiss}` : user?.username ?? ''}
+                                    className={`${inputClass} opacity-80`}
+                                />
+                            )}
                         </Field>
                     </div>
 
@@ -369,13 +411,15 @@ export default function Tickets() {
                                 ))}
                             </select>
                         </Field>
-                        <Field label={t('Statut')}>
-                            <select value={form.statut} onChange={(e) => setForm({ ...form, statut: e.target.value })} className={inputClass}>
-                                {Object.entries(STATUTS_TICKET).map(([k, m]) => (
-                                    <option key={k} value={k}>{m.label}</option>
-                                ))}
-                            </select>
-                        </Field>
+                        {peutGerer && (
+                            <Field label={t('Statut')}>
+                                <select value={form.statut} onChange={(e) => setForm({ ...form, statut: e.target.value })} className={inputClass}>
+                                    {Object.entries(STATUTS_TICKET).map(([k, m]) => (
+                                        <option key={k} value={k}>{m.label}</option>
+                                    ))}
+                                </select>
+                            </Field>
+                        )}
                     </div>
 
                     <Field label={t('Description')}>
@@ -411,13 +455,15 @@ export default function Tickets() {
                                 )}
                             </div>
                             <div className="flex items-center gap-1.5">
-                                <button
-                                    onClick={() => { ouvrirEdition(selected); setSelected(null); }}
-                                    title={t('Modifier ce ticket')}
-                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200/50 bg-slate-100 hover:bg-card-high text-slate-600 hover:text-sky-400 text-xs font-semibold transition-colors"
-                                >
-                                    <Pencil size={13} /> {t('Modifier')}
-                                </button>
+                                {peutGerer && (
+                                    <button
+                                        onClick={() => { ouvrirEdition(selected); setSelected(null); }}
+                                        title={t('Modifier ce ticket')}
+                                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200/50 bg-slate-100 hover:bg-card-high text-slate-600 hover:text-sky-400 text-xs font-semibold transition-colors"
+                                    >
+                                        <Pencil size={13} /> {t('Modifier')}
+                                    </button>
+                                )}
                                 <button onClick={() => setSelected(null)} className="p-1.5 text-slate-400 hover:text-slate-800"><X size={18} /></button>
                             </div>
                         </div>

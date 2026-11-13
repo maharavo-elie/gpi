@@ -12,12 +12,13 @@ class Achat extends Model
 
     protected $fillable = [
         'reference_achat', 'date_achat', 'numero_facture', 'bon_commande',
-        'montant_total', 'description', 'statut', 'id_fournisseur',
+        'montant_total', 'appreciation', 'appreciation_commentaire',
+        'description', 'statut', 'id_fournisseur',
     ];
 
     protected function casts(): array
     {
-        return ['date_achat' => 'date', 'montant_total' => 'decimal:2'];
+        return ['date_achat' => 'date', 'montant_total' => 'decimal:2', 'appreciation' => 'integer'];
     }
 
     public function fournisseur(): BelongsTo

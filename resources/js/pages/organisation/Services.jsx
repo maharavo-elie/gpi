@@ -13,6 +13,7 @@ export default function Services() {
             nomRessource="services"
             idKey="id_service"
             labelElement="Service"
+            filtreDirection
             filtreStatut={[['actif', 'Actif'], ['inactif', 'Inactif']]}
             colonnes={[
                 { key: 'code_service', label: 'Code', width: 'w-24', mono: true },

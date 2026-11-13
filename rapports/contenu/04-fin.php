@@ -2,7 +2,7 @@
 
 /**
  * Fin du rapport : conclusion, bibliographie, webographie, glossaire,
- * table des matières, résumé et abstract.
+ * annexes, table des matières, résumé et abstract.
  */
 return function (WordDoc $d): void {
     /* ---------------------------------------------------------------- */
@@ -25,11 +25,11 @@ return function (WordDoc $d): void {
 
     $d->h1('BIBLIOGRAPHIE');
 
-    $d->p('[1] TARDIEU H., ROCHFELD A., COLLETTI R., *La méthode Merise : principes et outils*, Éditions d’Organisation, Paris, 1983, 348 pages.', 'Corps', ['align' => 'left', 'indent' => 0]);
-    $d->p('[2] DATE C. J., *Introduction aux systèmes de bases de données*, Addison-Wesley, Paris, 2000, 247 pages.', 'Corps', ['align' => 'left', 'indent' => 0]);
-    $d->p('[3] GAMMA E., HELM R., JOHNSON R., VLISSIDES J., *Design Patterns : Elements of Reusable Object-Oriented Software*, Addison-Wesley, 1994, 395 pages.', 'Corps', ['align' => 'left', 'indent' => 0]);
-    $d->p('[4] FREEMAN A., ROBSON E., *Head First JavaScript Programming*, O’Reilly Media, 2014, 704 pages.', 'Corps', ['align' => 'left', 'indent' => 0]);
-    $d->p('[5] NANOU B., *Architecture logicielle : concevoir des applications robustes et évolutives*, Dunod, 2022, 256 pages.', 'Corps', ['align' => 'left', 'indent' => 0]);
+    $d->p('[1] TARDIEU H., ROCHFELD A., COLLETTI R., *La méthode Merise : principes et outils*, 1983, Éditions d’Organisation, Paris, 348 pages.', 'Corps', ['align' => 'left', 'indent' => 0]);
+    $d->p('[2] DATE C. J., *Introduction aux systèmes de bases de données*, 2000, Addison-Wesley, Paris, 247 pages.', 'Corps', ['align' => 'left', 'indent' => 0]);
+    $d->p('[3] GAMMA E., HELM R., JOHNSON R., VLISSIDES J., *Design Patterns : Elements of Reusable Object-Oriented Software*, 1994, Addison-Wesley, Reading, 395 pages.', 'Corps', ['align' => 'left', 'indent' => 0]);
+    $d->p('[4] FREEMAN A., ROBSON E., *Head First JavaScript Programming*, 2014, O’Reilly Media, Sebastopol, 704 pages.', 'Corps', ['align' => 'left', 'indent' => 0]);
+    $d->p('[5] NANOU B., *Architecture logicielle : concevoir des applications robustes et évolutives*, 2022, Dunod, Paris, 256 pages.', 'Corps', ['align' => 'left', 'indent' => 0]);
 
     /* ---------------------------------------------------------------- */
     /* WEBOGRAPHIE                                                       */
@@ -37,16 +37,16 @@ return function (WordDoc $d): void {
 
     $d->h1('WEBOGRAPHIE');
 
-    $d->p('[1] https://laravel.com/docs — Documentation officielle de Laravel, consultée en 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
-    $d->p('[2] https://fr.react.dev — Documentation officielle de React, consultée en 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
-    $d->p('[3] https://dev.mysql.com/doc/ — Manuel de référence MySQL 8.4, consulté en 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
-    $d->p('[4] https://tailwindcss.com/docs — Documentation de Tailwind CSS, consultée en 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
-    $d->p('[5] https://vite.dev/guide/ — Guide officiel de Vite, consulté en 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
-    $d->p('[6] https://getcomposer.org/doc/ — Documentation de Composer, consultée en 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
-    $d->p('[7] https://git-scm.com/book/fr/v2 — Pro Git, livre de référence en français, consulté en 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
-    $d->p('[8] https://developer.mozilla.org/fr/ — Ressources pour les développeurs web, consultées en 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
-    $d->p('[9] https://www.php.net/manual/fr/ — Manuel PHP, consulté en 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
-    $d->p('[10] https://web.maths.unsw.edu.au/~lafaye/CCM/merise/concintro.htm — Cours de MERISE, consulté en 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
+    $d->p('[6] https://laravel.com/docs, Documentation officielle de Laravel, consultée le 10 novembre 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
+    $d->p('[7] https://fr.react.dev, Documentation officielle de React, consultée le 10 novembre 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
+    $d->p('[8] https://dev.mysql.com/doc/, Manuel de référence MySQL 8.4, consulté le 9 novembre 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
+    $d->p('[9] https://tailwindcss.com/docs, Documentation de Tailwind CSS, consultée le 6 novembre 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
+    $d->p('[10] https://vite.dev/guide/, Guide officiel de Vite, consulté le 6 novembre 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
+    $d->p('[11] https://getcomposer.org/doc/, Documentation de Composer, consultée le 4 novembre 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
+    $d->p('[12] https://git-scm.com/book/fr/v2, Pro Git, livre de référence en français, consulté le 3 novembre 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
+    $d->p('[13] https://developer.mozilla.org/fr/, Ressources pour les développeurs web, consultées le 12 novembre 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
+    $d->p('[14] https://www.php.net/manual/fr/, Manuel PHP, consulté le 8 novembre 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
+    $d->p('[15] https://web.maths.unsw.edu.au/~lafaye/CCM/merise/concintro.htm, Cours de MERISE, consulté le 5 novembre 2026.', 'Corps', ['align' => 'left', 'indent' => 0]);
 
     /* ---------------------------------------------------------------- */
     /* GLOSSAIRE                                                         */
@@ -85,17 +85,78 @@ return function (WordDoc $d): void {
     ];
 
     $rows = [];
-    foreach ($glossaire as $terme => $definition) {
+    foreach (WordDoc::alphaSort($glossaire) as $terme => $definition) {
         $rows[] = [$terme, $definition];
     }
     $d->table(['Terme', 'Définition'], $rows, [3.6, 12.4]);
 
     /* ---------------------------------------------------------------- */
+    /* ANNEXES                                                           */
+    /* ---------------------------------------------------------------- */
+
+    $d->h1('ANNEXES');
+
+    $d->p('Les annexes rassemblent les documents techniques qui complètent le corps du rapport sans alourdir la présentation. Elles permettent de vérifier la traduction des modèles en code et l’organisation des points d’accès de l’application.');
+
+    $d->h2('Annexe A. Extrait du fichier de routes de l’API');
+    $d->p('Ce fichier déclare les points d’accès exposés par l’application et associe à chacun le contrôleur compétent, le middleware d’authentification et, lorsque l’opération modifie les données, le contrôle de rôle.', 'Corps', ['keepNext' => true]);
+    $d->code("Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1');
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/me', [AuthController::class, 'me']);
+    Route::get('/dashboard', [DashboardController::class, 'stats']);
+
+    // Ecriture reservee a l'administrateur et au gestionnaire de parc.
+    \$ecriture = 'role:admin,gestionnaire_parc';
+
+    Route::apiResource('equipements', EquipementController::class)
+        ->only(['index', 'show']);
+    Route::apiResource('equipements', EquipementController::class)
+        ->except(['index', 'show'])->middleware(\$ecriture);
+
+    Route::apiResource('agents', AgentController::class)
+        ->only(['index', 'show']);
+    Route::apiResource('agents', AgentController::class)
+        ->except(['index', 'show'])->middleware(\$ecriture);
+
+    // Tout agent authentifie peut declarer une demande d'assistance.
+    Route::apiResource('tickets', TicketController::class)
+        ->only(['index', 'show', 'store']);
+});");
+
+    $d->h2('Annexe B. Extrait du script de migration de la table equipements');
+    $d->p('Les tables sont créées par les migrations de Laravel. L’extrait ci-après montre la définition de la table centrale du parc, avec ses contraintes d’unicité, ses clés étrangères et son index sur le statut.', 'Corps', ['keepNext' => true]);
+    $d->code("Schema::create('equipements', function (Blueprint \$table) {
+    \$table->id('id_equipement');
+    \$table->string('code_inventaire', 50)->unique();
+    \$table->string('numero_serie', 100)->nullable()->unique();
+    \$table->string('designation', 200);
+    \$table->date('date_acquisition')->nullable();
+    \$table->decimal('prix_acquisition', 14, 2)->nullable();
+    \$table->date('garantie_debut')->nullable();
+    \$table->date('garantie_fin')->nullable();
+    \$table->enum('statut', [
+        'en_service', 'en_stock', 'en_maintenance',
+        'reforme', 'perdu', 'reserve',
+    ])->default('en_stock');
+
+    \$table->foreignId('id_modele')->nullable()
+        ->constrained('modeles', 'id_modele')->nullOnDelete();
+    \$table->foreignId('id_direction')->nullable()
+        ->constrained('directions', 'id_direction')->nullOnDelete();
+    \$table->foreignId('id_localisation')->nullable()
+        ->constrained('localisations', 'id_localisation')->nullOnDelete();
+
+    \$table->timestamps();
+    \$table->index('statut');
+});");
+
+    /* ---------------------------------------------------------------- */
     /* TABLE DES MATIÈRES                                                */
     /* ---------------------------------------------------------------- */
 
-    $d->h1('TABLE DES MATIÈRES');
-    $d->toc('TOC \\o "1-3" \\h \\z \\u', 'La table des matières se met à jour automatiquement à l’ouverture du document (Ctrl+A puis F9 si nécessaire).');
+    $d->p('TABLE DES MATIÈRES', 'TitreLiminaire', ['pageBreakBefore' => true]);
+    $d->toc('TOC \\o "1-4" \\h \\z', 'La table des matières se met à jour automatiquement à l’ouverture du document (Ctrl+A puis F9 si nécessaire).');
 
     /* ---------------------------------------------------------------- */
     /* RÉSUMÉ                                                            */
@@ -108,7 +169,7 @@ return function (WordDoc $d): void {
     $d->p('La plateforme couvre l’inventaire des équipements, les affectations et restitutions, les maintenances et tickets d’assistance, les achats et fournisseurs, les logiciels et licences, les campagnes d’inventaire, la traçabilité des mouvements et la production de rapports exportables en PDF. Elle repose sur quatre rôles (administrateur, gestionnaire de parc, technicien, utilisateur) et sur des règles de gestion vérifiées par des tests.');
     $d->p('Les résultats obtenus montrent que l’application répond aux besoins définis : le parc de trente-quatre équipements et les quatorze agents sont centralisés, les affectations sont suivies et les responsables disposent d’indicateurs à jour. Ce travail a permis de mettre en pratique les connaissances acquises durant la formation et de développer des compétences en conception, développement, sécurisation et déploiement d’applications.');
 
-    $d->p('**Mots-clés** : gestion du parc informatique, MERISE, Laravel, React, MySQL, API REST, application intranet, inventaire, affectation, maintenance.');
+    $d->p('**Mots-clés** : affectation, application intranet, gestion du parc informatique, inventaire, Laravel, maintenance, MERISE, MySQL.');
 
     /* ---------------------------------------------------------------- */
     /* ABSTRACT                                                          */
@@ -121,5 +182,5 @@ return function (WordDoc $d): void {
     $d->p('The platform covers equipment inventory, assignments and returns, maintenance and support tickets, purchases and suppliers, software and licences, inventory campaigns, movement tracking and PDF reports. It relies on four roles (administrator, asset manager, technician, user) and on business rules verified by tests.');
     $d->p('The results show that the application meets the defined requirements: the thirty-four pieces of equipment and fourteen agents are centralized, assignments are tracked and managers have up-to-date indicators. This work made it possible to put theoretical knowledge into practice and to develop skills in design, development, security and deployment.');
 
-    $d->p('**Keywords**: IT asset management, MERISE, Laravel, React, MySQL, REST API, intranet application, inventory, assignment, maintenance.');
+    $d->p('**Keywords**: assignment, intranet application, inventory, IT asset management, Laravel, maintenance, MERISE, MySQL.');
 };

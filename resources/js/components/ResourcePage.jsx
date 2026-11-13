@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Search, Plus, Pencil, Trash2, FileDown } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Search, Plus, Pencil, Trash2, FileDown, Eye, Star, X } from 'lucide-react';
 import { api } from '../api';
 import { useAuth, aRole, ROLES_ECRITURE } from '../auth';
 import { Spinner, PageHeader, EmptyState, Badge, Field, inputClass, ErrorText, EditModal, ConfirmModal } from './ui';
@@ -27,6 +28,8 @@ export default function ResourcePage({
     labelElement,
     nomRessource, // slug backend pour l'export PDF (ex. 'maintenances')
     rolesEcriture = ROLES_ECRITURE, // rôles autorisés à créer/modifier/supprimer
+    filtreDirection = false, // filtre local par direction (référentiels chargés en entier)
+    detail = null, // (item) => contenu de la fiche détaillée, affichée via un bouton « Détail »
 }) {
     const { user } = useAuth();
     const { t, langue } = useT();
@@ -36,6 +39,7 @@ export default function ResourcePage({
     const [ref, setRef] = useState(null);
     const [q, setQ] = useState('');
     const [statutFiltre, setStatutFiltre] = useState('');
+    const [directionFiltre, setDirectionFiltre] = useState('');
     const [modal, setModal] = useState(null); // null | { mode, item? }
     const [form, setForm] = useState({});
     const [errors, setErrors] = useState(null);
@@ -44,10 +48,22 @@ export default function ResourcePage({
     const [message, setMessage] = useState(null);
     const [aSupprimer, setASupprimer] = useState(null); // élément en attente de confirmation
     const [busySuppression, setBusySuppression] = useState(false);
+    const [aConsulter, setAConsulter] = useState(null);
 
     const nomSuppression = aSupprimer
         ? (aSupprimer[colonnes.find((c) => ! c.render && ! c.badge && ! c.date)?.key] ?? aSupprimer[idKey])
         : '';
+    const nomDetail = aConsulter
+        ? (aConsulter[colonnes.find((c) => ! c.render && ! c.badge && ! c.date)?.key] ?? aConsulter[idKey])
+        : '';
+
+    /* Triage par direction : le référentiel complet est déjà chargé, on filtre
+       donc localement sans nouvelle requête. */
+    const visibles = (items ?? []).filter((item) => {
+        if (! filtreDirection || ! directionFiltre) return true;
+        const id = item.id_direction ?? item.direction?.id_direction;
+        return String(id) === String(directionFiltre);
+    });
 
     /* Export PDF du registre de la section (respecte recherche + filtre statut). */
     const imprimerPdf = async () => {
@@ -161,7 +177,7 @@ export default function ResourcePage({
         <div className="anim-fade-up">
             <PageHeader
                 title={titreT}
-                subtitle={sousTitre ?? `${items.length} ${t('élément(s)')}`}
+                subtitle={sousTitre ?? `${visibles.length} ${t('élément(s)')}`}
                 actions={
                     <>
                         {nomRessource && (
@@ -204,6 +220,16 @@ export default function ResourcePage({
                         ))}
                     </select>
                 )}
+                {filtreDirection && (
+                    <select value={directionFiltre} onChange={(e) => setDirectionFiltre(e.target.value)} className={`${inputClass} sm:w-52`}>
+                        <option value="">{t('Toutes les directions')}</option>
+                        {(ref?.directions ?? []).map((d) => (
+                            <option key={d.id_direction} value={d.id_direction}>
+                                {d.code_direction ? `${d.code_direction} — ` : ''}{d.nom_direction}
+                            </option>
+                        ))}
+                    </select>
+                )}
             </div>
 
             {/* Table */}
@@ -219,7 +245,7 @@ export default function ResourcePage({
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {items.map((item, i) => (
+                            {visibles.map((item, i) => (
                                 <tr
                                     key={item[idKey]}
                                     className="anim-fade-in hover:bg-blue-50/40 transition-colors duration-150 hover:shadow-[inset_3px_0_0_var(--color-blue-500)]"
@@ -240,6 +266,15 @@ export default function ResourcePage({
                                     ))}
                                     <td className="px-4 py-2.5">
                                         <div className="flex items-center justify-end gap-1.5">
+                                            {detail && (
+                                                <button
+                                                    onClick={() => setAConsulter(item)}
+                                                    title={t('Voir le détail')}
+                                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-blue-200/60 bg-blue-50 hover:bg-blue-100 text-blue-300 text-xs font-semibold transition-all"
+                                                >
+                                                    <Eye size={13} /> {t('Détail')}
+                                                </button>
+                                            )}
                                             {peutEcrire && (
                                                 <button
                                                     onMouseEnter={() => sons.clic()}
@@ -266,7 +301,7 @@ export default function ResourcePage({
                                     </td>
                                 </tr>
                             ))}
-                            {items.length === 0 && (
+                            {visibles.length === 0 && (
                                 <tr>
                                     <td colSpan={colonnes.length + 1}>
                                         <EmptyState title={t('Aucun élément')} hint={t('Ajoutez le premier ou ajustez la recherche.')} />
@@ -277,6 +312,28 @@ export default function ResourcePage({
                     </table>
                 </div>
             </div>
+
+            {/* Fiche détaillée optionnelle (ex. logiciel, achat) */}
+            {detail && aConsulter && createPortal(
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm anim-fade-in"
+                    onMouseDown={(e) => { if (e.target === e.currentTarget) setAConsulter(null); }}
+                >
+                    <div className="anim-pop bg-card rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-slate-200/50">
+                        <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-slate-200/50 shrink-0">
+                            <h2 className="font-bold text-slate-800">
+                                {labelElement ? t(labelElement) : t('Détail')}
+                                <span className="text-slate-400 font-normal"> — {nomDetail}</span>
+                            </h2>
+                            <button onClick={() => setAConsulter(null)} className="p-1.5 text-slate-400 hover:text-slate-800 transition">
+                                <X size={18} />
+                            </button>
+                        </div>
+                        <div className="p-5 overflow-y-auto flex-1">{detail(aConsulter)}</div>
+                    </div>
+                </div>,
+                document.body,
+            )}
 
             {/* Modale de confirmation de suppression */}
             <ConfirmModal
@@ -316,6 +373,37 @@ export default function ResourcePage({
                                         <option key={o[c.idSource ?? Object.keys(o)[0]]} value={o[c.idSource ?? Object.keys(o)[0]]}>{c.get(o)}</option>
                                     ))}
                                 </select>
+                            ) : c.type === 'rating' ? (
+                                <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-0.5">
+                                        {[1, 2, 3, 4, 5].map((n) => (
+                                            <button
+                                                type="button"
+                                                key={n}
+                                                onClick={() => setForm({ ...form, [c.key]: String(n) })}
+                                                title={`${n}/5`}
+                                                aria-label={`${n}/5`}
+                                                className="p-0.5 rounded transition hover:scale-110"
+                                            >
+                                                <Star
+                                                    size={21}
+                                                    className={Number(form[c.key] ?? 0) >= n
+                                                        ? 'fill-jaune-400 text-jaune-400'
+                                                        : 'text-slate-400'}
+                                                />
+                                            </button>
+                                        ))}
+                                    </div>
+                                    {form[c.key] && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setForm({ ...form, [c.key]: '' })}
+                                            className="text-[11px] font-semibold text-slate-400 hover:text-slate-700"
+                                        >
+                                            {t('Effacer')}
+                                        </button>
+                                    )}
+                                </div>
                             ) : c.type === 'textarea' ? (
                                 <textarea rows={2} value={form[c.key] ?? ''} onChange={(e) => setForm({ ...form, [c.key]: e.target.value })} className={inputClass} />
                             ) : (

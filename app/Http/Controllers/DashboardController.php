@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Achat;
 use App\Models\Affectation;
 use App\Models\Equipement;
 use App\Models\Inventaire;
 use App\Models\Maintenance;
-use App\Models\Notification;
 use App\Models\Mouvement;
 use App\Models\Ticket;
 use Illuminate\Http\JsonResponse;
@@ -32,19 +30,53 @@ class DashboardController extends Controller
             ->groupBy('directions.code_direction')
             ->get();
 
-        // Flux entrées / sorties des 12 derniers mois, sous-échantillonné au mois :
-        // base du graphique d'évolution du tableau de bord.
-        $fluxMensuels = collect(range(0, 11))->map(function ($i) {
-            $m = now()->startOfMonth()->subMonths(11 - $i);
+        // Période glissante de 12 mois : une seule lecture par table, puis
+        // regroupement en mémoire pour rester compatible MySQL et SQLite.
+        $debutPeriode = now()->startOfMonth()->subMonths(11)->startOfDay();
+        $finPeriode = now()->endOfMonth()->endOfDay();
+        $bornes = [$debutPeriode->toDateString(), $finPeriode->toDateString()];
+
+        $mouvements = Mouvement::whereBetween('date_mouvement', $bornes)
+            ->get(['type_mouvement', 'date_mouvement'])
+            ->groupBy(fn (Mouvement $mouvement) => $mouvement->date_mouvement->format('Y-m'));
+
+        $tickets = Ticket::where(function ($query) use ($bornes) {
+            $query->whereBetween('date_creation', $bornes)
+                ->orWhereBetween('date_cloture', $bornes);
+        })->get(['date_creation', 'date_cloture']);
+
+        $creationsParMois = $tickets
+            ->filter(fn (Ticket $ticket) => $ticket->date_creation !== null)
+            ->groupBy(fn (Ticket $ticket) => $ticket->date_creation->format('Y-m'));
+
+        $resolutionsParMois = $tickets
+            ->filter(fn (Ticket $ticket) => $ticket->date_cloture !== null)
+            ->groupBy(fn (Ticket $ticket) => $ticket->date_cloture->format('Y-m'));
+
+        $moisPeriode = collect(range(0, 11))->map(
+            fn (int $i) => now()->startOfMonth()->subMonths(11 - $i)
+        );
+
+        // Flux entrées / sorties des 12 derniers mois : base du graphique
+        // d'évolution du tableau de bord.
+        $fluxMensuels = $moisPeriode->map(function ($mois) use ($mouvements) {
+            $duMois = $mouvements->get($mois->format('Y-m'), collect());
 
             return [
-                'mois' => $m->translatedFormat('M Y'),
-                'entrees' => Mouvement::whereIn('type_mouvement', ['stock', 'affectation'])
-                    ->whereBetween('date_mouvement', [$m->copy()->startOfMonth()->toDateString(), $m->copy()->endOfMonth()->toDateString()])
-                    ->count(),
-                'sorties' => Mouvement::whereIn('type_mouvement', ['restitution', 'reforme', 'maintenance'])
-                    ->whereBetween('date_mouvement', [$m->copy()->startOfMonth()->toDateString(), $m->copy()->endOfMonth()->toDateString()])
-                    ->count(),
+                'mois' => $mois->translatedFormat('M Y'),
+                'entrees' => $duMois->whereIn('type_mouvement', ['stock', 'affectation'])->count(),
+                'sorties' => $duMois->whereIn('type_mouvement', ['restitution', 'reforme', 'maintenance'])->count(),
+            ];
+        });
+
+        // Courbe des tickets : créations et résolutions mois par mois.
+        $ticketsMensuels = $moisPeriode->map(function ($mois) use ($creationsParMois, $resolutionsParMois) {
+            $cle = $mois->format('Y-m');
+
+            return [
+                'mois' => $mois->translatedFormat('M Y'),
+                'crees' => $creationsParMois->get($cle, collect())->count(),
+                'resolus' => $resolutionsParMois->get($cle, collect())->count(),
             ];
         });
 
@@ -58,6 +90,7 @@ class DashboardController extends Controller
             'tickets_par_priorite' => Ticket::select('priorite', DB::raw('count(*) as total'))->groupBy('priorite')->pluck('total', 'priorite'),
             'maintenances_par_mode' => Maintenance::select('mode_intervention', DB::raw('count(*) as total'))->groupBy('mode_intervention')->pluck('total', 'mode_intervention'),
             'flux_mensuels' => $fluxMensuels,
+            'tickets_mensuels' => $ticketsMensuels,
             'tickets_ouverts' => Ticket::whereIn('statut', ['ouvert', 'en_cours'])->count(),
             'maintenances_cours' => Maintenance::where('statut', 'en_cours')->count(),
             'affectations_actives' => Affectation::whereNull('date_fin')->count(),

@@ -106,12 +106,12 @@ export default function EquipementDetail() {
         ajouter(
             a.date_affectation,
             'affectation',
-            `Affectation à ${agent}`,
+            `Utilisation par ${agent}`
             [a.agent?.fonction, a.agent?.service?.nom_service, a.agent?.direction?.nom_direction]
                 .filter(Boolean).join(' · ')
         );
         if (a.date_fin) {
-            ajouter(a.date_fin, 'restitution', `Restitution par ${agent}`, a.motif);
+            ajouter(a.date_fin, 'restitution', `Fin d’utilisation par ${agent}`, a.motif);
         }
     });
 
@@ -355,12 +355,16 @@ export default function EquipementDetail() {
                     <Row label={t('Créée le')}>{formatDate(eq.created_at)}</Row>
                 </Section>
 
-                {/* Affectations */}
-                <Section icon={User} title={`${t('Affectations (')}${eq.affectations?.length ?? 0})`}>
-                    {eq.affectations?.length === 0 && <p className="text-xs text-slate-500">{t('Jamais affecté.')}</p>}
+                {/* Utilisation : l'agent qui se sert du matériel (vocabulaire distinct de l'affectation) */}
+                <Section icon={User} title={`${t('Utilisateurs de l’équipement (')}${eq.affectations?.length ?? 0})`}>
+                    {eq.affectations?.length === 0 && <p className="text-xs text-slate-500">{t('Aucun utilisateur enregistré pour ce matériel.')}</p>}
+                    {eq.affectations?.length > 0 && actives.length === 0 && (
+                        <p className="mb-2 text-xs text-slate-500">{t('Aucun utilisateur actuellement.')}</p>
+                    )}
                     <div className="space-y-2">
                         {actives.map((a) => (
                             <div key={a.id_affectation} className="rounded-xl bg-blue-50 border border-blue-200 p-3">
+                                <div className="text-[10px] font-bold uppercase tracking-wide text-blue-400">{t('Utilisé par')}</div>
                                 <div className="text-sm font-bold text-blue-300">
                                     {a.agent ? `${a.agent.prenom} ${a.agent.nom_naiss}` : '—'}
                                 </div>

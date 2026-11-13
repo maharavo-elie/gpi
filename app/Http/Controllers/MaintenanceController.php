@@ -85,6 +85,18 @@ class MaintenanceController extends CrudController
 
         $this->logAction('création', $maintenance);
 
+        // Une maintenance saisie par un technicien doit remonter aux responsables
+        // du parc, comme une nouvelle demande d'assistance.
+        $maintenance->loadMissing('equipement');
+        $code = $maintenance->equipement?->code_inventaire ?? 'matériel #'.$maintenance->id_equipement;
+        NotificationsMetier::notifier(
+            NotificationsMetier::idsParRoles(['admin', 'gestionnaire_parc']),
+            'Nouvelle maintenance — '.$code,
+            'Créée par '.auth()->user()->nom_complet.'. '
+                .($maintenance->description_probleme ?: 'Intervention enregistrée.'),
+            'info'
+        );
+
         return response()->json($maintenance->load($this->withRelations()), 201);
     }
 

@@ -11,6 +11,7 @@ use App\Support\NotificationsMetier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class TicketController extends CrudController
@@ -104,12 +105,26 @@ class TicketController extends CrudController
 
     public function store(Request $request): JsonResponse
     {
-        $data = $this->completerRattachement($request->validate($this->rules()));
+        $utilisateur = auth()->user();
+        $estIntervenant = $utilisateur->roles()
+            ->whereIn('nom_role', ['admin', 'gestionnaire_parc', 'technicien'])
+            ->exists();
+
+        $data = $request->validate($this->rules());
+
+        // Un demandeur standard ne choisit ni le statut ni un autre agent :
+        // sa demande part toujours ouverte et à son nom.
+        if (! $estIntervenant) {
+            $data['statut'] = 'ouvert';
+            $data['id_agent'] = $utilisateur->agent?->id_agent;
+        }
+
+        $data = $this->completerRattachement($data);
         $data['date_creation'] = today();
 
         // Le déclarant est celui qui dépose le ticket : s'il n'est pas
         // explicitement désigné, l'agent rattaché au compte connecté le devient.
-        if (empty($data['id_agent']) && ($agentConnecte = auth()->user()->agent)) {
+        if (empty($data['id_agent']) && ($agentConnecte = $utilisateur->agent)) {
             $data['id_agent'] = $agentConnecte->id_agent;
         }
 
@@ -132,10 +147,12 @@ class TicketController extends CrudController
 
         // Alerte aux intervenants : les tickets ouverts ne doivent pas
         // attendre qu'on remarque la page /tickets par hasard.
+        $auteur = $utilisateur->nom_complet;
         NotificationsMetier::notifier(
             NotificationsMetier::idsParRoles(['admin', 'gestionnaire_parc', 'technicien']),
             'Nouveau ticket '.$ticket->reference_ticket,
-            ($ticket->equipement?->code_inventaire ? $ticket->equipement->code_inventaire.' — ' : '')
+            ($auteur ? $auteur.' — ' : '')
+                .($ticket->equipement?->code_inventaire ? $ticket->equipement->code_inventaire.' — ' : '')
                 .$ticket->titre.' (priorité '.$ticket->priorite.')',
             $ticket->priorite === 'critique' || $ticket->priorite === 'haute' ? 'alerte' : 'info'
         );
@@ -210,7 +227,7 @@ class TicketController extends CrudController
     {
         $data = $request->validate(['contenu' => ['required', 'string', 'max:2000']]);
 
-        Ticket::findOrFail($id);
+        $ticket = Ticket::with(['agent', 'equipement'])->findOrFail($id);
 
         $commentaire = TicketCommentaire::create([
             'contenu' => $data['contenu'],
@@ -218,6 +235,19 @@ class TicketController extends CrudController
             'id_ticket' => $id,
             'id_utilisateur' => auth()->id(),
         ]);
+
+        // Un commentaire est un échange entre le demandeur et l'équipe support :
+        // les intervenants et le déclarant sont prévenus, l'auteur exclu.
+        $destinataires = array_merge(
+            NotificationsMetier::idsParRoles(['admin', 'gestionnaire_parc', 'technicien']),
+            [NotificationsMetier::idUtilisateurDeAgent($ticket->id_agent)]
+        );
+        NotificationsMetier::notifier(
+            $destinataires,
+            'Nouveau commentaire — '.$ticket->reference_ticket,
+            auth()->user()->nom_complet.' : '.Str::limit($data['contenu'], 140),
+            'info'
+        );
 
         return response()->json($commentaire->load('utilisateur'), 201);
     }

@@ -16,7 +16,7 @@ export default function Fournisseurs() {
             filtreStatut={[['actif', 'Actif'], ['inactif', 'Inactif']]}
             colonnes={[
                 { key: 'raison_sociale', label: 'Raison sociale' },
-                { key: 'contact', label: 'Contact' },
+                { key: 'contact', label: 'nom' },
                 { key: 'telephone', label: 'Téléphone' },
                 { key: 'email', label: 'Email' },
                 { key: 'rcs', label: 'RCS', mono: true },
@@ -24,7 +24,7 @@ export default function Fournisseurs() {
             ]}
             champs={[
                 { key: 'raison_sociale', label: 'Raison sociale', required: true },
-                { key: 'contact', label: 'Personne de contact' },
+                { key: 'contact', label: 'Contact' },
                 { key: 'telephone', label: 'Téléphone' },
                 { key: 'email', label: 'Email', type: 'email' },
                 { key: 'adresse', label: 'Adresse' },
